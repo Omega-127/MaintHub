@@ -1,0 +1,55 @@
+# ─────────────────────────────────────────────
+# MainHub .gitignore
+# ─────────────────────────────────────────────
+
+# Environment files — NEVER commit real secrets
+.env
+*.env.local
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+venv/
+env/
+.Python
+build/
+dist/
+*.egg-info/
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+
+# Flask
+instance/
+.webassets-cache
+
+# Flutter
+mainthub-app/build/
+mainthub-app/.dart_tool/
+mainthub-app/.flutter-plugins
+mainthub-app/.flutter-plugins-dependencies
+mainthub-app/.packages
+mainthub-app/pubspec.lock
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Docker
+*.log
+
+# Firebase credentials — NEVER commit
+firebase-credentials.json
+google-services.json
+GoogleService-Info.plist
