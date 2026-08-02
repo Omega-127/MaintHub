@@ -1,0 +1,71 @@
+version: '3.8'
+
+services:
+
+  # ─────────────────────────────────────────────
+  # MySQL Database
+  # ─────────────────────────────────────────────
+  mysql:
+    image: mysql:8.0
+    container_name: mainthub-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: mainthub_root
+      MYSQL_DATABASE: mainthub_db
+      MYSQL_USER: mainthub_user
+      MYSQL_PASSWORD: mainthub_pass
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql          # persistent data across restarts
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql  # auto-runs schema on first start
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-pmainthub_root"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ─────────────────────────────────────────────
+  # Flask Backend
+  # ─────────────────────────────────────────────
+  backend:
+    build:
+      context: ./mainthub-backend
+      dockerfile: Dockerfile
+    container_name: mainthub-backend
+    restart: unless-stopped
+    environment:
+      FLASK_ENV: development
+      FLASK_APP: run.py
+      DATABASE_URL: mysql+pymysql://mainthub_user:mainthub_pass@mysql:3306/mainthub_db
+      JWT_SECRET_KEY: mainthub-jwt-secret-change-in-production-min-32-chars
+    ports:
+      - "5000:5000"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    volumes:
+      - ./mainthub-backend:/app            # live reload — code changes reflect instantly
+    command: python run.py
+
+  # ─────────────────────────────────────────────
+  # phpMyAdmin — visual DB admin (optional but useful)
+  # ─────────────────────────────────────────────
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: mainthub-phpmyadmin
+    restart: unless-stopped
+    environment:
+      PMA_HOST: mysql
+      PMA_USER: mainthub_user
+      PMA_PASSWORD: mainthub_pass
+    ports:
+      - "8080:80"
+    depends_on:
+      - mysql
+
+# ─────────────────────────────────────────────
+# Named volumes (data persists even after container restarts)
+# ─────────────────────────────────────────────
+volumes:
+  mysql_data:
