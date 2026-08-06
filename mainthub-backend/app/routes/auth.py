@@ -99,4 +99,3 @@ def me():
         "email":     user.email,
         "role":      user.role
     }), 200
-
