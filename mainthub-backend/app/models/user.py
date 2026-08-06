@@ -13,7 +13,7 @@ class user(db.Model):
     is_active     = db.Column(db.Boolean,     nullable=False, default=True)
     created_at    = db.Column(db.DateTime,    default=lambda: datetime.now(timezone.utc))
     updated_at    = db.Column(db.DateTime,    default=lambda: datetime.now(timezone.utc),
-                                              onupdate=lambda: datetime.now(timezone.utc))
+                                            onupdate=lambda: datetime.now(timezone.utc))
 
     # Relationships
     machines              = db.relationship("Machine",            backref="creator",     lazy=True)
