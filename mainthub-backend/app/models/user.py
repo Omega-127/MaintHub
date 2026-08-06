@@ -2,7 +2,7 @@ from app import db
 from datetime import datetime, timezone
 
 
-class user(db.Model):
+class User(db.Model):
     __tablename__ = "users"
 
     id            = db.Column(db.Integer,     primary_key=True)
@@ -21,7 +21,7 @@ class user(db.Model):
     notifications         = db.relationship("Notification",       backref="recipient",   lazy=True)
 
     def __repr__(self):
-        return f"<user{self.email} ({self.role})"
+        return f"<User {self.email} ({self.role})>"
 
     
 
