@@ -5,4 +5,3 @@ class AppConfig {
 
   static const String appName = 'MainHub';
 }
-
