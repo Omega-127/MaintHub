@@ -89,7 +89,7 @@ def create_machine():
         "next_maintenance_date": str(machine.next_maintenance_date)
     }), 201
 
-@machines_bp.route("/<int:machine_id>", methods=["PUT"])\
+@machines_bp.route("/<int:machine_id>", methods=["PUT"])
 @jwt_required()
 
 def update_machine(machine_id):
