@@ -1,12 +1,9 @@
-from flask import jsonify
+from flask import Blueprint, jsonify
 from flask_jwt_extended import jwt_required
 from app.models.machine import Machine
 from app.models.maintenance import MaintenanceHistory
 from datetime import date
 
-dashboard_bp = Blueprint("dashboard", __name__)
-
-from flask import Blueprint
 dashboard_bp = Blueprint("dashboard", __name__)
 
 

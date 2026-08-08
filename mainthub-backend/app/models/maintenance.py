@@ -1,57 +1,17 @@
-from flask import Blueprint, request, jsonify
-from flask_jwt_extended import jwt_required, get_jwt_identity
 from app import db
-from app.models.machine import Machine
-from app.models.maintenance import MaintenanceHistory
-from datetime import datetime, date, time, timedelta, timezone
+from datetime import datetime, timezone
 
-maintenance_bp = Blueprint("maintenance", __name__)
 
-@maintenance_bp.route("/<int:machine_id>/complete", methods=["POST"])
-@jwt_required()
-def mark_complete(machine_id):
-    user_id = get_jwt_identity()
-    data = request.get_json() or {}
+class MaintenanceHistory(db.Model):
+    __tablename__ = "maintenance_history"
 
-    machine = Machine.query.get_or_404(machine_id)
+    id               = db.Column(db.Integer,     primary_key=True)
+    machine_id       = db.Column(db.Integer,     db.ForeignKey("machines.id"), nullable=False)
+    technician_id    = db.Column(db.Integer,     db.ForeignKey("users.id"),    nullable=False)
+    maintenance_date = db.Column(db.DateTime,    nullable=False, default=lambda: datetime.now(timezone.utc))
+    status           = db.Column(db.String(50),  nullable=False, default="COMPLETED")
+    notes            = db.Column(db.Text,        nullable=True)
+    created_at       = db.Column(db.DateTime,    default=lambda: datetime.now(timezone.utc))
 
-    today = date.today()
-
-    record = MaintenanceHistory(
-        machine_id=machine_id,
-        technician_id=int(user_id),
-        maintenance_date=datetime.now(timezone.utc),
-        status="COMPLETED",
-        notes=data.get("notes", "")
-    )
-
-    db.session.add(record)
-
-    machine.last_maintenance_date = today
-    machine.next_maintenance_date = today + timedelta(days=machine.maintenance_interval)
-    machine.status = "ACTIVE"
-
-    db.session.commit()
-
-    return jsonify({
-        "message":               "Maintenance marked as complete",
-        "next_maintenance_date": str(machine.next_maintenance_date)
-    }), 200
-
-@maintenance_bp.route("/<int:machine_id>/history", methods=["GET"])
-@jwt_required()
-def get_history(machine_id):
-    Machine.query.get_or_404(machine_id)
-
-    records = (MaintenanceHistory.query
-            .filter_by(machine_id=machine_id)
-            .order_by(MaintenanceHistory.maintenance_date.desc())
-            .all())
-
-    return jsonify([{
-        "id":               r.id,
-        "maintenance_date": str(r.maintenance_date),
-        "status":           r.status,
-        "notes":            r.notes,
-        "technician_id":    r.technician_id
-    } for r in records]), 200
+    def __repr__(self):
+        return f"<MaintenanceHistory machine={self.machine_id} status={self.status}>"
