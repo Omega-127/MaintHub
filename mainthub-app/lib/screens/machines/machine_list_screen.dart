@@ -6,7 +6,7 @@ import '../../models/machine.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/machine_provider.dart';
 import 'add_machine_screen.dart';
-import 'machine_detail_screen.dart';
+import 'machine_details_screen.dart';
 
 class MachineListScreen extends StatefulWidget {
   const MachineListScreen({super.key});

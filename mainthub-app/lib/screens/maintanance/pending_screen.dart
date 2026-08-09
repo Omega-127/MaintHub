@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import '../../config/theme.dart';
 import '../../providers/machine_provider.dart';
-import '../machines/machine_detail_screen.dart';
+import '../machines/machine_details_screen.dart';
 
 class PendingMaintenanceScreen extends StatefulWidget {
   const PendingMaintenanceScreen({super.key});

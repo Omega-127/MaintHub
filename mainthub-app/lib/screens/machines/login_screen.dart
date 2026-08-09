@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../config/theme.dart';
 import '../../providers/auth_provider.dart';
-import '../dashboard/dashboard_screen.dart';
+import 'dashboard_screen.dart';
+import 'signup_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -40,7 +41,7 @@ class _LoginScreenState extends State<LoginScreen> {
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(auth.error),
+          content: Text(auth.error.isNotEmpty ? auth.error : 'Login failed'),
           backgroundColor: AppTheme.danger,
         ),
       );
@@ -62,8 +63,20 @@ class _LoginScreenState extends State<LoginScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  // Logo
-                  const Icon(Icons.build_circle, size: 72, color: AppTheme.primary),
+                  // Logo Container
+                  Container(
+                    width: 80,
+                    height: 80,
+                    decoration: BoxDecoration(
+                      color: AppTheme.primary.withOpacity(0.1),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.build_circle,
+                      size: 52,
+                      color: AppTheme.primary,
+                    ),
+                  ),
                   const SizedBox(height: 16),
                   const Text(
                     'MainHub',
@@ -119,6 +132,31 @@ class _LoginScreenState extends State<LoginScreen> {
                           onPressed: _login,
                           child: const Text('Login'),
                         ),
+                  const SizedBox(height: 20),
+
+                  // Sign Up Option
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(
+                        "Don't have an account? ",
+                        style: TextStyle(color: AppTheme.textLight),
+                      ),
+                      GestureDetector(
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => const SignUpScreen()),
+                        ),
+                        child: const Text(
+                          'Sign Up',
+                          style: TextStyle(
+                            color: AppTheme.primary,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ),

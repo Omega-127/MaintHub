@@ -18,10 +18,20 @@ def create_app():
     app = Flask(__name__)
 
     # ── Config ──────────────────────────────────────────────
-    app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv(
-        "DATABASE_URL",
-        "mysql+pymysql://mainthub_user:mainthub_pass@localhost:3306/mainthub_db"
-    )
+    db_url = os.getenv("DATABASE_URL", "mysql+pymysql://mainthub_user:mainthub_pass@localhost:3306/mainthub_db")
+    if "mysql" in db_url:
+        import socket
+        try:
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            sock.settimeout(0.5)
+            res = sock.connect_ex(('127.0.0.1', 3306))
+            sock.close()
+            if res != 0:
+                db_url = "sqlite:///mainthub.db"
+        except Exception:
+            db_url = "sqlite:///mainthub.db"
+
+    app.config["SQLALCHEMY_DATABASE_URI"] = db_url
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     app.config["JWT_SECRET_KEY"] = os.getenv(
         "JWT_SECRET_KEY",
@@ -33,6 +43,15 @@ def create_app():
     jwt.init_app(app)
     ma.init_app(app)
     CORS(app)
+
+    # ── Import models to register schemas for table creation ──
+    from app.models.user import User
+    from app.models.machine import Machine
+    from app.models.maintenance import MaintenanceHistory
+    from app.models.notification import Notification
+
+    with app.app_context():
+        db.create_all()
 
     # ── Register blueprints (routes) ─────────────────────────
     from app.routes.auth        import auth_bp

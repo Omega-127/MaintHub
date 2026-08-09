@@ -1,46 +1,31 @@
-import '../models/machine.dart';
-import 'api_client.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'config/theme.dart';
+import 'providers/auth_provider.dart';
+import 'providers/machine_provider.dart';
+import 'screens/splash_screen.dart';
 
-class MachineService {
-  final _client = ApiClient();
+void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(const MyApp());
+}
 
-  Future<List<Machine>> getMachines() async {
-    final response = await _client.get('/machines/');
-    return (response.data as List)
-        .map((json) => Machine.fromJson(json))
-        .toList();
-  }
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
-  Future<Machine> getMachine(int id) async {
-    final response = await _client.get('/machines/$id');
-    return Machine.fromJson(response.data);
-  }
-
-  Future<void> createMachine({
-    required String name,
-    required String type,
-    required String location,
-    required int    intervalDays,
-    required String firstMaintenanceDate, // YYYY-MM-DD
-  }) async {
-    await _client.post('/machines/', data: {
-      'name':                   name,
-      'type':                   type,
-      'location':               location,
-      'maintenance_interval':   intervalDays,
-      'first_maintenance_date': firstMaintenanceDate,
-    });
-  }
-
-  Future<void> deleteMachine(int id) async {
-    await _client.delete('/machines/$id');
-  }
-
-  Future<String> markComplete(int machineId, {String notes = ''}) async {
-    final response = await _client.post(
-      '/maintenance/$machineId/complete',
-      data: {'notes': notes},
+  @override
+  Widget build(BuildContext context) {
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => AuthProvider()),
+        ChangeNotifierProvider(create: (_) => MachineProvider()),
+      ],
+      child: MaterialApp(
+        title: 'MainHub',
+        theme: AppTheme.theme,
+        debugShowCheckedModeBanner: false,
+        home: const SplashScreen(),
+      ),
     );
-    return response.data['next_maintenance_date'];
   }
 }

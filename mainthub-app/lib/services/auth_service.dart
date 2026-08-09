@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../models/user.dart';
 import 'api_client.dart';
@@ -21,6 +22,49 @@ class AuthService {
     await _storage.write(key: 'user_role',    value: user.role);
 
     return user;
+  }
+
+  // Sign up → register user and store token
+  Future<User> signUp({
+    required String fullName,
+    required String email,
+    required String password,
+    String role = 'TECHNICIAN',
+  }) async {
+    final payload = {
+      'full_name': fullName,
+      'name':      fullName,
+      'email':     email,
+      'password':  password,
+      'role':      role,
+    };
+
+    Response response;
+    try {
+      response = await _client.post('/auth/register', data: payload);
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 404) {
+        try {
+          response = await _client.post('/auth/signup', data: payload);
+        } on DioException catch (_) {
+          response = await _client.post('/users/register', data: payload);
+        }
+      } else {
+        rethrow;
+      }
+    }
+
+    if (response.data != null &&
+        response.data is Map &&
+        response.data['access_token'] != null) {
+      final token = response.data['access_token'];
+      final user  = User.fromJson(response.data['user'] ?? response.data);
+      await _storage.write(key: 'access_token', value: token);
+      await _storage.write(key: 'user_role',    value: user.role);
+      return user;
+    } else {
+      return await login(email, password);
+    }
   }
 
   // Logout — clear stored token

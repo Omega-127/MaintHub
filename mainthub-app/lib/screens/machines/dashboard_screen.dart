@@ -3,12 +3,11 @@ import 'package:provider/provider.dart';
 import '../../config/theme.dart';
 import '../../models/dashboard.dart';
 import '../../providers/auth_provider.dart';
-import '../../providers/machine_provider.dart';
 import '../../services/dashboard_service.dart';
-import '../auth/login_screen.dart';
-import '../machines/machine_list_screen.dart';
-import '../machines/add_machine_screen.dart';
-import '../maintenance/pending_screen.dart';
+import 'login_screen.dart';
+import 'machine_list_screen.dart';
+import 'add_machine_screen.dart';
+import '../maintanance/pending_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -129,10 +128,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  Widget _kpiRow(List<Widget> cards) => Row(
-    children: cards.map((c) => Expanded(child: c)).toList()
-      ..insert(1, const SizedBox(width: 12)),
-  );
+  Widget _kpiRow(List<Widget> cards) {
+    final list = <Widget>[];
+    for (int i = 0; i < cards.length; i++) {
+      if (i > 0) list.add(const SizedBox(width: 12));
+      list.add(Expanded(child: cards[i]));
+    }
+    return Row(children: list);
+  }
 }
 
 class _KpiCard extends StatelessWidget {
