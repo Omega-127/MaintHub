@@ -26,7 +26,11 @@ def check_due_machines(app):
 
 
         # get all technicians to notify
-        technicians = User.query.filter_by(role="TECHNICIAN", is_active=True).all()
+        # Notify both technicians and admins
+        technicians = User.query.filter(
+            User.role.in_(["TECHNICIAN", "ADMIN"]),
+            User.is_active == True
+        ).all()
 
         for machine in due_machines:
             is_overdue = machine.next_maintenance_date < today
@@ -74,5 +78,5 @@ def start_scheduler(app):
     )
 
     scheduler.start()
-    print("[schedular] started - daily check at 6:00 AM")
+    print("[scheduler] started - daily check at 6:00 AM")
     return scheduler
