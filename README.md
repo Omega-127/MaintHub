@@ -50,11 +50,12 @@ A full-stack **Machine Maintenance Management System** for automating maintenanc
 
 - 🟡 Equipment catalog — pre-loaded machine types with maintenance intervals (from Excel)
 - 🟡 Add from catalog — quick-add machines from predefined list
+- ✅ In-app notifications dashboard — view all alerts
 - 🟡 Mobile refinements — better UX on small screens
 
 ### 📋 Not Yet Started
 
-- ⬜ Email notifications — SMTP integration for alerts
+- ✅ In-app notifications — APScheduler creates alerts automatically
 - ⬜ QR code scanning — for machine tracking
 - ⬜ Analytics dashboard — charts and reports
 - ⬜ Multi-language support
@@ -131,7 +132,7 @@ flutter run
 ## 📁 Project Structure
 
 ```
-MainHub/
+mainthub'/
 │
 ├── README.md                       ← You are here
 ├── CONTRIBUTING.md                 ← Team guidelines
@@ -438,6 +439,7 @@ This project is licensed under the **MIT License** — see `LICENSE` file for de
 ---
 
 
+
 ---
 
 ## 🙋 Questions?
@@ -463,4 +465,4 @@ This project is licensed under the **MIT License** — see `LICENSE` file for de
 **Happy coding! 🚀**
 
 *Last updated: August 2026*  
-*MainHub Team*
+*mainthub' Team*
