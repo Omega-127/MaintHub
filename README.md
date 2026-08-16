@@ -8,50 +8,87 @@
 A full-stack **Machine Maintenance Management System** for automating maintenance scheduling, notifications, and tracking. Built with Flask (Python) backend and Flutter mobile app.
 
 > **Project Timeline:** August 2026 – November 2026 (16 weeks)  
-> **Status:** Week 1 Complete (Foundation & Setup) ✅
+> **Status:** Week 1-2 Complete (Backend & Frontend Built) ✅
 
 ---
 
 ## 🎯 Features
 
-- ✅ **User Management** — Admin and Technician roles with role-based access
-- ✅ **Machine Registry** — Register and track machines with maintenance intervals
-- ✅ **Automatic Scheduling** — System auto-calculates next maintenance date
-- ✅ **Smart Notifications** — APScheduler sends alerts at scheduled times (Firebase/Email)
-- ✅ **Maintenance Tracking** — Complete history of all maintenance events
-- ✅ **Dashboard** — Real-time overview (pending, completed, overdue maintenance)
-- ✅ **Mobile App** — iOS + Android Flutter app for on-the-go access
-- ✅ **Cross-Platform** — Runs on web, Android, iOS with single codebase
+### ✅ Completed Features
+
+**Backend (Flask API)**
+- ✅ User authentication — login/register with JWT tokens
+- ✅ Role-based access control — Admin vs Technician
+- ✅ Machine management — CRUD operations for machines
+- ✅ Auto-scheduling — next maintenance date calculation
+- ✅ Maintenance tracking — complete maintenance history
+- ✅ Dashboard KPIs — total, active, overdue, upcoming machines
+- ✅ Notifications system — auto-generated alerts
+- ✅ Background scheduler — APScheduler runs daily at 6 AM
+- ✅ All 5 API routes implemented and tested
+
+**Frontend (Flutter App)**
+- ✅ Splash screen — auto-login check on app start
+- ✅ Login/Register screens — email + password authentication
+- ✅ Dashboard — KPI cards showing machine status overview
+- ✅ Machine list — searchable, filterable machine registry
+- ✅ Machine detail — view machine info + mark complete
+- ✅ Add machine — admin-only form with date picker
+- ✅ Pending maintenance — shows overdue machines only
+- ✅ State management — Provider pattern for clean architecture
+- ✅ API integration — Dio HTTP client with auto-JWT injection
+- ✅ Secure storage — tokens stored in flutter_secure_storage
+
+**Database (MySQL)**
+- ✅ 4 core tables — users, machines, maintenance_history, notifications
+- ✅ Schema auto-creation — init.sql runs on Docker startup
+- ✅ Seed admin account — auto-created for first login
+- ✅ Proper indexing — optimized queries for scheduler
+- ✅ Foreign keys & cascades — data integrity maintained
+
+### 🔄 In Progress
+
+- 🟡 Equipment catalog — pre-loaded machine types with maintenance intervals (from Excel)
+- 🟡 Add from catalog — quick-add machines from predefined list
+- 🟡 Mobile refinements — better UX on small screens
+
+### 📋 Not Yet Started
+
+- ⬜ Email notifications — SMTP integration for alerts
+- ⬜ QR code scanning — for machine tracking
+- ⬜ Analytics dashboard — charts and reports
+- ⬜ Multi-language support
+- ⬜ Offline mode — sync when online
 
 ---
 
 ## 📊 Tech Stack
 
 ### Backend
-| Component | Technology | Purpose |
+| Component | Technology | Version |
 |-----------|-----------|---------|
-| Framework | Flask 2.3 | Lightweight, fast REST API |
-| ORM | SQLAlchemy | Database abstraction |
-| Database | MySQL 8.0 | Relational database |
-| Authentication | JWT | Stateless token auth |
-| Scheduling | APScheduler | Background task scheduler |
-| Notifications | Firebase/SMTP | Push notifications & email |
+| Framework | Flask | 3.0.3 |
+| ORM | SQLAlchemy | 2.0.19 |
+| Database | MySQL | 8.0 |
+| Auth | JWT (Flask-JWT-Extended) | 4.6.0 |
+| Scheduler | APScheduler | 3.10.4 |
+| Containerization | Docker | Latest |
 
 ### Frontend
-| Component | Technology | Purpose |
+| Component | Technology | Version |
 |-----------|-----------|---------|
-| Framework | Flutter 3.0+ | Cross-platform mobile |
-| State Mgmt | Riverpod | Reactive state management |
-| HTTP Client | Dio | REST API integration |
-| Storage | flutter_secure_storage | Secure token storage |
+| Framework | Flutter | 3.0+ |
+| State Mgmt | Provider | 6.1.2 |
+| HTTP Client | Dio | 5.4.0 |
+| Storage | flutter_secure_storage | 9.0.0 |
+| Date Formatting | intl | 0.19.0 |
 
-### Infrastructure
-| Component | Technology | Purpose |
-|-----------|-----------|---------|
-| Database | Supabase | Managed PostgreSQL |
-| Backend Hosting | Render | Flask app deployment |
-| Version Control | GitHub | Code repository + CI/CD |
-| Containerization | Docker | Local development consistency |
+### Infrastructure (Production)
+| Layer | Service | Purpose |
+|-------|---------|---------|
+| Database | Railway | Managed MySQL |
+| Backend | Render | Flask deployment |
+| Frontend | Google Play / Direct APK | Android distribution |
 
 ---
 
@@ -62,449 +99,216 @@ A full-stack **Machine Maintenance Management System** for automating maintenanc
 - Flutter SDK 3.0+
 - MySQL 8.0+ (or Docker)
 - Git
-- A code editor (VS Code, Android Studio, etc.)
 
 ### 30-Second Setup
 
+**Backend:**
 ```bash
-# 1. Clone the repo
-git clone https://github.com/your-org/MainHub.git
-cd MaintHub
-
-# 2. Run the initialization script
-bash init_project.sh
-
-# 3. Start the backend
 cd mainthub-backend
+python -m venv venv
+venv\Scripts\activate
+pip install -r requirements.txt
 python run.py
-# Backend runs at http://localhost:5000
-
-# 4. Start the frontend (in another terminal)
-cd mainthub-app
-flutter run
+# Backend at http://localhost:5000
 ```
 
-**That's it! Backend + Frontend running locally.**
+**Database:**
+```bash
+# From repo root
+docker-compose up -d mysql
+```
+
+**Frontend:**
+```bash
+cd mainthub-app
+flutter pub get
+flutter run
+# Opens on Android emulator/device
+```
 
 ---
 
 ## 📁 Project Structure
 
 ```
-mainthub/
+MainHub/
 │
-├── mainthub-backend/                 # Flask REST API
-│   ├── app/
-│   │   ├── models/                   # SQLAlchemy ORM models
-│   │   │   ├── user.py              # User (Admin/Technician)
-│   │   │   ├── machine.py           # Machine registry
-│   │   │   ├── maintenance.py       # Maintenance history
-│   │   │   └── notification.py      # Notifications
-│   │   ├── routes/                   # API endpoints
-│   │   │   ├── auth.py              # Login, register
-│   │   │   ├── machines.py          # Machine CRUD
-│   │   │   ├── maintenance.py       # Mark complete, history
-│   │   │   ├── dashboard.py         # Dashboard KPIs
-│   │   │   └── notifications.py     # Notification endpoints
-│   │   ├── schemas/                  # Request/response validation (Marshmallow)
-│   │   ├── services/                 # Business logic
-│   │   │   ├── auth_service.py
-│   │   │   ├── machine_service.py
-│   │   │   ├── maintenance_service.py
-│   │   │   ├── notification_service.py
-│   │   │   └── scheduler_service.py  # APScheduler jobs
-│   │   └── utils/                    # Utilities
-│   │       ├── security.py           # Bcrypt, JWT
-│   │       └── decorators.py         # @jwt_required, @admin_only
-│   ├── tests/                        # Test suite
-│   ├── migrations/                   # Database migrations (Alembic)
-│   ├── requirements.txt              # Python dependencies
-│   ├── .env.example                  # Environment template
-│   ├── Dockerfile                    # Container image
-│   ├── run.py                        # Development entry point
-│   └── wsgi.py                       # Production entry point
-│
-├── mainthub-app/                     # Flutter mobile app
-│   ├── lib/
-│   │   ├── main.dart                # App entry point
-│   │   ├── config/
-│   │   │   ├── app_config.dart      # Constants
-│   │   │   └── theme.dart           # Colors, fonts, themes
-│   │   ├── models/                   # Data models
-│   │   │   ├── user.dart
-│   │   │   ├── machine.dart
-│   │   │   └── maintenance.dart
-│   │   ├── providers/                # Riverpod state management
-│   │   │   ├── auth_provider.dart
-│   │   │   ├── machine_provider.dart
-│   │   │   └── dashboard_provider.dart
-│   │   ├── screens/                  # UI pages
-│   │   │   ├── auth/
-│   │   │   │   ├── login_screen.dart
-│   │   │   │   └── splash_screen.dart
-│   │   │   ├── machines/
-│   │   │   │   ├── machine_list_screen.dart
-│   │   │   │   ├── machine_detail_screen.dart
-│   │   │   │   └── add_machine_screen.dart
-│   │   │   ├── maintenance/
-│   │   │   │   ├── maintenance_pending_screen.dart
-│   │   │   │   └── maintenance_history_screen.dart
-│   │   │   └── dashboard/
-│   │   │       └── dashboard_screen.dart
-│   │   ├── services/                 # API integration
-│   │   │   ├── api_client.dart      # Dio HTTP client
-│   │   │   ├── auth_service.dart
-│   │   │   └── machine_service.dart
-│   │   └── widgets/                  # Reusable components
-│   ├── test/                         # Flutter tests
-│   ├── pubspec.yaml                  # Flutter dependencies
-│   ├── .env.example                  # Environment template
-│   └── README.md                     # Frontend-specific guide
-│
-├── docs/                             # Documentation
-│   ├── API_SPECIFICATION.md          # REST API endpoints
-│   ├── DATABASE_SCHEMA.md            # Database design
-│   ├── ARCHITECTURE.md               # System architecture
-│   ├── SETUP.md                      # Detailed setup guide
-│   └── DEPLOYMENT.md                 # Production deployment
-│
-├── docker-compose.yml                # Full stack in Docker
+├── README.md                       ← You are here
+├── CONTRIBUTING.md                 ← Team guidelines
+├── DEPLOYMENT.md                   ← Production deploy guide
+├── docker-compose.yml              ← MySQL + phpMyAdmin
+├── init.sql                        ← Database schema
 ├── .gitignore
-├── .github/
-│   └── workflows/                    # GitHub Actions CI/CD
-│       └── test.yml
-├── README.md                         # This file
-├── CONTRIBUTING.md                   # Contribution guidelines
-├── LICENSE                           # MIT License
-└── init_project.sh                   # One-time setup script
+│
+├── mainthub-backend/               ✅ COMPLETE
+│   ├── run.py                      ← Start server
+│   ├── requirements.txt            ← Python packages
+│   ├── Dockerfile                  ← Container image
+│   ├── .env.example
+│   └── app/
+│       ├── __init__.py            ← Flask factory + scheduler
+│       ├── models/                ← SQLAlchemy models (4 tables)
+│       ├── routes/                ← 5 API blueprints
+│       └── services/              ← Business logic + scheduler
+│
+├── mainthub-app/                   ✅ COMPLETE
+│   ├── pubspec.yaml               ← Flutter dependencies
+│   ├── android/                   ← Android config
+│   └── lib/
+│       ├── main.dart              ← App entry point
+│       ├── config/                ← Theme, URLs
+│       ├── models/                ← Data classes (User, Machine, Dashboard)
+│       ├── services/              ← API client + business logic
+│       ├── providers/             ← State management (Auth, Machine)
+│       └── screens/               ← 8 UI screens
+│           ├── auth/              ← Login, Splash
+│           ├── dashboard/         ← KPI overview
+│           ├── machines/          ← List, detail, add
+│           └── maintenance/       ← Pending maintenance
+│
+└── docs/                           ← Documentation
+    ├── API_SPECIFICATION.md        ← All endpoints
+    ├── DATABASE_SCHEMA.md          ← Table structure
+    ├── DATABASE_GUIDE.md           ← How to use the DB
+    ├── ARCHITECTURE.md             ← System design
+    └── SETUP.md                    ← Detailed setup guide
 ```
 
 ---
 
-## 🔧 Backend Setup
-
-### 1. Install Dependencies
-
-```bash
-cd mainthub-backend
-
-# Create virtual environment
-python3 -m venv venv
-
-# Activate it
-source venv/bin/activate              # On Windows: venv\Scripts\activate
-
-# Install Python packages
-pip install -r requirements.txt
-```
-
-### 2. Configure Database
-
-```bash
-# Create .env from template
-cp .env.example .env
-
-# Edit .env with your database credentials
-DATABASE_URL=mysql+pymysql://user:password@localhost:3306/maintenance_system
-JWT_SECRET_KEY=your-secret-key-here-min-32-chars
-```
-
-### 3. Initialize Database
-
-```bash
-# Run migrations
-flask db upgrade
-
-# Or create tables manually
-python
->>> from app import create_app, db
->>> app = create_app()
->>> with app.app_context():
-...     db.create_all()
-```
-
-### 4. Start Backend
-
-```bash
-python run.py
-```
-
-Backend runs at **http://localhost:5000**
-
-API documentation (Swagger): **http://localhost:5000/docs**
-
----
-
-## 📱 Frontend Setup
-
-### 1. Install Dependencies
-
-```bash
-cd mainthub-app
-
-flutter pub get
-```
-
-### 2. Configure Environment
-
-```bash
-# Create .env from template
-cp .env.example .env
-
-# Edit with your API URL
-API_BASE_URL=http://10.0.2.2:5000     # For Android emulator
-# or
-API_BASE_URL=http://localhost:5000    # For iOS simulator
-```
-
-### 3. Generate Code (if needed)
-
-```bash
-flutter pub run build_runner build
-```
-
-### 4. Run the App
-
-```bash
-# On Android emulator
-flutter emulators
-flutter emulators launch Pixel_4_API_30
-
-# Run app
-flutter run
-
-# Or specify device
-flutter run -d emulator-5554
-```
-
----
-
-## 🐳 Docker Setup (Recommended)
-
-Run everything with Docker:
-
-```bash
-cd mainthub
-
-# Start MySQL + Backend
-docker-compose up
-
-# In another terminal, start Flutter
-cd mainthub-app
-flutter run
-```
-
-**Services running:**
-- MySQL: `localhost:3306` (root:root_password)
-- Backend: `http://localhost:5000`
-- PhpMyAdmin (optional): `http://localhost:8080`
-
----
-
-## 📡 API Endpoints
+## 🔌 API Endpoints (Complete List)
 
 ### Authentication
 ```
-POST   /api/auth/login              Login user
 POST   /api/auth/register           Register new user
-POST   /api/auth/logout             Logout user
+POST   /api/auth/login              Login user → access token
+GET    /api/auth/me                 Get current user info
 ```
 
-### Machines
+### Machines (CRUD)
 ```
-GET    /api/machines                List all machines
-POST   /api/machines                Create machine
-GET    /api/machines/{id}           Get machine details
-PUT    /api/machines/{id}           Update machine
-DELETE /api/machines/{id}           Delete machine
+GET    /api/machines/               List all machines
+POST   /api/machines/               Create machine (admin only)
+GET    /api/machines/<id>           Get machine details
+PUT    /api/machines/<id>           Update machine (admin only)
+DELETE /api/machines/<id>           Delete machine (admin only)
 ```
 
 ### Maintenance
 ```
-GET    /api/maintenance/{machine_id}     Get maintenance history
-POST   /api/machines/{id}/mark-complete  Mark maintenance as done
+POST   /api/maintenance/<id>/complete    Mark maintenance as done
+GET    /api/maintenance/<id>/history     Get maintenance history
 ```
 
 ### Dashboard
 ```
-GET    /api/dashboard               Get dashboard data (KPIs)
+GET    /api/dashboard/              Get KPI summary + recent maintenance
 ```
 
 ### Notifications
 ```
-GET    /api/notifications           Get user notifications
-PUT    /api/notifications/{id}/read Mark notification as read
+GET    /api/notifications/          Get user's notifications
+PUT    /api/notifications/<id>/read Mark notification as read
 ```
 
-Full API documentation: See `docs/API_SPECIFICATION.md`
+Full API spec: See `docs/API_SPECIFICATION.md`
 
 ---
 
-## 💾 Database Schema
+## 🗄️ Database Schema
 
-### Core Tables
+**4 Core Tables:**
 
-**users** — Admins and Technicians
-```sql
-id | email | password_hash | full_name | role | is_active | created_at
-```
+| Table | Purpose | Key Fields |
+|-------|---------|-----------|
+| `users` | User accounts | id, email, password_hash, role (ADMIN/TECHNICIAN) |
+| `machines` | Equipment registry | id, name, type, next_maintenance_date, status |
+| `maintenance_history` | Maintenance events | id, machine_id, technician_id, status (COMPLETED/OVERDUE) |
+| `notifications` | Alerts sent to users | id, machine_id, user_id, type (REMINDER/OVERDUE) |
 
-**machines** — Equipment to maintain
-```sql
-id | name | type | maintenance_interval | last_maintenance_date | next_maintenance_date | status | created_by
-```
-
-**maintenance_history** — All maintenance events
-```sql
-id | machine_id | technician_id | maintenance_date | status | notes
-```
-
-**notifications** — Alerts to users
-```sql
-id | machine_id | user_id | title | message | type | is_sent
-```
-
-Full schema: See `docs/DATABASE_SCHEMA.md`
+**Auto-Scheduling:**
+- APScheduler runs daily at 6 AM
+- Finds all machines with `next_maintenance_date <= TODAY()`
+- Creates notifications for all technicians
+- When technician marks complete → `next_maintenance_date` recalculates automatically
 
 ---
 
-## 🔐 Authentication
+## 🔐 Default Login (Development)
 
-The app uses **JWT (JSON Web Tokens)**:
+| Field | Value |
+|-------|-------|
+| Email | admin@mainthub.com |
+| Password | admin123 |
+| Role | ADMIN |
 
-1. User logs in → Backend validates credentials
-2. Backend returns `access_token` + `refresh_token`
-3. Frontend stores token in secure storage
-4. Frontend includes token in all API requests: `Authorization: Bearer {token}`
-5. Backend validates token on protected endpoints
-
-**Token Expiry:**
-- Access token: 24 hours
-- Refresh token: 7 days
+**Change after first login in production!**
 
 ---
 
 ## 🧪 Testing
 
-### Backend Tests
+### Backend — Pytest
 
 ```bash
 cd mainthub-backend
-
-# Run all tests
-pytest
-
-# Run with coverage
-pytest --cov=app tests/
-
-# Run specific test file
-pytest tests/test_auth.py
+pytest                              # Run all tests
+pytest --cov=app tests/             # With coverage
+pytest tests/test_auth.py -v        # Specific test file
 ```
 
-### Frontend Tests
+**Minimum coverage:** 70%
+
+### Frontend — Flutter Test
 
 ```bash
 cd mainthub-app
-
-# Run all tests
-flutter test
-
-# Run specific test
-flutter test test/screens/login_screen_test.dart
-
-# Generate coverage report
-flutter test --coverage
-```
-
-**Coverage Target:** 80%+
-
----
-
-## 📅 Project Timeline
-
-| Phase | Weeks | Status | Focus |
-|-------|-------|--------|-------|
-| **1: Foundation** | 1-2 | ✅ Complete | Architecture, Database, Setup |
-| **2: Backend APIs** | 3-5 | 🔲 Next | Auth, Machines, Maintenance |
-| **3: Notifications** | 6-7 | 🔲 Planned | Scheduler, Alerts, Reporting |
-| **4: Flutter App** | 8-11 | 🔲 Planned | UI, Integration, Testing |
-| **5: Deployment** | 12-13 | 🔲 Planned | Production, Testing |
-| **6: Documentation** | 14-16 | 🔲 Planned | Docs, Demo, Presentation |
-
-**Current Status:** Week 1 Complete ✅
-
----
-
-## 🤝 Contributing
-
-We welcome contributions! Please read [CONTRIBUTING.md](CONTRIBUTING.md) for:
-
-- Branch naming conventions (`feature/`, `bugfix/`, `hotfix/`)
-- Commit message format
-- Code style (Python/Flutter)
-- Pull request process
-- Testing requirements
-
-### Quick Contribution Steps
-
-```bash
-# 1. Create a feature branch
-git checkout -b feature/your-feature-name
-
-# 2. Make changes and test
-# ... write code ...
-pytest          # Backend
-flutter test    # Frontend
-
-# 3. Commit with clear message
-git commit -m "feat: add new feature"
-
-# 4. Push and create Pull Request
-git push origin feature/your-feature-name
+flutter test                        # Run all tests
+flutter test test/providers/        # Test specific folder
 ```
 
 ---
 
 ## 🚀 Deployment
 
-### Backend (Render)
+### Production Stack
+- **Database:** Railway (MySQL managed)
+- **Backend:** Render (Flask auto-deploy from GitHub)
+- **Frontend:** Android APK (direct distribution or Play Store)
 
-```bash
-# Deploy from GitHub
-git push origin main
-# Render auto-deploys on push
-```
+**See `DEPLOYMENT.md` for complete step-by-step guide.**
 
-Environment variables on Render:
-```
-DATABASE_URL = your-database-url
-JWT_SECRET_KEY = your-secret-key
-FIREBASE_CREDENTIALS = your-firebase-key
-```
-
-### Frontend (App Stores)
-
-```bash
-# Android
-flutter build apk --release
-# Upload to Google Play Store
-
-# iOS
-flutter build ios --release
-# Upload to App Store
-```
-
-See [DEPLOYMENT.md](docs/DEPLOYMENT.md) for detailed instructions.
+### Quick Deploy Checklist
+- [ ] Push code to GitHub `main` branch
+- [ ] Render auto-deploys Flask backend
+- [ ] Update `app_config.dart` with Render URL
+- [ ] Build APK: `flutter build apk --release`
+- [ ] Distribute APK to team
 
 ---
 
-## 📖 Documentation
+## 📞 Team Workflow
 
-- **[API Specification](docs/API_SPECIFICATION.md)** — All endpoints with examples
-- **[Database Schema](docs/DATABASE_SCHEMA.md)** — Tables, relationships, indexing
-- **[Architecture Guide](docs/ARCHITECTURE.md)** — System design and patterns
-- **[Setup Instructions](docs/SETUP.md)** — Detailed configuration guide
-- **[Deployment Guide](docs/DEPLOYMENT.md)** — Production deployment steps
+### Branch Strategy
+- `main` — production-ready code
+- `develop` — integration branch (latest working)
+- `feature/*` — new features
+- `bugfix/*` — bug fixes
+
+See `CONTRIBUTING.md` for detailed branching & commit conventions.
+
+### Code Review
+- Minimum 1 approval before merge
+- No self-merging
+- Address all comments before merge
+
+### Daily Workflow
+1. Pull latest `develop`
+2. Create `feature/your-feature` branch
+3. Commit with conventional commits (`feat:`, `fix:`, etc.)
+4. Push and create Pull Request
+5. Wait for review → merge
+6. Delete branch
 
 ---
 
@@ -512,8 +316,8 @@ See [DEPLOYMENT.md](docs/DEPLOYMENT.md) for detailed instructions.
 
 ### Backend Won't Start
 ```bash
-# Make sure venv is activated
-source venv/bin/activate
+# Check Python version
+python --version          # need 3.9+
 
 # Reinstall dependencies
 pip install -r requirements.txt
@@ -522,124 +326,141 @@ pip install -r requirements.txt
 echo $DATABASE_URL
 ```
 
-### Flutter Won't Run
+### Flutter Build Fails
 ```bash
-# Get dependencies
-flutter pub get
-
-# Clean build
+# Clean and rebuild
 flutter clean
 flutter pub get
-
-# Run with verbose output
-flutter run -v
+flutter run -v            # verbose for detailed errors
 ```
 
 ### Database Connection Error
 ```bash
 # Check MySQL is running
-mysql -u root -p -e "SELECT 1;"
+docker ps                 # should show mainthub-mysql
 
-# Or use Docker
-docker run -d -p 3306:3306 -e MYSQL_ROOT_PASSWORD=root mysql:8.0
+# Check connection string format
+DATABASE_URL=mysql+pymysql://user:pass@host:port/dbname
 ```
 
-See [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md) for more.
+### API Calls Fail on Physical Device
+```
+Update app_config.dart with your PC's actual IP (192.168.x.x)
+Not 10.0.2.2 — that only works on emulators
+```
+
+See `DEPLOYMENT.md` troubleshooting section for more.
 
 ---
 
-## 📞 Support
+## 📚 Documentation
 
-- **Issues & Bugs** → [GitHub Issues](https://github.com/Omega-127/MaintHub/issues)
-- **Discussions** → [GitHub Discussions](https://github.com/Omega-127/MaintHub/discussions)
-- **Team Slack** → #mainthub-dev
-- **Weekly Sync** → Friday 5 PM (team meeting)
-
----
-
-
----
-
-## 📝 License
-
-This project is licensed under the **MIT License** — see [LICENSE](LICENSE) for details.
+| Document | What It Covers |
+|----------|---------------|
+| `README.md` | Project overview (this file) |
+| `CONTRIBUTING.md` | Team guidelines, branching, commits, code style |
+| `DEPLOYMENT.md` | Production deployment on Railway + Render |
+| `docs/API_SPECIFICATION.md` | All REST endpoints with examples |
+| `docs/DATABASE_SCHEMA.md` | Table structure and relationships |
+| `docs/DATABASE_GUIDE.md` | Using MySQL, useful queries |
+| `docs/ARCHITECTURE.md` | System design and patterns |
 
 ---
 
-## 🎉 Acknowledgments
+## 🎯 Next Steps (Week 2+)
 
-- Flask & SQLAlchemy for backend framework
-- Flutter & Riverpod for mobile framework
-- APScheduler for job scheduling
-- Firebase for push notifications
-- GitHub for version control & CI/CD
+### Week 2
+- [ ] Load equipment catalog from Excel
+- [ ] Add "Quick Add from Catalog" feature
+- [ ] Add email notifications (SMTP)
+- [ ] Polish UI based on feedback
+
+### Week 3-4
+- [ ] Analytics dashboard (charts, reports)
+- [ ] Maintenance history filtering
+- [ ] Technician assignment feature
+- [ ] Export maintenance reports as PDF
+
+### Week 5+
+- [ ] QR code scanning for machines
+- [ ] Offline mode (sync when online)
+- [ ] Multi-language support
+- [ ] Play Store submission
 
 ---
 
 ## 📊 Project Stats
 
-- **Lines of Code:** 5000+ (estimated by Week 16)
-- **Test Coverage:** 80%+
-- **API Endpoints:** 12+
-- **Flutter Screens:** 8+
-- **Database Tables:** 4
-- **Team Size:** 3-4 developers
-- **Timeline:** 16 weeks
+| Metric | Value |
+|--------|-------|
+| Lines of Code | ~3500+ |
+| Python Files | 15+ |
+| Dart Files | 20+ |
+| API Endpoints | 12 |
+| Flutter Screens | 8 |
+| Database Tables | 4 |
+| Test Coverage Target | 70%+ |
+| Team Size | 1-4 developers |
 
 ---
 
-## 🚀 Getting Started Now
+## 📅 Timeline Status
 
-1. **Clone the repo**
-   ```bash
-   git clone https://github.com/Omega-127/MaintHub.git
-   ```
-
-2. **Read the docs**
-   - Start with [SETUP.md](docs/SETUP.md)
-   - Backend: [mainthub-backend/README.md](mainthub-backend/README.md)
-   - Frontend: [mainthub-app/README.md](mainthub-app/README.md)
-
-3. **Run locally**
-   ```bash
-   bash init_project.sh
-   python mainthub-backend/run.py
-   flutter run
-   ```
-
-4. **Join the team**
-   - Read [CONTRIBUTING.md](CONTRIBUTING.md)
-   - Claim a task from GitHub Issues
-   - Create a pull request
+| Phase | Weeks | Status | Focus |
+|-------|-------|--------|-------|
+| **1: Foundation** | 1-2 | ✅ Done | Architecture, DB, Setup |
+| **2: Core Features** | 3-5 | 🔄 In Progress | Catalog, Notifications |
+| **3: Refinement** | 6-8 | 🔲 Next | Polish, Analytics |
+| **4: Testing** | 9-11 | 🔲 Later | QA, Edge cases |
+| **5: Deployment** | 12-13 | 🔲 Later | Production setup |
+| **6: Documentation** | 14-16 | 🔲 Later | Final docs, demo |
 
 ---
 
-## 📅 Latest Updates
+## 🤝 Contributing
 
-- **Week 1 (Aug 2026):** ✅ Foundation & Setup Complete
-  - Database schema finalized
-  - Project structure initialized
-  - Development environment ready
-  - Next: Backend APIs (Week 2)
+Read `CONTRIBUTING.md` for:
+- How to set up your dev environment
+- Branch naming conventions
+- Commit message format
+- Code style guidelines
+- Pull request process
+- Code review standards
+
+**TL;DR:** Branch from `develop`, commit with `feat:` or `fix:`, push, create PR, get 1 approval, merge.
 
 ---
 
-## ⭐ If You Like This Project
+## 📜 License
 
-Please consider:
-- ⭐ Starring this repo
-- 🍴 Forking for your own use
-- 🐛 Reporting issues
-- 💡 Suggesting improvements
-- 👥 Contributing code
+This project is licensed under the **MIT License** — see `LICENSE` file for details.
+
+---
+
+
+---
+
+## 🙋 Questions?
+
+1. Check `docs/` folder for detailed guides
+2. Check `CONTRIBUTING.md` for team standards
+3. Check `DEPLOYMENT.md` for production questions
+4. Ask in team chat (Slack/WhatsApp)
+5. Create GitHub Issue for bugs/features
+
+---
+
+## ⭐ If This Helped
+
+- ⭐ Star this repo
+- 🍴 Fork for your own use
+- 🐛 Report issues
+- 💡 Suggest improvements
+- 👥 Share with your team
 
 ---
 
 **Happy coding! 🚀**
 
-For questions, check the [docs](docs/) or open a [GitHub Issue](https://github.com/Omega-127/MaintHub/issues).
-
----
-
-*Last Updated: August 2026*  
-*Status: In Development (Week 1/16 Complete)*
+*Last updated: August 2026*  
+*MainHub Team*
