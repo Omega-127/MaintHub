@@ -132,7 +132,7 @@ flutter run
 ## 📁 Project Structure
 
 ```
-mainthub'/
+mainthub/
 │
 ├── README.md                       ← You are here
 ├── CONTRIBUTING.md                 ← Team guidelines
@@ -465,4 +465,4 @@ This project is licensed under the **MIT License** — see `LICENSE` file for de
 **Happy coding! 🚀**
 
 *Last updated: August 2026*  
-*mainthub' Team*
+*mainthub Team*
