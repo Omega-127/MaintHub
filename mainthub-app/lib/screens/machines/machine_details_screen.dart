@@ -92,6 +92,7 @@ class _MachineDetailScreenState extends State<MachineDetailScreen> {
     final last = m.lastMaintenanceDate != null
         ? DateFormat('dd MMM yyyy').format(DateTime.parse(m.lastMaintenanceDate!))
         : 'Never';
+    final textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
       appBar: AppBar(
@@ -109,14 +110,14 @@ class _MachineDetailScreenState extends State<MachineDetailScreen> {
             // Status banner
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
               decoration: BoxDecoration(
                 color: m.isOverdue
-                    ? AppTheme.danger.withOpacity(0.1)
-                    : AppTheme.success.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(12),
+                    ? AppTheme.danger.withOpacity(0.08)
+                    : AppTheme.success.withOpacity(0.08),
+                borderRadius: BorderRadius.circular(16),
                 border: Border.all(
-                  color: m.isOverdue ? AppTheme.danger : AppTheme.success,
+                  color: m.isOverdue ? AppTheme.danger.withOpacity(0.5) : AppTheme.success.withOpacity(0.5),
                 ),
               ),
               child: Row(
@@ -124,32 +125,51 @@ class _MachineDetailScreenState extends State<MachineDetailScreen> {
                   Icon(
                     m.isOverdue ? Icons.warning_rounded : Icons.check_circle,
                     color: m.isOverdue ? AppTheme.danger : AppTheme.success,
+                    size: 28,
                   ),
-                  const SizedBox(width: 12),
-                  Text(
-                    m.isOverdue ? 'Overdue — needs immediate attention' : 'Maintenance up to date',
-                    style: TextStyle(
-                      color: m.isOverdue ? AppTheme.danger : AppTheme.success,
-                      fontWeight: FontWeight.w600,
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Text(
+                      m.isOverdue ? 'Overdue — needs immediate attention' : 'Maintenance up to date',
+                      style: textTheme.titleMedium?.copyWith(
+                        color: m.isOverdue ? AppTheme.danger : AppTheme.success,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 32),
 
             // Details
-            const Text('Machine Details',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 12),
-            _DetailRow('Name',      m.name),
-            _DetailRow('Type',      m.type),
-            _DetailRow('Location',  m.location ?? 'Not set'),
-            _DetailRow('Status',    m.status),
-            _DetailRow('Interval',  '${m.maintenanceInterval} days'),
-            _DetailRow('Last Maintenance', last),
-            _DetailRow('Next Maintenance', next),
-            const SizedBox(height: 28),
+            Text(
+              'Machine Details',
+              style: textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 16),
+            Card(
+              elevation: 0,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+                side: const BorderSide(color: Color(0xFFF3F4F6), width: 1),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  children: [
+                    _DetailRow('Name',      m.name),
+                    _DetailRow('Type',      m.type),
+                    _DetailRow('Location',  m.location ?? 'Not set'),
+                    _DetailRow('Status',    m.status),
+                    _DetailRow('Interval',  '${m.maintenanceInterval} days'),
+                    _DetailRow('Last Maintenance', last),
+                    _DetailRow('Next Maintenance', next),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 32),
 
             // Mark complete button (all roles can mark complete)
             ElevatedButton.icon(
@@ -170,19 +190,22 @@ class _DetailRow extends StatelessWidget {
   const _DetailRow(this.label, this.value);
 
   @override
-  Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.only(bottom: 12),
-    child: Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SizedBox(
-          width: 140,
-          child: Text(label, style: const TextStyle(color: AppTheme.textLight)),
-        ),
-        Expanded(
-          child: Text(value, style: const TextStyle(fontWeight: FontWeight.w600)),
-        ),
-      ],
-    ),
-  );
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 140,
+            child: Text(label, style: textTheme.bodyMedium?.copyWith(color: AppTheme.textLight)),
+          ),
+          Expanded(
+            child: Text(value, style: textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600)),
+          ),
+        ],
+      ),
+    );
+  }
 }

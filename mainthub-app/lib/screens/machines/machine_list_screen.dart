@@ -89,6 +89,7 @@ class _MachineCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
     final color  = machine.isOverdue ? AppTheme.danger : AppTheme.success;
     final label  = machine.isOverdue ? 'OVERDUE' : machine.isDueToday ? 'DUE TODAY' : 'OK';
     final next   = DateFormat('dd MMM yyyy').format(DateTime.parse(machine.nextMaintenanceDate));
@@ -103,25 +104,42 @@ class _MachineCard extends StatelessWidget {
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         leading: CircleAvatar(
           backgroundColor: color.withOpacity(0.15),
+          radius: 24,
           child: Icon(Icons.precision_manufacturing, color: color),
         ),
-        title: Text(machine.name, style: const TextStyle(fontWeight: FontWeight.bold)),
+        title: Text(
+          machine.name,
+          style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+        ),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('${machine.type} • ${machine.location ?? 'No location'}',
-                style: const TextStyle(fontSize: 12)),
             const SizedBox(height: 4),
-            Text('Next: $next', style: TextStyle(fontSize: 12, color: color)),
+            Text(
+              '${machine.type} • ${machine.location ?? 'No location'}',
+              style: textTheme.bodySmall?.copyWith(color: AppTheme.textLight),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              'Next: $next',
+              style: textTheme.bodySmall?.copyWith(color: color, fontWeight: FontWeight.w600),
+            ),
           ],
         ),
         trailing: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
           decoration: BoxDecoration(
             color: color.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(6),
+            borderRadius: BorderRadius.circular(12),
           ),
-          child: Text(label, style: TextStyle(color: color, fontSize: 11, fontWeight: FontWeight.bold)),
+          child: Text(
+            label,
+            style: textTheme.labelSmall?.copyWith(
+              color: color,
+              fontWeight: FontWeight.bold,
+              letterSpacing: 0.5,
+            ),
+          ),
         ),
       ),
     );

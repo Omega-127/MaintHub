@@ -48,6 +48,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
     final auth = context.watch<AuthProvider>();
+    final textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
       appBar: AppBar(
@@ -70,11 +71,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     // Greeting
                     Text(
                       'Hello, ${auth.user?.fullName ?? 'User'} 👋',
-                      style: const TextStyle(
-                        fontSize: 22, fontWeight: FontWeight.bold, color: AppTheme.textDark),
+                      style: textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 4),
-                    Text(auth.user?.role ?? '', style: const TextStyle(color: AppTheme.textLight)),
+                    Text(
+                      auth.user?.role ?? '',
+                      style: textTheme.bodyMedium?.copyWith(color: AppTheme.textLight),
+                    ),
                     const SizedBox(height: 24),
 
                     // KPI Cards
@@ -93,8 +96,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     const SizedBox(height: 28),
 
                     // Quick actions
-                    const Text('Quick Actions',
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                    Text(
+                      'Quick Actions',
+                      style: textTheme.titleLarge,
+                    ),
                     const SizedBox(height: 12),
                     _ActionTile(
                       icon:    Icons.list_alt,
@@ -103,7 +108,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       onTap:   () => Navigator.push(context,
                           MaterialPageRoute(builder: (_) => const MachineListScreen())),
                     ),
-                    const SizedBox(height: 10),
+                    const SizedBox(height: 12),
                     _ActionTile(
                       icon:    Icons.warning_rounded,
                       label:   'Pending Maintenance',
@@ -112,7 +117,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           MaterialPageRoute(builder: (_) => const PendingMaintenanceScreen())),
                     ),
                     if (auth.user?.isAdmin == true) ...[
-                      const SizedBox(height: 10),
+                      const SizedBox(height: 12),
                       _ActionTile(
                         icon:    Icons.add_circle,
                         label:   'Add Machine',
@@ -147,22 +152,36 @@ class _KpiCard extends StatelessWidget {
   const _KpiCard(this.label, this.value, this.icon, this.color);
 
   @override
-  Widget build(BuildContext context) => Card(
-    child: Padding(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(icon, color: color, size: 28),
-          const SizedBox(height: 8),
-          Text('$value',
-              style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: color)),
-          const SizedBox(height: 4),
-          Text(label, style: const TextStyle(color: AppTheme.textLight, fontSize: 13)),
-        ],
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Icon(icon, color: color, size: 28),
+            const SizedBox(height: 12),
+            Text(
+              '$value',
+              style: textTheme.headlineMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: color,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              label,
+              style: textTheme.bodySmall?.copyWith(
+                color: AppTheme.textLight,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
       ),
-    ),
-  );
+    );
+  }
 }
 
 class _ActionTile extends StatelessWidget {
@@ -174,12 +193,15 @@ class _ActionTile extends StatelessWidget {
   const _ActionTile({required this.icon, required this.label, required this.color, required this.onTap});
 
   @override
-  Widget build(BuildContext context) => ListTile(
-    onTap:   onTap,
-    tileColor: color.withOpacity(0.08),
-    shape:   RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-    leading: CircleAvatar(backgroundColor: color, child: Icon(icon, color: Colors.white, size: 20)),
-    title:   Text(label, style: const TextStyle(fontWeight: FontWeight.w600)),
-    trailing: const Icon(Icons.chevron_right),
-  );
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    return ListTile(
+      onTap:   onTap,
+      tileColor: color.withOpacity(0.08),
+      shape:   RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      leading: CircleAvatar(backgroundColor: color, child: Icon(icon, color: Colors.white, size: 20)),
+      title:   Text(label, style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600)),
+      trailing: const Icon(Icons.chevron_right),
+    );
+  }
 }

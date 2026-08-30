@@ -10,7 +10,7 @@ class AppConfig {
     if (kIsWeb) {
       return 'http://localhost:5000/api';
     }
-    return 'http://192.168.1.5:5000/api';
+    return 'http://192.168.1.2:5000/api';
   }
 
   static const String appName = 'MainHub';
