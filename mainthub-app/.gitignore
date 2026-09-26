@@ -12,34 +12,79 @@
 .swiftpm/
 migrate_working_dir/
 
-# IntelliJ related
+# IntelliJ / VS Code / Android Studio
 *.iml
 *.ipr
 *.iws
 .idea/
+.vscode/
 
-# The .vscode folder contains launch configuration and tasks you configure in
-# VS Code which you may wish to be included in version control, so this line
-# is commented out by default.
-#.vscode/
+# Environment & secrets — NEVER commit
+.env
+.env.*
+*.env.local
+firebase-credentials.json
+google-services.json
+GoogleService-Info.plist
+**/secrets/
+**/credentials.json
+
+# Signing / release keys — NEVER commit
+key.properties
+**/*.keystore
+**/*.jks
+**/*.pem
+**/*.p12
+**/*.mobileprovision
 
 # Flutter/Dart/Pub related
 **/doc/api/
 **/ios/Flutter/.last_build_id
 .dart_tool/
+.flutter-plugins
 .flutter-plugins-dependencies
+.packages
 .pub-cache/
 .pub/
 /build/
 /coverage/
 
-# Symbolication related
-app.*.symbols
+# Generated / platform build caches
+**/Generated.xcconfig
+**/flutter_export_environment.sh
+.android/
+.ios/
+**/ephemeral/
 
-# Obfuscation related
+# iOS (if/when added)
+ios/Pods/
+ios/.symlinks/
+ios/Flutter/App.framework
+ios/Flutter/Flutter.framework
+ios/Flutter/Flutter.podspec
+ios/ServiceDefinitions.json
+ios/Runner/GeneratedPluginRegistrant.*
+
+# Android local SDK paths (also in android/.gitignore)
+android/local.properties
+android/.gradle/
+android/captures/
+android/.cxx/
+android/app/debug/
+android/app/profile/
+android/app/release/
+
+# Built app binaries
+*.apk
+*.aab
+*.ap_
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# Symbolication / obfuscation
+app.*.symbols
 app.*.map.json
 
-# Android Studio will place build artifacts here
-/android/app/debug
-/android/app/profile
-/android/app/release
+# FVM / tool versions (optional local)
+.fvm/flutter_sdk

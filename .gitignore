@@ -32,7 +32,16 @@ mainthub-app/.dart_tool/
 mainthub-app/.flutter-plugins
 mainthub-app/.flutter-plugins-dependencies
 mainthub-app/.packages
-mainthub-app/pubspec.lock
+mainthub-app/.env
+mainthub-app/.env.*
+mainthub-app/**/google-services.json
+mainthub-app/**/GoogleService-Info.plist
+mainthub-app/**/key.properties
+mainthub-app/**/*.jks
+mainthub-app/**/*.keystore
+mainthub-app/**/*.apk
+mainthub-app/**/*.aab
+# NOTE: commit pubspec.lock for apps (reproducible builds) — do not ignore it
 
 # IDE
 .vscode/
