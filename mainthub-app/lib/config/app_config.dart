@@ -8,9 +8,9 @@ class AppConfig {
   // - Web / iOS Simulator: use http://localhost:5000/api
   static String get baseUrl {
     if (kIsWeb) {
-      return 'http://localhost:5000/api';
+      return 'https://mainthub-backend.onrender.com';
     }
-    return 'http://192.168.1.2:5000/api';
+    return 'https://mainthub-backend.onrender.com';
   }
 
   static const String appName = 'MainHub';
