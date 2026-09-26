@@ -1,11 +1,6 @@
-# MaintHub — Render Blueprint (monorepo)
-# Dashboard: New → Blueprint → select this repo
-
-databases:
-  - name: mainthub-db
-    plan: free
-    databaseName: mainthub_db
-    user: mainthub
+# MaintHub — Render web service (database lives on Railway)
+# Dashboard: New → Web Service, Root Directory = mainthub-backend
+# Set DATABASE_URL manually to your Railway public connection string.
 
 services:
   - type: web
@@ -24,6 +19,4 @@ services:
       - key: JWT_SECRET_KEY
         generateValue: true
       - key: DATABASE_URL
-        fromDatabase:
-          name: mainthub-db
-          property: connectionString
+        sync: false   # paste Railway public URL in Render dashboard
