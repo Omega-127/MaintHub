@@ -15,11 +15,15 @@ ma = Marshmallow()
 
 
 def _normalize_database_url(url: str) -> str:
-    """Render/Heroku-style URLs need SQLAlchemy-compatible schemes."""
+    """Render/Railway/Heroku URLs need SQLAlchemy-compatible schemes."""
+    # Prefer psycopg2 (installed as psycopg2-binary). Newer SQLAlchemy may
+    # default postgresql:// to psycopg v3, which we do not ship.
     if url.startswith("postgres://"):
-        return "postgresql://" + url[len("postgres://"):]
+        url = "postgresql://" + url[len("postgres://"):]
+    if url.startswith("postgresql://") and not url.startswith("postgresql+"):
+        url = "postgresql+psycopg2://" + url[len("postgresql://"):]
     if url.startswith("mysql://"):
-        return "mysql+pymysql://" + url[len("mysql://"):]
+        url = "mysql+pymysql://" + url[len("mysql://"):]
     return url
 
 
