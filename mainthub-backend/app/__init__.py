@@ -14,17 +14,37 @@ jwt = JWTManager()
 ma = Marshmallow()
 
 
+def _normalize_database_url(url: str) -> str:
+    """Render/Heroku-style URLs need SQLAlchemy-compatible schemes."""
+    if url.startswith("postgres://"):
+        return "postgresql://" + url[len("postgres://"):]
+    if url.startswith("mysql://"):
+        return "mysql+pymysql://" + url[len("mysql://"):]
+    return url
+
+
+def _is_local_mysql(url: str) -> bool:
+    return "mysql" in url and ("localhost" in url or "127.0.0.1" in url)
+
+
 def create_app():
     app = Flask(__name__)
 
     # ── Config ──────────────────────────────────────────────
-    db_url = os.getenv("DATABASE_URL", "mysql+pymysql://mainthub_user:mainthub_pass@localhost:3306/mainthub_db")
-    if "mysql" in db_url:
+    db_url = _normalize_database_url(
+        os.getenv(
+            "DATABASE_URL",
+            "mysql+pymysql://mainthub_user:mainthub_pass@localhost:3306/mainthub_db",
+        )
+    )
+    # Dev convenience only: if local MySQL isn't running, fall back to SQLite.
+    # Never override remote production URLs (Render MySQL/Postgres).
+    if _is_local_mysql(db_url):
         import socket
         try:
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             sock.settimeout(0.5)
-            res = sock.connect_ex(('127.0.0.1', 3306))
+            res = sock.connect_ex(("127.0.0.1", 3306))
             sock.close()
             if res != 0:
                 db_url = "sqlite:///mainthub.db"
@@ -65,6 +85,10 @@ def create_app():
     app.register_blueprint(maintenance_bp,   url_prefix="/api/maintenance")
     app.register_blueprint(dashboard_bp,     url_prefix="/api/dashboard")
     app.register_blueprint(notifications_bp, url_prefix="/api/notifications")
+
+    @app.get("/health")
+    def health():
+        return {"status": "ok"}, 200
 
     # ── Start background scheduler ───────────────────────────
     from app.services.scheduler import start_scheduler
