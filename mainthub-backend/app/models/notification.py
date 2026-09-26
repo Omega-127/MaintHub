@@ -11,9 +11,14 @@ class Notification(db.Model):
     title             = db.Column(db.String(255), nullable=False)
     message           = db.Column(db.Text,        nullable=False)
     notification_type = db.Column(
-                            db.Enum("REMINDER", "OVERDUE", "COMPLETED"),
+                            db.Enum(
+                                "REMINDER", "OVERDUE", "COMPLETED",
+                                name="notification_type",
+                                native_enum=False,
+                                length=20,
+                            ),
                             nullable=False,
-                            default="REMINDER"
+                            default="REMINDER",
                         )
     is_sent           = db.Column(db.Boolean,  default=False)
     is_read           = db.Column(db.Boolean,  default=False)

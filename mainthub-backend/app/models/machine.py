@@ -13,9 +13,14 @@ class Machine(db.Model):
     last_maintenance_date  = db.Column(db.Date,        nullable=True)
     next_maintenance_date  = db.Column(db.Date,        nullable=False)
     status                 = db.Column(
-                                db.Enum("ACTIVE", "INACTIVE", "UNDER_MAINTENANCE"),
+                                db.Enum(
+                                    "ACTIVE", "INACTIVE", "UNDER_MAINTENANCE",
+                                    name="machine_status",
+                                    native_enum=False,
+                                    length=32,
+                                ),
                                 nullable=False,
-                                default="ACTIVE"
+                                default="ACTIVE",
                              )
     created_by             = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
     created_at             = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))

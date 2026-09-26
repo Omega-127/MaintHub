@@ -9,7 +9,11 @@ class User(db.Model):
     full_name     = db.Column(db.String(255), nullable=False)
     email         = db.Column(db.String(255), nullable=False, unique=True)
     password_hash = db.Column(db.String(255), nullable=False)
-    role          = db.Column(db.Enum("ADMIN", "TECHNICIAN"), nullable=False, default="TECHNICIAN")
+    role          = db.Column(
+                        db.Enum("ADMIN", "TECHNICIAN", name="user_role", native_enum=False, length=20),
+                        nullable=False,
+                        default="TECHNICIAN",
+                    )
     is_active     = db.Column(db.Boolean,     nullable=False, default=True)
     created_at    = db.Column(db.DateTime,    default=lambda: datetime.now(timezone.utc))
     updated_at    = db.Column(db.DateTime,    default=lambda: datetime.now(timezone.utc),
