@@ -2,7 +2,7 @@ class Machine {
   final int     id;
   final String  name;
   final String  type;
-  final String  department; // 'BLOWROOM' | 'COMBER'
+  final String  department; // 'BLOWROOM' | 'COMBER' | 'RING_FRAME'
   final String? location;
   final int     maintenanceInterval;
   final String? lastMaintenanceDate;
@@ -37,8 +37,13 @@ class Machine {
   }
 
   /// Human-readable department label
-  String get departmentLabel =>
-      department == 'COMBER' ? 'Comber' : 'Blowroom';
+  String get departmentLabel {
+    switch (department) {
+      case 'COMBER':     return 'Comber';
+      case 'RING_FRAME': return 'Ring Frame';
+      default:           return 'Blowroom';
+    }
+  }
 
   factory Machine.fromJson(Map<String, dynamic> json) => Machine(
     id:                   json['id'],

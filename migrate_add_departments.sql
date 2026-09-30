@@ -6,12 +6,12 @@
 
 -- 1. Add department to users table (NULL = Admin sees all)
 ALTER TABLE users
-    ADD COLUMN IF NOT EXISTS department ENUM('BLOWROOM', 'COMBER') NULL DEFAULT NULL
+    ADD COLUMN IF NOT EXISTS department ENUM('BLOWROOM', 'COMBER', 'RING_FRAME') NULL DEFAULT NULL
     AFTER role;
 
 -- 2. Add department to machines table (default existing to BLOWROOM)
 ALTER TABLE machines
-    ADD COLUMN IF NOT EXISTS department ENUM('BLOWROOM', 'COMBER') NOT NULL DEFAULT 'BLOWROOM'
+    ADD COLUMN IF NOT EXISTS department ENUM('BLOWROOM', 'COMBER', 'RING_FRAME') NOT NULL DEFAULT 'BLOWROOM'
     AFTER type;
 
 -- 3. Add index for fast department-based queries

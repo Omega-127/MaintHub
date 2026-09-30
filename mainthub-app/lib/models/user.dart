@@ -3,7 +3,7 @@ class User {
   final String  fullName;
   final String  email;
   final String  role;
-  final String? department; // 'BLOWROOM' | 'COMBER' | null (Admin sees all)
+  final String? department; // 'BLOWROOM' | 'COMBER' | 'RING_FRAME' | null (Admin sees all)
 
   User({
     required this.id,
@@ -18,9 +18,10 @@ class User {
   /// Human-readable department label
   String get departmentLabel {
     switch (department) {
-      case 'BLOWROOM': return 'Blowroom';
-      case 'COMBER':   return 'Comber';
-      default:         return 'All Departments';
+      case 'BLOWROOM':   return 'Blowroom';
+      case 'COMBER':     return 'Comber';
+      case 'RING_FRAME': return 'Ring Frame';
+      default:           return 'All Departments';
     }
   }
 

@@ -36,9 +36,12 @@ class _MachineListScreenState extends State<MachineListScreen> {
     final isAdmin   = auth.user?.isAdmin == true;
 
     // Title: department-scoped or "All Machines"
-    final title = widget.department != null
-        ? '${widget.department == 'BLOWROOM' ? 'Blowroom' : 'Comber'} Machines'
-        : 'All Machines';
+    final title = switch (widget.department) {
+      'BLOWROOM'   => 'Blowroom Machines',
+      'COMBER'     => 'Comber Machines',
+      'RING_FRAME' => 'Ring Frame Machines',
+      _            => 'All Machines',
+    };
 
     // Filter: search + optional department
     final filtered = provider.machines.where((m) {
@@ -72,6 +75,13 @@ class _MachineListScreenState extends State<MachineListScreen> {
               selected: _activeDeptFilter == 'COMBER',
               onTap: () => setState(() =>
                   _activeDeptFilter = _activeDeptFilter == 'COMBER' ? null : 'COMBER'),
+            ),
+            const SizedBox(width: 4),
+            _DeptFilterChip(
+              label: 'Ring Frame',
+              selected: _activeDeptFilter == 'RING_FRAME',
+              onTap: () => setState(() =>
+                  _activeDeptFilter = _activeDeptFilter == 'RING_FRAME' ? null : 'RING_FRAME'),
             ),
             const SizedBox(width: 8),
           ],

@@ -500,6 +500,360 @@ MACHINES = [
         "next_maintenance_date": date(2026, 12, 1),
     },
     # NOTE: Nipper Pin Changed is intentionally excluded as per user instructions.
+
+    # ── RING FRAME Department ─────────────────────────────────────────────────
+    # LR9 AX machines (RF 1-13): Apron Replacement Schedule
+    # Top aprons: ~6 months (180 days), Bottom aprons: ~6 months (180 days)
+    {
+        "name":                  "RF 1 - Top & Bottom Apron Replacement",
+        "type":                  "Ring Frame LR9 AX",
+        "department":            "RING_FRAME",
+        "location":              "Ring Frame Section",
+        "maintenance_interval":  180,
+        "last_maintenance_date": date(2026, 1, 28),
+        "next_maintenance_date": date(2026, 7, 27),
+    },
+    {
+        "name":                  "RF 2 - Top & Bottom Apron Replacement",
+        "type":                  "Ring Frame LR9 AX",
+        "department":            "RING_FRAME",
+        "location":              "Ring Frame Section",
+        "maintenance_interval":  180,
+        "last_maintenance_date": date(2026, 1, 29),
+        "next_maintenance_date": date(2026, 7, 28),
+    },
+    {
+        "name":                  "RF 3 - Top & Bottom Apron Replacement",
+        "type":                  "Ring Frame LR9 AX",
+        "department":            "RING_FRAME",
+        "location":              "Ring Frame Section",
+        "maintenance_interval":  180,
+        "last_maintenance_date": date(2026, 1, 10),
+        "next_maintenance_date": date(2026, 7, 9),
+    },
+    {
+        "name":                  "RF 4 - Top & Bottom Apron Replacement",
+        "type":                  "Ring Frame LR9 AX",
+        "department":            "RING_FRAME",
+        "location":              "Ring Frame Section",
+        "maintenance_interval":  180,
+        "last_maintenance_date": date(2026, 1, 31),
+        "next_maintenance_date": date(2026, 7, 30),
+    },
+    {
+        "name":                  "RF 5 - Top & Bottom Apron Replacement",
+        "type":                  "Ring Frame LR9 AX",
+        "department":            "RING_FRAME",
+        "location":              "Ring Frame Section",
+        "maintenance_interval":  180,
+        "last_maintenance_date": date(2026, 2, 2),
+        "next_maintenance_date": date(2026, 8, 1),
+    },
+    {
+        "name":                  "RF 6 - Top & Bottom Apron Replacement",
+        "type":                  "Ring Frame LR9 AX",
+        "department":            "RING_FRAME",
+        "location":              "Ring Frame Section",
+        "maintenance_interval":  180,
+        "last_maintenance_date": date(2025, 5, 22),
+        "next_maintenance_date": date(2026, 1, 26),    # OVERDUE
+    },
+    {
+        "name":                  "RF 7 - Top & Bottom Apron Replacement",
+        "type":                  "Ring Frame LR9 AX",
+        "department":            "RING_FRAME",
+        "location":              "Ring Frame Section",
+        "maintenance_interval":  180,
+        "last_maintenance_date": date(2025, 11, 20),
+        "next_maintenance_date": date(2026, 5, 19),    # OVERDUE
+    },
+    {
+        "name":                  "RF 8 - Top & Bottom Apron Replacement",
+        "type":                  "Ring Frame LR9 AX",
+        "department":            "RING_FRAME",
+        "location":              "Ring Frame Section",
+        "maintenance_interval":  180,
+        "last_maintenance_date": date(2026, 3, 20),
+        "next_maintenance_date": date(2026, 9, 16),
+    },
+    {
+        "name":                  "RF 9 - Top & Bottom Apron Replacement",
+        "type":                  "Ring Frame LR9 AX",
+        "department":            "RING_FRAME",
+        "location":              "Ring Frame Section",
+        "maintenance_interval":  180,
+        "last_maintenance_date": date(2026, 4, 6),
+        "next_maintenance_date": date(2026, 10, 3),
+    },
+    {
+        "name":                  "RF 10 - Top & Bottom Apron Replacement",
+        "type":                  "Ring Frame LR9 AX",
+        "department":            "RING_FRAME",
+        "location":              "Ring Frame Section",
+        "maintenance_interval":  180,
+        "last_maintenance_date": date(2025, 12, 9),
+        "next_maintenance_date": date(2026, 6, 7),     # OVERDUE
+    },
+    {
+        "name":                  "RF 11 - Top & Bottom Apron Replacement",
+        "type":                  "Ring Frame LR9 AX",
+        "department":            "RING_FRAME",
+        "location":              "Ring Frame Section",
+        "maintenance_interval":  180,
+        "last_maintenance_date": date(2025, 12, 1),
+        "next_maintenance_date": date(2026, 5, 30),    # OVERDUE
+    },
+    {
+        "name":                  "RF 12 - Top & Bottom Apron Replacement",
+        "type":                  "Ring Frame LR9 AX",
+        "department":            "RING_FRAME",
+        "location":              "Ring Frame Section",
+        "maintenance_interval":  180,
+        "last_maintenance_date": date(2026, 3, 28),
+        "next_maintenance_date": date(2026, 9, 24),
+    },
+    {
+        "name":                  "RF 13 - Top & Bottom Apron Replacement",
+        "type":                  "Ring Frame LR9 AX",
+        "department":            "RING_FRAME",
+        "location":              "Ring Frame Section",
+        "maintenance_interval":  180,
+        "last_maintenance_date": date(2026, 4, 1),
+        "next_maintenance_date": date(2026, 9, 28),
+    },
+    # RF 1-13: Main Shaft Greasing — 3 months (91 days)
+    {
+        "name":                  "RF 1-5 - Main Shaft Greasing",
+        "type":                  "Ring Frame LR9 AX",
+        "department":            "RING_FRAME",
+        "location":              "Ring Frame Section",
+        "maintenance_interval":  91,
+        "last_maintenance_date": date(2026, 8, 18),
+        "next_maintenance_date": date(2026, 11, 18),
+    },
+    {
+        "name":                  "RF 6-13 - Main Shaft Greasing",
+        "type":                  "Ring Frame LR9 AX",
+        "department":            "RING_FRAME",
+        "location":              "Ring Frame Section",
+        "maintenance_interval":  91,
+        "last_maintenance_date": date(2026, 8, 26),
+        "next_maintenance_date": date(2026, 11, 26),
+    },
+    # RF 1-13: Spindle Oil Lubrication — 9 months (273 days)
+    {
+        "name":                  "RF 1-13 - Spindle Oil Lubrication",
+        "type":                  "Ring Frame LR9 AX",
+        "department":            "RING_FRAME",
+        "location":              "Ring Frame Section",
+        "maintenance_interval":  273,
+        "last_maintenance_date": date(2026, 1, 16),
+        "next_maintenance_date": date(2026, 10, 16),
+    },
+    # RF 1-13: Arm Load & Roller Setting — 6 months (180 days)
+    {
+        "name":                  "RF 1-13 - Arm Load & Roller Setting",
+        "type":                  "Ring Frame LR9 AX",
+        "department":            "RING_FRAME",
+        "location":              "Ring Frame Section",
+        "maintenance_interval":  180,
+        "last_maintenance_date": date(2026, 8, 31),
+        "next_maintenance_date": date(2027, 2, 27),
+    },
+    # RF 1-13: Jockey Pulley Greasing — 6 months (180 days)
+    {
+        "name":                  "RF 1 - Jockey Pulley Greasing",
+        "type":                  "Ring Frame LR9 AX",
+        "department":            "RING_FRAME",
+        "location":              "Ring Frame Section",
+        "maintenance_interval":  180,
+        "last_maintenance_date": date(2026, 9, 14),
+        "next_maintenance_date": date(2027, 3, 14),
+    },
+    {
+        "name":                  "RF 6-13 - Jockey Pulley Greasing",
+        "type":                  "Ring Frame LR9 AX",
+        "department":            "RING_FRAME",
+        "location":              "Ring Frame Section",
+        "maintenance_interval":  180,
+        "last_maintenance_date": date(2026, 9, 13),
+        "next_maintenance_date": date(2027, 3, 13),
+    },
+    # RF 1-13: Drafting Pressure Hose — 5 years (1826 days)
+    {
+        "name":                  "RF 1-5 - Drafting Pressure Hose",
+        "type":                  "Ring Frame LR9 AX",
+        "department":            "RING_FRAME",
+        "location":              "Ring Frame Section",
+        "maintenance_interval":  1826,
+        "last_maintenance_date": date(2024, 8, 5),
+        "next_maintenance_date": date(2029, 8, 5),
+    },
+    {
+        "name":                  "RF 6-13 - Drafting Pressure Hose",
+        "type":                  "Ring Frame LR9 AX",
+        "department":            "RING_FRAME",
+        "location":              "Ring Frame Section",
+        "maintenance_interval":  1826,
+        "last_maintenance_date": date(2023, 5, 5),
+        "next_maintenance_date": date(2028, 5, 5),
+    },
+    # RF 1-13: LMW Cradle Overhauling — 5 years (1826 days)
+    {
+        "name":                  "RF 1-5 - LMW Cradle Overhauling",
+        "type":                  "Ring Frame LR9 AX",
+        "department":            "RING_FRAME",
+        "location":              "Ring Frame Section",
+        "maintenance_interval":  1826,
+        "last_maintenance_date": date(2024, 4, 11),
+        "next_maintenance_date": date(2029, 4, 11),
+    },
+    # RF 12-13: Main Shaft Speeder Hub Bearing — 1.5 years (547 days)
+    {
+        "name":                  "RF 12 - Main Shaft Speeder Hub Bearing",
+        "type":                  "Ring Frame LR9 AX",
+        "department":            "RING_FRAME",
+        "location":              "Ring Frame Section",
+        "maintenance_interval":  547,
+        "last_maintenance_date": date(2026, 3, 20),
+        "next_maintenance_date": date(2027, 9, 20),
+    },
+    {
+        "name":                  "RF 13 - Main Shaft Speeder Hub Bearing",
+        "type":                  "Ring Frame LR9 AX",
+        "department":            "RING_FRAME",
+        "location":              "Ring Frame Section",
+        "maintenance_interval":  547,
+        "last_maintenance_date": date(2026, 3, 14),
+        "next_maintenance_date": date(2027, 9, 14),
+    },
+    # Suessen machines (RF 14-16): Apron & Spindle Oil Schedule
+    {
+        "name":                  "RF 14 (Suessen) - Top & Bottom Apron Replacement",
+        "type":                  "Ring Frame Suessen",
+        "department":            "RING_FRAME",
+        "location":              "Ring Frame Section",
+        "maintenance_interval":  273,                   # ~9 months
+        "last_maintenance_date": date(2026, 5, 24),
+        "next_maintenance_date": date(2027, 2, 21),
+    },
+    {
+        "name":                  "RF 15 (Suessen) - Top & Bottom Apron Replacement",
+        "type":                  "Ring Frame Suessen",
+        "department":            "RING_FRAME",
+        "location":              "Ring Frame Section",
+        "maintenance_interval":  273,
+        "last_maintenance_date": date(2026, 5, 26),
+        "next_maintenance_date": date(2027, 2, 23),
+    },
+    {
+        "name":                  "RF 16 (Suessen) - Top & Bottom Apron Replacement",
+        "type":                  "Ring Frame Suessen",
+        "department":            "RING_FRAME",
+        "location":              "Ring Frame Section",
+        "maintenance_interval":  273,
+        "last_maintenance_date": date(2026, 5, 27),
+        "next_maintenance_date": date(2027, 2, 24),
+    },
+    # Suessen RF 14-16: Spindle Oil Change — 10 months (304 days)
+    {
+        "name":                  "RF 14-16 (Suessen) - Spindle Oil Change",
+        "type":                  "Ring Frame Suessen",
+        "department":            "RING_FRAME",
+        "location":              "Ring Frame Section",
+        "maintenance_interval":  304,
+        "last_maintenance_date": date(2025, 12, 16),
+        "next_maintenance_date": date(2026, 10, 16),
+    },
+    # Suessen RF 14-16: Fibre Gear (23T) Change — 7 months (213 days)
+    {
+        "name":                  "RF 14 (Suessen) - Fibre Gear Change",
+        "type":                  "Ring Frame Suessen",
+        "department":            "RING_FRAME",
+        "location":              "Ring Frame Section",
+        "maintenance_interval":  213,
+        "last_maintenance_date": date(2025, 8, 8),
+        "next_maintenance_date": date(2026, 3, 9),     # OVERDUE
+    },
+    {
+        "name":                  "RF 16 (Suessen) - Fibre Gear Change",
+        "type":                  "Ring Frame Suessen",
+        "department":            "RING_FRAME",
+        "location":              "Ring Frame Section",
+        "maintenance_interval":  213,
+        "last_maintenance_date": date(2025, 7, 29),
+        "next_maintenance_date": date(2026, 2, 28),    # OVERDUE
+    },
+    # Suessen RF 14-16: Main Shaft Greasing — 3 months (91 days)
+    {
+        "name":                  "RF 14-16 (Suessen) - Main Shaft Greasing",
+        "type":                  "Ring Frame Suessen",
+        "department":            "RING_FRAME",
+        "location":              "Ring Frame Section",
+        "maintenance_interval":  91,
+        "last_maintenance_date": date(2026, 7, 15),
+        "next_maintenance_date": date(2026, 10, 15),
+    },
+    # Suessen RF 14-16: Elite Shaft Greasing — 5 months (152 days)
+    {
+        "name":                  "RF 14-16 (Suessen) - Elite Shaft Greasing",
+        "type":                  "Ring Frame Suessen",
+        "department":            "RING_FRAME",
+        "location":              "Ring Frame Section",
+        "maintenance_interval":  152,
+        "last_maintenance_date": date(2025, 9, 30),
+        "next_maintenance_date": date(2026, 3, 2),     # OVERDUE
+    },
+    # Suessen RF 14-16: Tension Pulley Greasing — 6 months (180 days)
+    {
+        "name":                  "RF 14-16 (Suessen) - Tension Pulley Greasing",
+        "type":                  "Ring Frame Suessen",
+        "department":            "RING_FRAME",
+        "location":              "Ring Frame Section",
+        "maintenance_interval":  180,
+        "last_maintenance_date": date(2026, 8, 4),
+        "next_maintenance_date": date(2027, 2, 1),
+    },
+    # Suessen RF 14-16: Suessen Arm Load & Saddle Gauge — 9 months (273 days)
+    {
+        "name":                  "RF 14-16 (Suessen) - Arm Load & Saddle Gauge",
+        "type":                  "Ring Frame Suessen",
+        "department":            "RING_FRAME",
+        "location":              "Ring Frame Section",
+        "maintenance_interval":  273,
+        "last_maintenance_date": date(2025, 9, 30),
+        "next_maintenance_date": date(2026, 7, 1),     # OVERDUE
+    },
+    # Suessen RF 14-16: Ring Replacement — 5 years (1826 days)
+    {
+        "name":                  "RF 14-16 (Suessen) - Ring Replacement",
+        "type":                  "Ring Frame Suessen",
+        "department":            "RING_FRAME",
+        "location":              "Ring Frame Section",
+        "maintenance_interval":  1826,
+        "last_maintenance_date": date(2017, 4, 29),
+        "next_maintenance_date": date(2022, 4, 29),    # OVERDUE
+    },
+    # RF 1-13: Off-end & Headstock Gear Greasing — 3 months (91 days)
+    {
+        "name":                  "RF 1-13 - Off-end & Headstock Gear Greasing",
+        "type":                  "Ring Frame LR9 AX",
+        "department":            "RING_FRAME",
+        "location":              "Ring Frame Section",
+        "maintenance_interval":  91,
+        "last_maintenance_date": date(2026, 8, 11),
+        "next_maintenance_date": date(2026, 11, 11),
+    },
+    # RF 1-13: AutoDoffer Pusher Gauge & Gripper Check — 3 months (91 days)
+    {
+        "name":                  "RF 1-13 - AutoDoffer Pusher Gauge & Gripper",
+        "type":                  "Ring Frame LR9 AX",
+        "department":            "RING_FRAME",
+        "location":              "Ring Frame Section",
+        "maintenance_interval":  91,
+        "last_maintenance_date": date(2026, 9, 1),
+        "next_maintenance_date": date(2026, 12, 1),
+    },
 ]
 
 
@@ -544,13 +898,15 @@ def seed():
 
         # Show status summary by department
         all_m = Machine.query.all()
-        blowroom_m = [m for m in all_m if m.department == "BLOWROOM"]
-        comber_m   = [m for m in all_m if m.department == "COMBER"]
-        overdue    = [m for m in all_m if m.next_maintenance_date < today and m.status == "ACTIVE"]
+        blowroom_m   = [m for m in all_m if m.department == "BLOWROOM"]
+        comber_m     = [m for m in all_m if m.department == "COMBER"]
+        ring_frame_m = [m for m in all_m if m.department == "RING_FRAME"]
+        overdue      = [m for m in all_m if m.next_maintenance_date < today and m.status == "ACTIVE"]
 
         print(f"   Total machines in DB  : {len(all_m)}")
         print(f"   BLOWROOM machines     : {len(blowroom_m)}")
         print(f"   COMBER machines       : {len(comber_m)}")
+        print(f"   RING FRAME machines   : {len(ring_frame_m)}")
         print(f"   Currently OVERDUE     : {len(overdue)}")
         if overdue:
             print("\n   Overdue machines:")

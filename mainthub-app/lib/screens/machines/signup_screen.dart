@@ -210,6 +210,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   value: 'COMBER',
                                   child: Text('Comber'),
                                 ),
+                                DropdownMenuItem(
+                                  value: 'RING_FRAME',
+                                  child: Text('Ring Frame'),
+                                ),
                               ],
                               validator: (v) =>
                                   v == null ? 'Please select a department' : null,
