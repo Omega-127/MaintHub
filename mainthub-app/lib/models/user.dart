@@ -22,6 +22,7 @@ class User {
       case 'COMBER':      return 'Comber';
       case 'RING_FRAME':  return 'Ring Frame';
       case 'SPEED_FRAME': return 'Speed Frame';
+      case 'WINDING':     return 'Winding';
       default:            return 'All Departments';
     }
   }

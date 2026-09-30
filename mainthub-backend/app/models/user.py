@@ -15,7 +15,7 @@ class User(db.Model):
                         default="TECHNICIAN",
                     )
     department    = db.Column(
-                        db.Enum("BLOWROOM", "COMBER", "RING_FRAME", "SPEED_FRAME", name="user_department", native_enum=False, length=20),
+                        db.Enum("BLOWROOM", "COMBER", "RING_FRAME", "SPEED_FRAME", "WINDING", name="user_department", native_enum=False, length=20),
                         nullable=True,   # NULL = Admin (sees all departments)
                     )
     is_active     = db.Column(db.Boolean,     nullable=False, default=True)

@@ -100,6 +100,7 @@ class _AddMachineScreenState extends State<AddMachineScreen> {
                   DropdownMenuItem(value: 'COMBER',      child: Text('Comber')),
                   DropdownMenuItem(value: 'RING_FRAME',  child: Text('Ring Frame')),
                   DropdownMenuItem(value: 'SPEED_FRAME', child: Text('Speed Frame')),
+                  DropdownMenuItem(value: 'WINDING',     child: Text('Winding')),
                 ],
                 onChanged: (v) => setState(() => _selectedDept = v!),
                 validator: (v) => v == null ? 'Select a department' : null,

@@ -41,6 +41,7 @@ class _MachineListScreenState extends State<MachineListScreen> {
       'COMBER'      => 'Comber Machines',
       'RING_FRAME'  => 'Ring Frame Machines',
       'SPEED_FRAME' => 'Speed Frame Machines',
+      'WINDING'     => 'Winding Machines',
       _             => 'All Machines',
     };
 
@@ -90,6 +91,13 @@ class _MachineListScreenState extends State<MachineListScreen> {
               selected: _activeDeptFilter == 'SPEED_FRAME',
               onTap: () => setState(() =>
                   _activeDeptFilter = _activeDeptFilter == 'SPEED_FRAME' ? null : 'SPEED_FRAME'),
+            ),
+            const SizedBox(width: 4),
+            _DeptFilterChip(
+              label: 'Winding',
+              selected: _activeDeptFilter == 'WINDING',
+              onTap: () => setState(() =>
+                  _activeDeptFilter = _activeDeptFilter == 'WINDING' ? null : 'WINDING'),
             ),
             const SizedBox(width: 8),
           ],
@@ -200,7 +208,9 @@ class _MachineCard extends StatelessWidget {
             ? const Color(0xFF00897B)
             : machine.department == 'SPEED_FRAME'
                 ? const Color(0xFFE65100)
-                : const Color(0xFF0077B6);
+                : machine.department == 'WINDING'
+                    ? const Color(0xFF6A1B9A)
+                    : const Color(0xFF0077B6);
 
     return Card(
       margin: const EdgeInsets.only(bottom: 12),

@@ -146,5 +146,149 @@ VALUES
 -- Cots Buffing | 60 days / 0.2 mm
 ('SF 1-4 - Cots Buffing (Drafting Rollers)', 'Speed Frame', 'SPEED_FRAME', 'Speed Frame Section', 60, '2026-08-01', '2026-09-30', 'ACTIVE', 1);
 
+
+-- ============================================================
+-- WINDING department (added from Winding_Maintenance_Schedule.xlsx)
+-- No dates in source file; last_maintenance_date = 2026-09-30 placeholder.
+-- Update actual dates via the app once confirmed.
+-- ============================================================
+
+-- 8. Extend ENUMs to include WINDING
+ALTER TABLE users
+    MODIFY COLUMN department ENUM('BLOWROOM', 'COMBER', 'RING_FRAME', 'SPEED_FRAME', 'WINDING') NULL DEFAULT NULL;
+
+ALTER TABLE machines
+    MODIFY COLUMN department ENUM('BLOWROOM', 'COMBER', 'RING_FRAME', 'SPEED_FRAME', 'WINDING') NOT NULL DEFAULT 'BLOWROOM';
+
+-- 9. Insert WINDING machines -- AC 1-5 (Schlafhorst Automatic Coners)
+INSERT IGNORE INTO machines (name, type, department, location, maintenance_interval, last_maintenance_date, next_maintenance_date, status, created_by)
+VALUES
+-- Leaf Spring | 2 Years (730 days)
+('AC 1 - Leaf Spring', 'Automatic Coner', 'WINDING', 'Winding Section', 730, '2026-09-30', '2028-09-28', 'ACTIVE', 1),
+('AC 2 - Leaf Spring', 'Automatic Coner', 'WINDING', 'Winding Section', 730, '2026-09-30', '2028-09-28', 'ACTIVE', 1),
+('AC 3 - Leaf Spring', 'Automatic Coner', 'WINDING', 'Winding Section', 730, '2026-09-30', '2028-09-28', 'ACTIVE', 1),
+('AC 4 - Leaf Spring', 'Automatic Coner', 'WINDING', 'Winding Section', 730, '2026-09-30', '2028-09-28', 'ACTIVE', 1),
+('AC 5 - Leaf Spring', 'Automatic Coner', 'WINDING', 'Winding Section', 730, '2026-09-30', '2028-09-28', 'ACTIVE', 1),
+-- Break Lining | 4 Years (1460 days)
+('AC 1 - Break Lining', 'Automatic Coner', 'WINDING', 'Winding Section', 1460, '2026-09-30', '2030-09-25', 'ACTIVE', 1),
+('AC 2 - Break Lining', 'Automatic Coner', 'WINDING', 'Winding Section', 1460, '2026-09-30', '2030-09-25', 'ACTIVE', 1),
+('AC 3 - Break Lining', 'Automatic Coner', 'WINDING', 'Winding Section', 1460, '2026-09-30', '2030-09-25', 'ACTIVE', 1),
+('AC 4 - Break Lining', 'Automatic Coner', 'WINDING', 'Winding Section', 1460, '2026-09-30', '2030-09-25', 'ACTIVE', 1),
+('AC 5 - Break Lining', 'Automatic Coner', 'WINDING', 'Winding Section', 1460, '2026-09-30', '2030-09-25', 'ACTIVE', 1),
+-- Scissor | 4 Years (1460 days)
+('AC 1 - Scissor', 'Automatic Coner', 'WINDING', 'Winding Section', 1460, '2026-09-30', '2030-09-25', 'ACTIVE', 1),
+('AC 2 - Scissor', 'Automatic Coner', 'WINDING', 'Winding Section', 1460, '2026-09-30', '2030-09-25', 'ACTIVE', 1),
+('AC 3 - Scissor', 'Automatic Coner', 'WINDING', 'Winding Section', 1460, '2026-09-30', '2030-09-25', 'ACTIVE', 1),
+('AC 4 - Scissor', 'Automatic Coner', 'WINDING', 'Winding Section', 1460, '2026-09-30', '2030-09-25', 'ACTIVE', 1),
+('AC 5 - Scissor', 'Automatic Coner', 'WINDING', 'Winding Section', 1460, '2026-09-30', '2030-09-25', 'ACTIVE', 1),
+-- Splicer Cleaning & Settings | 6 Months (180 days)
+('AC 1 - Splicer Cleaning & Settings', 'Automatic Coner', 'WINDING', 'Winding Section', 180, '2026-09-30', '2027-03-29', 'ACTIVE', 1),
+('AC 2 - Splicer Cleaning & Settings', 'Automatic Coner', 'WINDING', 'Winding Section', 180, '2026-09-30', '2027-03-29', 'ACTIVE', 1),
+('AC 3 - Splicer Cleaning & Settings', 'Automatic Coner', 'WINDING', 'Winding Section', 180, '2026-09-30', '2027-03-29', 'ACTIVE', 1),
+('AC 4 - Splicer Cleaning & Settings', 'Automatic Coner', 'WINDING', 'Winding Section', 180, '2026-09-30', '2027-03-29', 'ACTIVE', 1),
+('AC 5 - Splicer Cleaning & Settings', 'Automatic Coner', 'WINDING', 'Winding Section', 180, '2026-09-30', '2027-03-29', 'ACTIVE', 1),
+-- Splicer O Ring | 4 Years (1460 days)
+('AC 1 - Splicer O Ring', 'Automatic Coner', 'WINDING', 'Winding Section', 1460, '2026-09-30', '2030-09-25', 'ACTIVE', 1),
+('AC 2 - Splicer O Ring', 'Automatic Coner', 'WINDING', 'Winding Section', 1460, '2026-09-30', '2030-09-25', 'ACTIVE', 1),
+('AC 3 - Splicer O Ring', 'Automatic Coner', 'WINDING', 'Winding Section', 1460, '2026-09-30', '2030-09-25', 'ACTIVE', 1),
+('AC 4 - Splicer O Ring', 'Automatic Coner', 'WINDING', 'Winding Section', 1460, '2026-09-30', '2030-09-25', 'ACTIVE', 1),
+('AC 5 - Splicer O Ring', 'Automatic Coner', 'WINDING', 'Winding Section', 1460, '2026-09-30', '2030-09-25', 'ACTIVE', 1),
+-- Scissor Settings | 6 Months (180 days)
+('AC 1 - Scissor Settings', 'Automatic Coner', 'WINDING', 'Winding Section', 180, '2026-09-30', '2027-03-29', 'ACTIVE', 1),
+('AC 2 - Scissor Settings', 'Automatic Coner', 'WINDING', 'Winding Section', 180, '2026-09-30', '2027-03-29', 'ACTIVE', 1),
+('AC 3 - Scissor Settings', 'Automatic Coner', 'WINDING', 'Winding Section', 180, '2026-09-30', '2027-03-29', 'ACTIVE', 1),
+('AC 4 - Scissor Settings', 'Automatic Coner', 'WINDING', 'Winding Section', 180, '2026-09-30', '2027-03-29', 'ACTIVE', 1),
+('AC 5 - Scissor Settings', 'Automatic Coner', 'WINDING', 'Winding Section', 180, '2026-09-30', '2027-03-29', 'ACTIVE', 1),
+-- Drum Shaft Bearing Change | 6 Months (180 days)
+('AC 1 - Drum Shaft Bearing Change', 'Automatic Coner', 'WINDING', 'Winding Section', 180, '2026-09-30', '2027-03-29', 'ACTIVE', 1),
+('AC 2 - Drum Shaft Bearing Change', 'Automatic Coner', 'WINDING', 'Winding Section', 180, '2026-09-30', '2027-03-29', 'ACTIVE', 1),
+('AC 3 - Drum Shaft Bearing Change', 'Automatic Coner', 'WINDING', 'Winding Section', 180, '2026-09-30', '2027-03-29', 'ACTIVE', 1),
+('AC 4 - Drum Shaft Bearing Change', 'Automatic Coner', 'WINDING', 'Winding Section', 180, '2026-09-30', '2027-03-29', 'ACTIVE', 1),
+('AC 5 - Drum Shaft Bearing Change', 'Automatic Coner', 'WINDING', 'Winding Section', 180, '2026-09-30', '2027-03-29', 'ACTIVE', 1),
+-- Tension Assembly Cleaning & Splicer Cleaning | 6 Months (180 days)
+('AC 1 - Tension Assembly Cleaning & Splicer Cleaning', 'Automatic Coner', 'WINDING', 'Winding Section', 180, '2026-09-30', '2027-03-29', 'ACTIVE', 1),
+('AC 2 - Tension Assembly Cleaning & Splicer Cleaning', 'Automatic Coner', 'WINDING', 'Winding Section', 180, '2026-09-30', '2027-03-29', 'ACTIVE', 1),
+('AC 3 - Tension Assembly Cleaning & Splicer Cleaning', 'Automatic Coner', 'WINDING', 'Winding Section', 180, '2026-09-30', '2027-03-29', 'ACTIVE', 1),
+('AC 4 - Tension Assembly Cleaning & Splicer Cleaning', 'Automatic Coner', 'WINDING', 'Winding Section', 180, '2026-09-30', '2027-03-29', 'ACTIVE', 1),
+('AC 5 - Tension Assembly Cleaning & Splicer Cleaning', 'Automatic Coner', 'WINDING', 'Winding Section', 180, '2026-09-30', '2027-03-29', 'ACTIVE', 1),
+-- Drum & Drum Shaft Greasing | 10 Months (300 days)
+('AC 1 - Drum & Drum Shaft Greasing', 'Automatic Coner', 'WINDING', 'Winding Section', 300, '2026-09-30', '2027-07-26', 'ACTIVE', 1),
+('AC 2 - Drum & Drum Shaft Greasing', 'Automatic Coner', 'WINDING', 'Winding Section', 300, '2026-09-30', '2027-07-26', 'ACTIVE', 1),
+('AC 3 - Drum & Drum Shaft Greasing', 'Automatic Coner', 'WINDING', 'Winding Section', 300, '2026-09-30', '2027-07-26', 'ACTIVE', 1),
+('AC 4 - Drum & Drum Shaft Greasing', 'Automatic Coner', 'WINDING', 'Winding Section', 300, '2026-09-30', '2027-07-26', 'ACTIVE', 1),
+('AC 5 - Drum & Drum Shaft Greasing', 'Automatic Coner', 'WINDING', 'Winding Section', 300, '2026-09-30', '2027-07-26', 'ACTIVE', 1),
+-- Magazine Bearing Greasing | 12 Months (365 days)
+('AC 1 - Magazine Bearing Greasing', 'Automatic Coner', 'WINDING', 'Winding Section', 365, '2026-09-30', '2027-09-30', 'ACTIVE', 1),
+('AC 2 - Magazine Bearing Greasing', 'Automatic Coner', 'WINDING', 'Winding Section', 365, '2026-09-30', '2027-09-30', 'ACTIVE', 1),
+('AC 3 - Magazine Bearing Greasing', 'Automatic Coner', 'WINDING', 'Winding Section', 365, '2026-09-30', '2027-09-30', 'ACTIVE', 1),
+('AC 4 - Magazine Bearing Greasing', 'Automatic Coner', 'WINDING', 'Winding Section', 365, '2026-09-30', '2027-09-30', 'ACTIVE', 1),
+('AC 5 - Magazine Bearing Greasing', 'Automatic Coner', 'WINDING', 'Winding Section', 365, '2026-09-30', '2027-09-30', 'ACTIVE', 1),
+-- LH & RH Adaptor Greasing | 10 Months (300 days)
+('AC 1 - LH & RH Adaptor Greasing', 'Automatic Coner', 'WINDING', 'Winding Section', 300, '2026-09-30', '2027-07-26', 'ACTIVE', 1),
+('AC 2 - LH & RH Adaptor Greasing', 'Automatic Coner', 'WINDING', 'Winding Section', 300, '2026-09-30', '2027-07-26', 'ACTIVE', 1),
+('AC 3 - LH & RH Adaptor Greasing', 'Automatic Coner', 'WINDING', 'Winding Section', 300, '2026-09-30', '2027-07-26', 'ACTIVE', 1),
+('AC 4 - LH & RH Adaptor Greasing', 'Automatic Coner', 'WINDING', 'Winding Section', 300, '2026-09-30', '2027-07-26', 'ACTIVE', 1),
+('AC 5 - LH & RH Adaptor Greasing', 'Automatic Coner', 'WINDING', 'Winding Section', 300, '2026-09-30', '2027-07-26', 'ACTIVE', 1),
+-- Suction Arm, Waxing Device & Yarn Trap Pipe Cleaning | 12 Months (365 days)
+('AC 1 - Suction Arm, Waxing Device & Yarn Trap Pipe Cleaning', 'Automatic Coner', 'WINDING', 'Winding Section', 365, '2026-09-30', '2027-09-30', 'ACTIVE', 1),
+('AC 2 - Suction Arm, Waxing Device & Yarn Trap Pipe Cleaning', 'Automatic Coner', 'WINDING', 'Winding Section', 365, '2026-09-30', '2027-09-30', 'ACTIVE', 1),
+('AC 3 - Suction Arm, Waxing Device & Yarn Trap Pipe Cleaning', 'Automatic Coner', 'WINDING', 'Winding Section', 365, '2026-09-30', '2027-09-30', 'ACTIVE', 1),
+('AC 4 - Suction Arm, Waxing Device & Yarn Trap Pipe Cleaning', 'Automatic Coner', 'WINDING', 'Winding Section', 365, '2026-09-30', '2027-09-30', 'ACTIVE', 1),
+('AC 5 - Suction Arm, Waxing Device & Yarn Trap Pipe Cleaning', 'Automatic Coner', 'WINDING', 'Winding Section', 365, '2026-09-30', '2027-09-30', 'ACTIVE', 1),
+-- Prism & Splicer Cutter Cleaning & Setting | 6 Months (180 days)
+('AC 1 - Prism & Splicer Cutter Cleaning & Setting', 'Automatic Coner', 'WINDING', 'Winding Section', 180, '2026-09-30', '2027-03-29', 'ACTIVE', 1),
+('AC 2 - Prism & Splicer Cutter Cleaning & Setting', 'Automatic Coner', 'WINDING', 'Winding Section', 180, '2026-09-30', '2027-03-29', 'ACTIVE', 1),
+('AC 3 - Prism & Splicer Cutter Cleaning & Setting', 'Automatic Coner', 'WINDING', 'Winding Section', 180, '2026-09-30', '2027-03-29', 'ACTIVE', 1),
+('AC 4 - Prism & Splicer Cutter Cleaning & Setting', 'Automatic Coner', 'WINDING', 'Winding Section', 180, '2026-09-30', '2027-03-29', 'ACTIVE', 1),
+('AC 5 - Prism & Splicer Cutter Cleaning & Setting', 'Automatic Coner', 'WINDING', 'Winding Section', 180, '2026-09-30', '2027-03-29', 'ACTIVE', 1),
+-- Paper Cone Adaptor Cleaning | 12 Months (365 days)
+('AC 1 - Paper Cone Adaptor Cleaning', 'Automatic Coner', 'WINDING', 'Winding Section', 365, '2026-09-30', '2027-09-30', 'ACTIVE', 1),
+('AC 2 - Paper Cone Adaptor Cleaning', 'Automatic Coner', 'WINDING', 'Winding Section', 365, '2026-09-30', '2027-09-30', 'ACTIVE', 1),
+('AC 3 - Paper Cone Adaptor Cleaning', 'Automatic Coner', 'WINDING', 'Winding Section', 365, '2026-09-30', '2027-09-30', 'ACTIVE', 1),
+('AC 4 - Paper Cone Adaptor Cleaning', 'Automatic Coner', 'WINDING', 'Winding Section', 365, '2026-09-30', '2027-09-30', 'ACTIVE', 1),
+('AC 5 - Paper Cone Adaptor Cleaning', 'Automatic Coner', 'WINDING', 'Winding Section', 365, '2026-09-30', '2027-09-30', 'ACTIVE', 1),
+-- Suction Arm Setting | 12 Months (365 days)
+('AC 1 - Suction Arm Setting', 'Automatic Coner', 'WINDING', 'Winding Section', 365, '2026-09-30', '2027-09-30', 'ACTIVE', 1),
+('AC 2 - Suction Arm Setting', 'Automatic Coner', 'WINDING', 'Winding Section', 365, '2026-09-30', '2027-09-30', 'ACTIVE', 1),
+('AC 3 - Suction Arm Setting', 'Automatic Coner', 'WINDING', 'Winding Section', 365, '2026-09-30', '2027-09-30', 'ACTIVE', 1),
+('AC 4 - Suction Arm Setting', 'Automatic Coner', 'WINDING', 'Winding Section', 365, '2026-09-30', '2027-09-30', 'ACTIVE', 1),
+('AC 5 - Suction Arm Setting', 'Automatic Coner', 'WINDING', 'Winding Section', 365, '2026-09-30', '2027-09-30', 'ACTIVE', 1),
+-- Returner Tube Cleaning with Brasso | 6 Months (180 days)
+('AC 1 - Returner Tube Cleaning with Brasso', 'Automatic Coner', 'WINDING', 'Winding Section', 180, '2026-09-30', '2027-03-29', 'ACTIVE', 1),
+('AC 2 - Returner Tube Cleaning with Brasso', 'Automatic Coner', 'WINDING', 'Winding Section', 180, '2026-09-30', '2027-03-29', 'ACTIVE', 1),
+('AC 3 - Returner Tube Cleaning with Brasso', 'Automatic Coner', 'WINDING', 'Winding Section', 180, '2026-09-30', '2027-03-29', 'ACTIVE', 1),
+('AC 4 - Returner Tube Cleaning with Brasso', 'Automatic Coner', 'WINDING', 'Winding Section', 180, '2026-09-30', '2027-03-29', 'ACTIVE', 1),
+('AC 5 - Returner Tube Cleaning with Brasso', 'Automatic Coner', 'WINDING', 'Winding Section', 180, '2026-09-30', '2027-03-29', 'ACTIVE', 1),
+-- Empty Bobbin Gear Box Cleaning | 3 Months (91 days)
+('AC 1 - Empty Bobbin Gear Box Cleaning', 'Automatic Coner', 'WINDING', 'Winding Section', 91, '2026-09-30', '2026-12-30', 'ACTIVE', 1),
+('AC 2 - Empty Bobbin Gear Box Cleaning', 'Automatic Coner', 'WINDING', 'Winding Section', 91, '2026-09-30', '2026-12-30', 'ACTIVE', 1),
+('AC 3 - Empty Bobbin Gear Box Cleaning', 'Automatic Coner', 'WINDING', 'Winding Section', 91, '2026-09-30', '2026-12-30', 'ACTIVE', 1),
+('AC 4 - Empty Bobbin Gear Box Cleaning', 'Automatic Coner', 'WINDING', 'Winding Section', 91, '2026-09-30', '2026-12-30', 'ACTIVE', 1),
+('AC 5 - Empty Bobbin Gear Box Cleaning', 'Automatic Coner', 'WINDING', 'Winding Section', 91, '2026-09-30', '2026-12-30', 'ACTIVE', 1),
+-- Splicer Full Cleaning | 3 Months (91 days)
+('AC 1 - Splicer Full Cleaning', 'Automatic Coner', 'WINDING', 'Winding Section', 91, '2026-09-30', '2026-12-30', 'ACTIVE', 1),
+('AC 2 - Splicer Full Cleaning', 'Automatic Coner', 'WINDING', 'Winding Section', 91, '2026-09-30', '2026-12-30', 'ACTIVE', 1),
+('AC 3 - Splicer Full Cleaning', 'Automatic Coner', 'WINDING', 'Winding Section', 91, '2026-09-30', '2026-12-30', 'ACTIVE', 1),
+('AC 4 - Splicer Full Cleaning', 'Automatic Coner', 'WINDING', 'Winding Section', 91, '2026-09-30', '2026-12-30', 'ACTIVE', 1),
+('AC 5 - Splicer Full Cleaning', 'Automatic Coner', 'WINDING', 'Winding Section', 91, '2026-09-30', '2026-12-30', 'ACTIVE', 1),
+-- Machine Full Cleaning | 20 Days
+('AC 1 - Machine Full Cleaning', 'Automatic Coner', 'WINDING', 'Winding Section', 20, '2026-09-30', '2026-10-20', 'ACTIVE', 1),
+('AC 2 - Machine Full Cleaning', 'Automatic Coner', 'WINDING', 'Winding Section', 20, '2026-09-30', '2026-10-20', 'ACTIVE', 1),
+('AC 3 - Machine Full Cleaning', 'Automatic Coner', 'WINDING', 'Winding Section', 20, '2026-09-30', '2026-10-20', 'ACTIVE', 1),
+('AC 4 - Machine Full Cleaning', 'Automatic Coner', 'WINDING', 'Winding Section', 20, '2026-09-30', '2026-10-20', 'ACTIVE', 1),
+('AC 5 - Machine Full Cleaning', 'Automatic Coner', 'WINDING', 'Winding Section', 20, '2026-09-30', '2026-10-20', 'ACTIVE', 1),
+-- Bobbin Peg & Magazine Cleaning | 6 Months (180 days)
+('AC 1 - Bobbin Peg & Magazine Cleaning', 'Automatic Coner', 'WINDING', 'Winding Section', 180, '2026-09-30', '2027-03-29', 'ACTIVE', 1),
+('AC 2 - Bobbin Peg & Magazine Cleaning', 'Automatic Coner', 'WINDING', 'Winding Section', 180, '2026-09-30', '2027-03-29', 'ACTIVE', 1),
+('AC 3 - Bobbin Peg & Magazine Cleaning', 'Automatic Coner', 'WINDING', 'Winding Section', 180, '2026-09-30', '2027-03-29', 'ACTIVE', 1),
+('AC 4 - Bobbin Peg & Magazine Cleaning', 'Automatic Coner', 'WINDING', 'Winding Section', 180, '2026-09-30', '2027-03-29', 'ACTIVE', 1),
+('AC 5 - Bobbin Peg & Magazine Cleaning', 'Automatic Coner', 'WINDING', 'Winding Section', 180, '2026-09-30', '2027-03-29', 'ACTIVE', 1),
+-- Silicon Oiling to Adaptor | 2 Months (60 days)
+('AC 1 - Silicon Oiling to Adaptor', 'Automatic Coner', 'WINDING', 'Winding Section', 60, '2026-09-30', '2026-11-29', 'ACTIVE', 1),
+('AC 2 - Silicon Oiling to Adaptor', 'Automatic Coner', 'WINDING', 'Winding Section', 60, '2026-09-30', '2026-11-29', 'ACTIVE', 1),
+('AC 3 - Silicon Oiling to Adaptor', 'Automatic Coner', 'WINDING', 'Winding Section', 60, '2026-09-30', '2026-11-29', 'ACTIVE', 1),
+('AC 4 - Silicon Oiling to Adaptor', 'Automatic Coner', 'WINDING', 'Winding Section', 60, '2026-09-30', '2026-11-29', 'ACTIVE', 1),
+('AC 5 - Silicon Oiling to Adaptor', 'Automatic Coner', 'WINDING', 'Winding Section', 60, '2026-09-30', '2026-11-29', 'ACTIVE', 1);
+
 -- Verify all departments
 SELECT department, COUNT(*) as machine_count FROM machines GROUP BY department;

@@ -40,7 +40,7 @@ def get_machines():
     # Technicians are automatically restricted to their own department
     if user.role == "ADMIN":
         dept_filter = request.args.get("department")
-        if dept_filter and dept_filter in ("BLOWROOM", "COMBER", "RING_FRAME", "SPEED_FRAME"):
+        if dept_filter and dept_filter in ("BLOWROOM", "COMBER", "RING_FRAME", "SPEED_FRAME", "WINDING"):
             query = query.filter(Machine.department == dept_filter)
     else:
         # Technicians only see their department
@@ -64,8 +64,8 @@ def get_machine_types():
 @machines_bp.route("/departments", methods=["GET"])
 @jwt_required()
 def get_departments():
-    """Return the four available departments."""
-    return jsonify(["BLOWROOM", "COMBER", "RING_FRAME", "SPEED_FRAME"]), 200
+    """Return the five available departments."""
+    return jsonify(["BLOWROOM", "COMBER", "RING_FRAME", "SPEED_FRAME", "WINDING"]), 200
 
 
 # ── GET /api/machines/due ────────────────────────────────────
@@ -119,8 +119,8 @@ def create_machine():
         if not data.get(field):
             return jsonify({"error": f"{field} is required"}), 400
 
-    if data["department"] not in ("BLOWROOM", "COMBER", "RING_FRAME", "SPEED_FRAME"):
-        return jsonify({"error": "department must be BLOWROOM, COMBER, RING_FRAME or SPEED_FRAME"}), 400
+    if data["department"] not in ("BLOWROOM", "COMBER", "RING_FRAME", "SPEED_FRAME", "WINDING"):
+        return jsonify({"error": "department must be BLOWROOM, COMBER, RING_FRAME, SPEED_FRAME or WINDING"}), 400
 
     try:
         first_date = date.fromisoformat(data["first_maintenance_date"])
