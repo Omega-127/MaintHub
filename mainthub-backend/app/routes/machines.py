@@ -12,22 +12,43 @@ def calculate_next_date(last_date, interval_days):
     return last_date + timedelta(days=interval_days)
 
 
-# ── GET /api/machines/ ───────────────────────────────────────
-@machines_bp.route("/", methods=["GET"])
-@jwt_required()
-def get_machines():
-    machines = Machine.query.all()
-    return jsonify([{
+def machine_to_dict(m):
+    return {
         "id":                    m.id,
         "name":                  m.name,
         "type":                  m.type,
+        "department":            m.department,
         "location":              m.location,
         "maintenance_interval":  m.maintenance_interval,
         "last_maintenance_date": str(m.last_maintenance_date) if m.last_maintenance_date else None,
         "next_maintenance_date": str(m.next_maintenance_date),
         "status":                m.status,
-        "created_by":            m.created_by
-    } for m in machines]), 200
+        "created_by":            m.created_by,
+    }
+
+
+# ── GET /api/machines/ ───────────────────────────────────────
+@machines_bp.route("/", methods=["GET"])
+@jwt_required()
+def get_machines():
+    user_id = get_jwt_identity()
+    user    = User.query.get(user_id)
+
+    query = Machine.query
+
+    # Admins can filter by department via ?department=BLOWROOM|COMBER
+    # Technicians are automatically restricted to their own department
+    if user.role == "ADMIN":
+        dept_filter = request.args.get("department")
+        if dept_filter and dept_filter in ("BLOWROOM", "COMBER"):
+            query = query.filter(Machine.department == dept_filter)
+    else:
+        # Technicians only see their department
+        if user.department:
+            query = query.filter(Machine.department == user.department)
+
+    machines = query.all()
+    return jsonify([machine_to_dict(m) for m in machines]), 200
 
 
 # ── GET /api/machines/types ──────────────────────────────────
@@ -39,27 +60,36 @@ def get_machine_types():
     return jsonify([r[0] for r in rows]), 200
 
 
+# ── GET /api/machines/departments ───────────────────────────
+@machines_bp.route("/departments", methods=["GET"])
+@jwt_required()
+def get_departments():
+    """Return the two available departments."""
+    return jsonify(["BLOWROOM", "COMBER"]), 200
+
+
 # ── GET /api/machines/due ────────────────────────────────────
 @machines_bp.route("/due", methods=["GET"])
 @jwt_required()
 def get_due_machines():
     """Return all active machines whose next_maintenance_date <= today."""
-    today = date.today()
-    due = Machine.query.filter(
+    user_id = get_jwt_identity()
+    user    = User.query.get(user_id)
+    today   = date.today()
+
+    query = Machine.query.filter(
         Machine.next_maintenance_date <= today,
         Machine.status == "ACTIVE"
-    ).order_by(Machine.next_maintenance_date.asc()).all()
+    )
+
+    if user.role != "ADMIN" and user.department:
+        query = query.filter(Machine.department == user.department)
+
+    due = query.order_by(Machine.next_maintenance_date.asc()).all()
 
     return jsonify([{
-        "id":                    m.id,
-        "name":                  m.name,
-        "type":                  m.type,
-        "location":              m.location,
-        "maintenance_interval":  m.maintenance_interval,
-        "last_maintenance_date": str(m.last_maintenance_date) if m.last_maintenance_date else None,
-        "next_maintenance_date": str(m.next_maintenance_date),
-        "status":                m.status,
-        "days_overdue":          (today - m.next_maintenance_date).days
+        **machine_to_dict(m),
+        "days_overdue": (today - m.next_maintenance_date).days
     } for m in due]), 200
 
 
@@ -68,17 +98,7 @@ def get_due_machines():
 @jwt_required()
 def get_machine(machine_id):
     machine = Machine.query.get_or_404(machine_id)
-    return jsonify({
-        "id":                    machine.id,
-        "name":                  machine.name,
-        "type":                  machine.type,
-        "location":              machine.location,
-        "maintenance_interval":  machine.maintenance_interval,
-        "last_maintenance_date": str(machine.last_maintenance_date) if machine.last_maintenance_date else None,
-        "next_maintenance_date": str(machine.next_maintenance_date),
-        "status":                machine.status,
-        "created_by":            machine.created_by
-    }), 200
+    return jsonify(machine_to_dict(machine)), 200
 
 
 # ── POST /api/machines/ ──────────────────────────────────────
@@ -93,12 +113,14 @@ def create_machine():
 
     data = request.get_json()
 
-    # Fixed: was "first_maintenance_data" (typo) → "first_maintenance_date"
-    required = ["name", "type", "maintenance_interval", "first_maintenance_date"]
+    required = ["name", "type", "department", "maintenance_interval", "first_maintenance_date"]
 
     for field in required:
         if not data.get(field):
             return jsonify({"error": f"{field} is required"}), 400
+
+    if data["department"] not in ("BLOWROOM", "COMBER"):
+        return jsonify({"error": "department must be BLOWROOM or COMBER"}), 400
 
     try:
         first_date = date.fromisoformat(data["first_maintenance_date"])
@@ -110,6 +132,7 @@ def create_machine():
     machine = Machine(
         name=data["name"],
         type=data["type"],
+        department=data["department"],
         location=data.get("location"),
         maintenance_interval=int(data["maintenance_interval"]),
         last_maintenance_date=first_date,
@@ -124,6 +147,7 @@ def create_machine():
         "message":               "Machine created successfully",
         "id":                    machine.id,
         "name":                  machine.name,
+        "department":            machine.department,
         "next_maintenance_date": str(machine.next_maintenance_date)
     }), 201
 
@@ -141,10 +165,11 @@ def update_machine(machine_id):
     machine = Machine.query.get_or_404(machine_id)
     data = request.get_json()
 
-    if "name"     in data: machine.name     = data["name"]
-    if "type"     in data: machine.type     = data["type"]
-    if "location" in data: machine.location = data["location"]
-    if "status"   in data: machine.status   = data["status"]
+    if "name"       in data: machine.name       = data["name"]
+    if "type"       in data: machine.type       = data["type"]
+    if "department" in data: machine.department = data["department"]
+    if "location"   in data: machine.location   = data["location"]
+    if "status"     in data: machine.status     = data["status"]
 
     if "maintenance_interval" in data:
         machine.maintenance_interval = int(data["maintenance_interval"])

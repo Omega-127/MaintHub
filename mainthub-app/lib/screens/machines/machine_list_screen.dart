@@ -9,39 +9,76 @@ import 'add_machine_screen.dart';
 import 'machine_details_screen.dart';
 
 class MachineListScreen extends StatefulWidget {
-  const MachineListScreen({super.key});
+  /// When [department] is provided, only machines from that department are shown.
+  /// Admins can pass null to see all.
+  final String? department;
+  const MachineListScreen({super.key, this.department});
 
   @override
   State<MachineListScreen> createState() => _MachineListScreenState();
 }
 
 class _MachineListScreenState extends State<MachineListScreen> {
-  String _search = '';
+  String  _search          = '';
+  String? _activeDeptFilter; // null = all (admin only)
 
   @override
   void initState() {
     super.initState();
+    _activeDeptFilter = widget.department;
     Future.microtask(() => context.read<MachineProvider>().loadMachines());
   }
 
   @override
   Widget build(BuildContext context) {
-    final provider = context.watch<MachineProvider>();
-    final auth     = context.watch<AuthProvider>();
+    final provider  = context.watch<MachineProvider>();
+    final auth      = context.watch<AuthProvider>();
+    final isAdmin   = auth.user?.isAdmin == true;
 
-    final filtered = provider.machines
-        .where((m) => m.name.toLowerCase().contains(_search.toLowerCase()) ||
-                      m.type.toLowerCase().contains(_search.toLowerCase()))
-        .toList();
+    // Title: department-scoped or "All Machines"
+    final title = widget.department != null
+        ? '${widget.department == 'BLOWROOM' ? 'Blowroom' : 'Comber'} Machines'
+        : 'All Machines';
+
+    // Filter: search + optional department
+    final filtered = provider.machines.where((m) {
+      final matchSearch = m.name.toLowerCase().contains(_search.toLowerCase()) ||
+                          m.type.toLowerCase().contains(_search.toLowerCase());
+      final matchDept   = _activeDeptFilter == null || m.department == _activeDeptFilter;
+      return matchSearch && matchDept;
+    }).toList();
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Machines'),
+        title: Text(title),
         actions: [
+          // Admin-only department filter chips
+          if (isAdmin && widget.department == null) ...[
+            _DeptFilterChip(
+              label: 'All',
+              selected: _activeDeptFilter == null,
+              onTap: () => setState(() => _activeDeptFilter = null),
+            ),
+            const SizedBox(width: 4),
+            _DeptFilterChip(
+              label: 'Blowroom',
+              selected: _activeDeptFilter == 'BLOWROOM',
+              onTap: () => setState(() =>
+                  _activeDeptFilter = _activeDeptFilter == 'BLOWROOM' ? null : 'BLOWROOM'),
+            ),
+            const SizedBox(width: 4),
+            _DeptFilterChip(
+              label: 'Comber',
+              selected: _activeDeptFilter == 'COMBER',
+              onTap: () => setState(() =>
+                  _activeDeptFilter = _activeDeptFilter == 'COMBER' ? null : 'COMBER'),
+            ),
+            const SizedBox(width: 8),
+          ],
           IconButton(icon: const Icon(Icons.refresh), onPressed: provider.loadMachines),
         ],
       ),
-      floatingActionButton: auth.user?.isAdmin == true
+      floatingActionButton: isAdmin
           ? FloatingActionButton(
               backgroundColor: AppTheme.primary,
               child: const Icon(Icons.add, color: Colors.white),
@@ -65,6 +102,25 @@ class _MachineListScreenState extends State<MachineListScreen> {
             ),
           ),
 
+          // Active filter label for technicians
+          if (!isAdmin && auth.user?.department != null)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Row(
+                children: [
+                  const Icon(Icons.filter_list, size: 16, color: AppTheme.textLight),
+                  const SizedBox(width: 6),
+                  Text(
+                    'Showing: ${auth.user!.departmentLabel} department',
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: AppTheme.textLight,
+                          fontStyle: FontStyle.italic,
+                        ),
+                  ),
+                ],
+              ),
+            ),
+
           // List
           Expanded(
             child: provider.isLoading
@@ -72,12 +128,37 @@ class _MachineListScreenState extends State<MachineListScreen> {
                 : filtered.isEmpty
                     ? const Center(child: Text('No machines found'))
                     : ListView.builder(
-                        padding:     const EdgeInsets.symmetric(horizontal: 16),
+                        padding:     const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                         itemCount:   filtered.length,
                         itemBuilder: (_, i) => _MachineCard(machine: filtered[i]),
                       ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// Small filter chip for admin dept filtering
+class _DeptFilterChip extends StatelessWidget {
+  final String label;
+  final bool   selected;
+  final VoidCallback onTap;
+  const _DeptFilterChip({required this.label, required this.selected, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Chip(
+        label: Text(label, style: TextStyle(
+          fontSize:   11,
+          fontWeight: selected ? FontWeight.bold : FontWeight.normal,
+          color:      selected ? Colors.white : AppTheme.textDark,
+        )),
+        backgroundColor: selected ? AppTheme.primary : Colors.grey.shade200,
+        padding: const EdgeInsets.symmetric(horizontal: 2),
+        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
       ),
     );
   }
@@ -94,6 +175,11 @@ class _MachineCard extends StatelessWidget {
     final label  = machine.isOverdue ? 'OVERDUE' : machine.isDueToday ? 'DUE TODAY' : 'OK';
     final next   = DateFormat('dd MMM yyyy').format(DateTime.parse(machine.nextMaintenanceDate));
 
+    // Dept badge color
+    final deptColor = machine.department == 'COMBER'
+        ? const Color(0xFF7B61FF)
+        : const Color(0xFF0077B6);
+
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       child: ListTile(
@@ -107,9 +193,31 @@ class _MachineCard extends StatelessWidget {
           radius: 24,
           child: Icon(Icons.precision_manufacturing, color: color),
         ),
-        title: Text(
-          machine.name,
-          style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+        title: Row(
+          children: [
+            Expanded(
+              child: Text(
+                machine.name,
+                style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+              ),
+            ),
+            // Department badge
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+              decoration: BoxDecoration(
+                color: deptColor.withOpacity(0.12),
+                borderRadius: BorderRadius.circular(6),
+              ),
+              child: Text(
+                machine.departmentLabel,
+                style: textTheme.labelSmall?.copyWith(
+                  color: deptColor,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 9,
+                ),
+              ),
+            ),
+          ],
         ),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

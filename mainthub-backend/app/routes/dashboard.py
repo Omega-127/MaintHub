@@ -1,5 +1,5 @@
-from flask import Blueprint, jsonify
-from flask_jwt_extended import jwt_required
+from flask import Blueprint, jsonify, request
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from app.models.machine import Machine
 from app.models.maintenance import MaintenanceHistory
 from app.models.user import User
@@ -12,8 +12,21 @@ dashboard_bp = Blueprint("dashboard", __name__)
 @dashboard_bp.route("/", methods=["GET"])
 @jwt_required()
 def get_dashboard():
-    today        = date.today()
-    all_machines = Machine.query.all()
+    user_id = get_jwt_identity()
+    user    = User.query.get(user_id)
+    today   = date.today()
+
+    # Admins: optional ?department filter; Technicians: forced to own department
+    query = Machine.query
+    if user.role == "ADMIN":
+        dept_filter = request.args.get("department")
+        if dept_filter and dept_filter in ("BLOWROOM", "COMBER"):
+            query = query.filter(Machine.department == dept_filter)
+    else:
+        if user.department:
+            query = query.filter(Machine.department == user.department)
+
+    all_machines = query.all()
 
     total             = len(all_machines)
     active            = sum(1 for m in all_machines if m.status == "ACTIVE")
@@ -69,6 +82,7 @@ def get_dashboard():
             "id":                    m.id,
             "name":                  m.name,
             "type":                  m.type,
+            "department":            m.department,
             "location":              m.location,
             "next_maintenance_date": str(m.next_maintenance_date),
             "days_overdue":          (today - m.next_maintenance_date).days

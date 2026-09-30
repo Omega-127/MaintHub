@@ -26,6 +26,14 @@ def register():
     if data["role"] not in ["ADMIN", "TECHNICIAN"]:
         return jsonify({"error": "Role must be ADMIN or TECHNICIAN"}), 400
 
+    # Validate department for technicians
+    department = data.get("department")
+    if data["role"] == "TECHNICIAN":
+        if not department or department not in ["BLOWROOM", "COMBER"]:
+            return jsonify({"error": "Technicians must have a department: BLOWROOM or COMBER"}), 400
+    else:
+        department = None  # Admins see all departments
+
     # Hash password
     password_hash = bcrypt.hashpw(
         data["password"].encode("utf-8"),
@@ -37,7 +45,8 @@ def register():
         full_name=data["full_name"],
         email=data["email"],
         password_hash=password_hash,
-        role=data["role"]
+        role=data["role"],
+        department=department,
     )
     db.session.add(user)
     db.session.commit()
@@ -45,10 +54,11 @@ def register():
     return jsonify({
         "message": "User registered successfully",
         "user": {
-            "id":        user.id,
-            "full_name": user.full_name,
-            "email":     user.email,
-            "role":      user.role
+            "id":         user.id,
+            "full_name":  user.full_name,
+            "email":      user.email,
+            "role":       user.role,
+            "department": user.department,
         }
     }), 201
 
@@ -76,10 +86,11 @@ def login():
     return jsonify({
         "access_token": access_token,
         "user": {
-            "id":        user.id,
-            "full_name": user.full_name,
-            "email":     user.email,
-            "role":      user.role
+            "id":         user.id,
+            "full_name":  user.full_name,
+            "email":      user.email,
+            "role":       user.role,
+            "department": user.department,
         }
     }), 200
 
@@ -94,8 +105,9 @@ def me():
         return jsonify({"error": "User not found"}), 404
 
     return jsonify({
-        "id":        user.id,
-        "full_name": user.full_name,
-        "email":     user.email,
-        "role":      user.role
-    }), 200
+        "id":         user.id,
+        "full_name":  user.full_name,
+        "email":      user.email,
+        "role":       user.role,
+        "department": user.department,
+    }), 200

@@ -79,7 +79,8 @@ class AuthProvider extends ChangeNotifier {
     required String fullName,
     required String email,
     required String password,
-    String role = 'TECHNICIAN',
+    String  role       = 'TECHNICIAN',
+    String? department,
   }) async {
     _isLoading = true;
     _error     = '';
@@ -87,10 +88,11 @@ class AuthProvider extends ChangeNotifier {
 
     try {
       _user = await _authService.signUp(
-        fullName: fullName,
-        email:    email,
-        password: password,
-        role:     role,
+        fullName:   fullName,
+        email:      email,
+        password:   password,
+        role:       role,
+        department: department,
       );
       _isLoading = false;
       notifyListeners();

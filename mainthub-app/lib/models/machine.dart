@@ -2,6 +2,7 @@ class Machine {
   final int     id;
   final String  name;
   final String  type;
+  final String  department; // 'BLOWROOM' | 'COMBER'
   final String? location;
   final int     maintenanceInterval;
   final String? lastMaintenanceDate;
@@ -12,6 +13,7 @@ class Machine {
     required this.id,
     required this.name,
     required this.type,
+    required this.department,
     this.location,
     required this.maintenanceInterval,
     this.lastMaintenanceDate,
@@ -34,10 +36,15 @@ class Machine {
            next.day == today.day;
   }
 
+  /// Human-readable department label
+  String get departmentLabel =>
+      department == 'COMBER' ? 'Comber' : 'Blowroom';
+
   factory Machine.fromJson(Map<String, dynamic> json) => Machine(
     id:                   json['id'],
     name:                 json['name'],
     type:                 json['type'],
+    department:           json['department'] ?? 'BLOWROOM',
     location:             json['location'],
     maintenanceInterval:  json['maintenance_interval'],
     lastMaintenanceDate:  json['last_maintenance_date'],

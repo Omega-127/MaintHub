@@ -33,6 +33,7 @@ class MachineProvider extends ChangeNotifier {
   Future<bool> createMachine({
     required String name,
     required String type,
+    required String department,
     required String location,
     required int    intervalDays,
     required String firstDate,
@@ -41,6 +42,7 @@ class MachineProvider extends ChangeNotifier {
       await _service.createMachine(
         name:                name,
         type:                type,
+        department:          department,
         location:            location,
         intervalDays:        intervalDays,
         firstMaintenanceDate: firstDate,

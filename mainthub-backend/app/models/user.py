@@ -14,6 +14,10 @@ class User(db.Model):
                         nullable=False,
                         default="TECHNICIAN",
                     )
+    department    = db.Column(
+                        db.Enum("BLOWROOM", "COMBER", name="user_department", native_enum=False, length=20),
+                        nullable=True,   # NULL = Admin (sees all departments)
+                    )
     is_active     = db.Column(db.Boolean,     nullable=False, default=True)
     created_at    = db.Column(db.DateTime,    default=lambda: datetime.now(timezone.utc))
     updated_at    = db.Column(db.DateTime,    default=lambda: datetime.now(timezone.utc),

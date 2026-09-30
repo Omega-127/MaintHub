@@ -18,6 +18,7 @@ class _AddMachineScreenState extends State<AddMachineScreen> {
   final _locationCtrl   = TextEditingController();
   final _intervalCtrl   = TextEditingController();
   DateTime? _firstDate;
+  String _selectedDept  = 'BLOWROOM';
 
   @override
   void dispose() {
@@ -30,8 +31,8 @@ class _AddMachineScreenState extends State<AddMachineScreen> {
     final picked = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
-      firstDate: DateTime(2020),
-      lastDate: DateTime(2030),
+      firstDate: DateTime(2010),
+      lastDate: DateTime(2035),
     );
     if (picked != null) setState(() => _firstDate = picked);
   }
@@ -48,6 +49,7 @@ class _AddMachineScreenState extends State<AddMachineScreen> {
     final success = await context.read<MachineProvider>().createMachine(
       name:        _nameCtrl.text.trim(),
       type:        _typeCtrl.text.trim(),
+      department:  _selectedDept,
       location:    _locationCtrl.text.trim(),
       intervalDays: int.parse(_intervalCtrl.text.trim()),
       firstDate:   DateFormat('yyyy-MM-dd').format(_firstDate!),
@@ -79,10 +81,31 @@ class _AddMachineScreenState extends State<AddMachineScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _field(_nameCtrl,     'Machine Name',       'e.g. Pump-001'),
-              _field(_typeCtrl,     'Type',               'e.g. Pump, Motor, Loom'),
-              _field(_locationCtrl, 'Location',           'e.g. Hall A, Floor 2'),
-              _field(_intervalCtrl, 'Maintenance Interval (days)', 'e.g. 90',
+              _field(_nameCtrl,     'Machine Name',       'e.g. Comber 1 - Top Comb Change'),
+              _field(_typeCtrl,     'Type',               'e.g. Comber, Blowroom, Carding'),
+              const SizedBox(height: 4),
+
+              // Department picker
+              const Text('Department',
+                  style: TextStyle(fontSize: 14, color: AppTheme.textLight)),
+              const SizedBox(height: 8),
+              DropdownButtonFormField<String>(
+                value: _selectedDept,
+                decoration: const InputDecoration(
+                  prefixIcon: Icon(Icons.factory_outlined),
+                  border: OutlineInputBorder(),
+                ),
+                items: const [
+                  DropdownMenuItem(value: 'BLOWROOM', child: Text('Blowroom')),
+                  DropdownMenuItem(value: 'COMBER',   child: Text('Comber')),
+                ],
+                onChanged: (v) => setState(() => _selectedDept = v!),
+                validator: (v) => v == null ? 'Select a department' : null,
+              ),
+              const SizedBox(height: 16),
+
+              _field(_locationCtrl, 'Location', 'e.g. Comber Section'),
+              _field(_intervalCtrl, 'Maintenance Interval (days)', 'e.g. 730',
                   keyboardType: TextInputType.number),
 
               const SizedBox(height: 16),
@@ -143,4 +166,3 @@ class _AddMachineScreenState extends State<AddMachineScreen> {
         ),
       );
 }
-

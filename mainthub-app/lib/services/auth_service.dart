@@ -20,6 +20,9 @@ class AuthService {
     // Store token securely
     await _storage.write(key: 'access_token', value: token);
     await _storage.write(key: 'user_role',    value: user.role);
+    if (user.department != null) {
+      await _storage.write(key: 'user_department', value: user.department!);
+    }
 
     return user;
   }
@@ -29,15 +32,19 @@ class AuthService {
     required String fullName,
     required String email,
     required String password,
-    String role = 'TECHNICIAN',
+    String  role       = 'TECHNICIAN',
+    String? department,           // BLOWROOM | COMBER | null (for ADMIN)
   }) async {
-    final payload = {
+    final payload = <String, dynamic>{
       'full_name': fullName,
       'name':      fullName,
       'email':     email,
       'password':  password,
       'role':      role,
     };
+    if (department != null) {
+      payload['department'] = department;
+    }
 
     Response response;
     try {
@@ -61,6 +68,9 @@ class AuthService {
       final user  = User.fromJson(response.data['user'] ?? response.data);
       await _storage.write(key: 'access_token', value: token);
       await _storage.write(key: 'user_role',    value: user.role);
+      if (user.department != null) {
+        await _storage.write(key: 'user_department', value: user.department!);
+      }
       return user;
     } else {
       return await login(email, password);

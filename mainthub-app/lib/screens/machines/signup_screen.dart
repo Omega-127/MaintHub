@@ -18,9 +18,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final _passwordCtrl    = TextEditingController();
   final _confirmPassCtrl = TextEditingController();
 
-  String _selectedRole = 'TECHNICIAN';
-  bool   _obscurePass  = true;
-  bool   _obscureConfirmPass = true;
+  String  _selectedRole       = 'TECHNICIAN';
+  String? _selectedDepartment = 'BLOWROOM';
+  bool    _obscurePass        = true;
+  bool    _obscureConfirmPass = true;
 
   @override
   void dispose() {
@@ -34,12 +35,24 @@ class _SignUpScreenState extends State<SignUpScreen> {
   Future<void> _signUp() async {
     if (!_formKey.currentState!.validate()) return;
 
+    // Technicians must pick a department
+    if (_selectedRole == 'TECHNICIAN' && _selectedDepartment == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please select a department'),
+          backgroundColor: AppTheme.danger,
+        ),
+      );
+      return;
+    }
+
     final auth    = context.read<AuthProvider>();
     final success = await auth.signUp(
-      fullName: _nameCtrl.text.trim(),
-      email:    _emailCtrl.text.trim(),
-      password: _passwordCtrl.text,
-      role:     _selectedRole,
+      fullName:   _nameCtrl.text.trim(),
+      email:      _emailCtrl.text.trim(),
+      password:   _passwordCtrl.text,
+      role:       _selectedRole,
+      department: _selectedRole == 'TECHNICIAN' ? _selectedDepartment : null,
     );
 
     if (!mounted) return;
@@ -61,7 +74,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final auth = context.watch<AuthProvider>();
+    final auth      = context.watch<AuthProvider>();
     final textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
@@ -124,6 +137,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             textAlign: TextAlign.center,
                           ),
                           const SizedBox(height: 24),
+
                           // Full Name
                           TextFormField(
                             controller: _nameCtrl,
@@ -136,6 +150,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 v == null || v.trim().isEmpty ? 'Enter your full name' : null,
                           ),
                           const SizedBox(height: 16),
+
                           // Email
                           TextFormField(
                             controller: _emailCtrl,
@@ -148,6 +163,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 v == null || !v.contains('@') ? 'Enter a valid email' : null,
                           ),
                           const SizedBox(height: 16),
+
                           // Role Dropdown
                           DropdownButtonFormField<String>(
                             initialValue: _selectedRole,
@@ -167,11 +183,43 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             ],
                             onChanged: (val) {
                               if (val != null) {
-                                setState(() => _selectedRole = val);
+                                setState(() {
+                                  _selectedRole = val;
+                                  // Reset department when switching roles
+                                  _selectedDepartment = val == 'TECHNICIAN' ? 'BLOWROOM' : null;
+                                });
                               }
                             },
                           ),
                           const SizedBox(height: 16),
+
+                          // Department Dropdown — only shown for Technicians
+                          if (_selectedRole == 'TECHNICIAN') ...[
+                            DropdownButtonFormField<String>(
+                              value: _selectedDepartment,
+                              decoration: const InputDecoration(
+                                labelText: 'Department',
+                                prefixIcon: Icon(Icons.factory_outlined),
+                              ),
+                              items: const [
+                                DropdownMenuItem(
+                                  value: 'BLOWROOM',
+                                  child: Text('Blowroom'),
+                                ),
+                                DropdownMenuItem(
+                                  value: 'COMBER',
+                                  child: Text('Comber'),
+                                ),
+                              ],
+                              validator: (v) =>
+                                  v == null ? 'Please select a department' : null,
+                              onChanged: (val) {
+                                setState(() => _selectedDepartment = val);
+                              },
+                            ),
+                            const SizedBox(height: 16),
+                          ],
+
                           // Password
                           TextFormField(
                             controller: _passwordCtrl,
@@ -190,6 +238,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 v == null || v.length < 6 ? 'Password must be at least 6 characters' : null,
                           ),
                           const SizedBox(height: 16),
+
                           // Confirm Password
                           TextFormField(
                             controller: _confirmPassCtrl,
@@ -211,6 +260,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             },
                           ),
                           const SizedBox(height: 32),
+
                           // Sign Up Button
                           auth.isLoading
                               ? const Center(child: CircularProgressIndicator())
@@ -224,6 +274,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ),
                 ),
                 const SizedBox(height: 32),
+
                 // Back to Login link
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,

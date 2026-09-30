@@ -47,8 +47,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final auth = context.watch<AuthProvider>();
+    final auth      = context.watch<AuthProvider>();
     final textTheme = Theme.of(context).textTheme;
+    final isAdmin   = auth.user?.isAdmin == true;
+    final userDept  = auth.user?.department;   // null for admin
 
     return Scaffold(
       appBar: AppBar(
@@ -74,9 +76,18 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       style: textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 4),
-                    Text(
-                      auth.user?.role ?? '',
-                      style: textTheme.bodyMedium?.copyWith(color: AppTheme.textLight),
+                    // Role + department badge
+                    Row(
+                      children: [
+                        Text(
+                          auth.user?.role ?? '',
+                          style: textTheme.bodyMedium?.copyWith(color: AppTheme.textLight),
+                        ),
+                        if (userDept != null) ...[
+                          const SizedBox(width: 8),
+                          _DeptBadge(department: userDept),
+                        ],
+                      ],
                     ),
                     const SizedBox(height: 24),
 
@@ -95,28 +106,46 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
                     const SizedBox(height: 28),
 
-                    // Quick actions
-                    Text(
-                      'Quick Actions',
-                      style: textTheme.titleLarge,
-                    ),
+                    // Quick Actions
+                    Text('Quick Actions', style: textTheme.titleLarge),
                     const SizedBox(height: 12),
-                    _ActionTile(
-                      icon:    Icons.list_alt,
-                      label:   'All Machines',
-                      color:   AppTheme.primary,
-                      onTap:   () => Navigator.push(context,
-                          MaterialPageRoute(builder: (_) => const MachineListScreen())),
-                    ),
-                    const SizedBox(height: 12),
-                    _ActionTile(
-                      icon:    Icons.warning_rounded,
-                      label:   'Pending Maintenance',
-                      color:   AppTheme.danger,
-                      onTap:   () => Navigator.push(context,
-                          MaterialPageRoute(builder: (_) => const PendingMaintenanceScreen())),
-                    ),
-                    if (auth.user?.isAdmin == true) ...[
+
+                    // --- ADMIN: see both departments ---
+                    if (isAdmin) ...[
+                      // Blowroom department tile
+                      _ActionTile(
+                        icon:    Icons.factory_outlined,
+                        label:   'Blowroom Machines',
+                        color:   const Color(0xFF0077B6),
+                        onTap:   () => Navigator.push(context,
+                            MaterialPageRoute(builder: (_) => const MachineListScreen(department: 'BLOWROOM'))),
+                      ),
+                      const SizedBox(height: 12),
+                      // Comber department tile
+                      _ActionTile(
+                        icon:    Icons.settings_input_component_outlined,
+                        label:   'Comber Machines',
+                        color:   const Color(0xFF7B61FF),
+                        onTap:   () => Navigator.push(context,
+                            MaterialPageRoute(builder: (_) => const MachineListScreen(department: 'COMBER'))),
+                      ),
+                      const SizedBox(height: 12),
+                      // All machines
+                      _ActionTile(
+                        icon:    Icons.list_alt,
+                        label:   'All Machines',
+                        color:   AppTheme.primary,
+                        onTap:   () => Navigator.push(context,
+                            MaterialPageRoute(builder: (_) => const MachineListScreen())),
+                      ),
+                      const SizedBox(height: 12),
+                      _ActionTile(
+                        icon:    Icons.warning_rounded,
+                        label:   'Pending Maintenance',
+                        color:   AppTheme.danger,
+                        onTap:   () => Navigator.push(context,
+                            MaterialPageRoute(builder: (_) => const PendingMaintenanceScreen())),
+                      ),
                       const SizedBox(height: 12),
                       _ActionTile(
                         icon:    Icons.add_circle,
@@ -124,6 +153,29 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         color:   AppTheme.success,
                         onTap:   () => Navigator.push(context,
                             MaterialPageRoute(builder: (_) => const AddMachineScreen())),
+                      ),
+                    ],
+
+                    // --- TECHNICIAN: only their department ---
+                    if (!isAdmin) ...[
+                      _ActionTile(
+                        icon:    userDept == 'COMBER'
+                                    ? Icons.settings_input_component_outlined
+                                    : Icons.factory_outlined,
+                        label:   '${auth.user?.departmentLabel ?? ''} Machines',
+                        color:   userDept == 'COMBER'
+                                    ? const Color(0xFF7B61FF)
+                                    : const Color(0xFF0077B6),
+                        onTap:   () => Navigator.push(context,
+                            MaterialPageRoute(builder: (_) => MachineListScreen(department: userDept))),
+                      ),
+                      const SizedBox(height: 12),
+                      _ActionTile(
+                        icon:    Icons.warning_rounded,
+                        label:   'Pending Maintenance',
+                        color:   AppTheme.danger,
+                        onTap:   () => Navigator.push(context,
+                            MaterialPageRoute(builder: (_) => const PendingMaintenanceScreen())),
                       ),
                     ],
                   ],
@@ -140,6 +192,30 @@ class _DashboardScreenState extends State<DashboardScreen> {
       list.add(Expanded(child: cards[i]));
     }
     return Row(children: list);
+  }
+}
+
+/// Small coloured department badge
+class _DeptBadge extends StatelessWidget {
+  final String department;
+  const _DeptBadge({required this.department});
+
+  @override
+  Widget build(BuildContext context) {
+    final color  = department == 'COMBER' ? const Color(0xFF7B61FF) : const Color(0xFF0077B6);
+    final label  = department == 'COMBER' ? 'Comber' : 'Blowroom';
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.12),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: color.withOpacity(0.4)),
+      ),
+      child: Text(
+        label,
+        style: TextStyle(color: color, fontSize: 11, fontWeight: FontWeight.bold),
+      ),
+    );
   }
 }
 

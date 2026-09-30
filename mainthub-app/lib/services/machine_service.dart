@@ -19,6 +19,7 @@ class MachineService {
   Future<void> createMachine({
     required String name,
     required String type,
+    required String department,
     required String location,
     required int    intervalDays,
     required String firstMaintenanceDate, // YYYY-MM-DD
@@ -26,6 +27,7 @@ class MachineService {
     await _client.post('/machines/', data: {
       'name':                   name,
       'type':                   type,
+      'department':             department,
       'location':               location,
       'maintenance_interval':   intervalDays,
       'first_maintenance_date': firstMaintenanceDate,
