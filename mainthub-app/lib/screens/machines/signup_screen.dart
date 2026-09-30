@@ -222,6 +222,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   value: 'WINDING',
                                   child: Text('Winding'),
                                 ),
+                                DropdownMenuItem(
+                                  value: 'BUFFING',
+                                  child: Text('Buffing'),
+                                ),
                               ],
                               validator: (v) =>
                                   v == null ? 'Please select a department' : null,

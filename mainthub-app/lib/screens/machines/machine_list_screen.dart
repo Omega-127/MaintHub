@@ -42,6 +42,7 @@ class _MachineListScreenState extends State<MachineListScreen> {
       'RING_FRAME'  => 'Ring Frame Machines',
       'SPEED_FRAME' => 'Speed Frame Machines',
       'WINDING'     => 'Winding Machines',
+      'BUFFING'     => 'Buffing Machines',
       _             => 'All Machines',
     };
 
@@ -98,6 +99,13 @@ class _MachineListScreenState extends State<MachineListScreen> {
               selected: _activeDeptFilter == 'WINDING',
               onTap: () => setState(() =>
                   _activeDeptFilter = _activeDeptFilter == 'WINDING' ? null : 'WINDING'),
+            ),
+            const SizedBox(width: 4),
+            _DeptFilterChip(
+              label: 'Buffing',
+              selected: _activeDeptFilter == 'BUFFING',
+              onTap: () => setState(() =>
+                  _activeDeptFilter = _activeDeptFilter == 'BUFFING' ? null : 'BUFFING'),
             ),
             const SizedBox(width: 8),
           ],

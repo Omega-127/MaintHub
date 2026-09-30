@@ -29,8 +29,8 @@ def register():
     # Validate department for technicians
     department = data.get("department")
     if data["role"] == "TECHNICIAN":
-        if not department or department not in ["BLOWROOM", "COMBER", "RING_FRAME", "SPEED_FRAME", "WINDING"]:
-            return jsonify({"error": "Technicians must have a department: BLOWROOM, COMBER, RING_FRAME, SPEED_FRAME or WINDING"}), 400
+        if not department or department not in ["BLOWROOM", "COMBER", "RING_FRAME", "SPEED_FRAME", "WINDING", "BUFFING"]:
+            return jsonify({"error": "Technicians must have a department: BLOWROOM, COMBER, RING_FRAME, SPEED_FRAME, WINDING or BUFFING"}), 400
     else:
         department = None  # Admins see all departments
 

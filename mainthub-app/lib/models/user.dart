@@ -3,7 +3,7 @@ class User {
   final String  fullName;
   final String  email;
   final String  role;
-  final String? department; // 'BLOWROOM' | 'COMBER' | 'RING_FRAME' | null (Admin sees all)
+  final String? department; // 'BLOWROOM' | 'COMBER' | 'RING_FRAME' | 'SPEED_FRAME' | 'WINDING' | 'BUFFING' | null (Admin sees all)
 
   User({
     required this.id,
@@ -23,6 +23,7 @@ class User {
       case 'RING_FRAME':  return 'Ring Frame';
       case 'SPEED_FRAME': return 'Speed Frame';
       case 'WINDING':     return 'Winding';
+      case 'BUFFING':     return 'Buffing';
       default:            return 'All Departments';
     }
   }

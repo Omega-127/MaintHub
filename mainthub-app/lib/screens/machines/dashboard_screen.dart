@@ -157,6 +157,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             MaterialPageRoute(builder: (_) => const MachineListScreen(department: 'WINDING'))),
                       ),
                       const SizedBox(height: 12),
+                      // Buffing department tile
+                      _ActionTile(
+                        icon:    Icons.construction_outlined,
+                        label:   'Buffing Machines',
+                        color:   const Color(0xFF00695C),
+                        onTap:   () => Navigator.push(context,
+                            MaterialPageRoute(builder: (_) => const MachineListScreen(department: 'BUFFING'))),
+                      ),
+                      const SizedBox(height: 12),
                       // All machines
                       _ActionTile(
                         icon:    Icons.list_alt,
@@ -194,7 +203,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                             ? Icons.speed_outlined
                                             : userDept == 'WINDING'
                                                 ? Icons.wind_power_outlined
-                                                : Icons.factory_outlined,
+                                                : userDept == 'BUFFING'
+                                                    ? Icons.construction_outlined
+                                                    : Icons.factory_outlined,
                         label:   '${auth.user?.departmentLabel ?? ''} Machines',
                         color:   userDept == 'COMBER'
                                     ? const Color(0xFF7B61FF)
@@ -204,7 +215,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                             ? const Color(0xFFE65100)
                                             : userDept == 'WINDING'
                                                 ? const Color(0xFF6A1B9A)
-                                                : const Color(0xFF0077B6),
+                                                : userDept == 'BUFFING'
+                                                    ? const Color(0xFF00695C)
+                                                    : const Color(0xFF0077B6),
                         onTap:   () => Navigator.push(context,
                             MaterialPageRoute(builder: (_) => MachineListScreen(department: userDept))),
                       ),
@@ -249,7 +262,9 @@ class _DeptBadge extends StatelessWidget {
                 ? const Color(0xFFE65100)
                 : department == 'WINDING'
                     ? const Color(0xFF6A1B9A)
-                    : const Color(0xFF0077B6);
+                    : department == 'BUFFING'
+                        ? const Color(0xFF00695C)
+                        : const Color(0xFF0077B6);
     final label = department == 'COMBER'
         ? 'Comber'
         : department == 'RING_FRAME'
@@ -258,7 +273,9 @@ class _DeptBadge extends StatelessWidget {
                 ? 'Speed Frame'
                 : department == 'WINDING'
                     ? 'Winding'
-                    : 'Blowroom';
+                    : department == 'BUFFING'
+                        ? 'Buffing'
+                        : 'Blowroom';
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
       decoration: BoxDecoration(

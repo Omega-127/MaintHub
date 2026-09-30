@@ -4,15 +4,21 @@
 -- want to reset from init.sql scratch.
 -- ============================================================
 
--- 1. Add department to users table (NULL = Admin sees all)
+-- 1. Add / update department to users table (NULL = Admin sees all)
 ALTER TABLE users
-    ADD COLUMN IF NOT EXISTS department ENUM('BLOWROOM', 'COMBER', 'RING_FRAME') NULL DEFAULT NULL
+    ADD COLUMN IF NOT EXISTS department ENUM('BLOWROOM', 'COMBER', 'RING_FRAME', 'SPEED_FRAME', 'WINDING', 'BUFFING') NULL DEFAULT NULL
     AFTER role;
 
--- 2. Add department to machines table (default existing to BLOWROOM)
+ALTER TABLE users
+    MODIFY COLUMN department ENUM('BLOWROOM', 'COMBER', 'RING_FRAME', 'SPEED_FRAME', 'WINDING', 'BUFFING') NULL DEFAULT NULL;
+
+-- 2. Add / update department to machines table (default existing to BLOWROOM)
 ALTER TABLE machines
-    ADD COLUMN IF NOT EXISTS department ENUM('BLOWROOM', 'COMBER', 'RING_FRAME') NOT NULL DEFAULT 'BLOWROOM'
+    ADD COLUMN IF NOT EXISTS department ENUM('BLOWROOM', 'COMBER', 'RING_FRAME', 'SPEED_FRAME', 'WINDING', 'BUFFING') NOT NULL DEFAULT 'BLOWROOM'
     AFTER type;
+
+ALTER TABLE machines
+    MODIFY COLUMN department ENUM('BLOWROOM', 'COMBER', 'RING_FRAME', 'SPEED_FRAME', 'WINDING', 'BUFFING') NOT NULL DEFAULT 'BLOWROOM';
 
 -- 3. Add index for fast department-based queries
 CREATE INDEX IF NOT EXISTS idx_machines_department ON machines(department);
@@ -292,3 +298,105 @@ VALUES
 
 -- Verify all departments
 SELECT department, COUNT(*) as machine_count FROM machines GROUP BY department;
+
+-- ============================================================
+-- BUFFING department (added from Preparatory_Buffing_Schedule.xlsx)
+-- Sheet 1: Preparatory Buffing  →  Breaker D/F, Finisher D/F,
+--          Speed Frame Cots, Unilap, Comber Drawbox, Comber Detaching
+-- Sheet 2: Ring Frame Cots      →  LR9A/LRJ9AX Compact & F/B Cots
+-- Sheet 3: Suessen Cots         →  Suessen Compact/Front & Back Cots
+-- Buffing interval expressed in days (based on shed period noted in file).
+-- Last-maintenance dates taken from first recorded date column in xlsx.
+-- ============================================================
+
+-- 10. Extend ENUMs to include BUFFING
+ALTER TABLE users
+    MODIFY COLUMN department ENUM('BLOWROOM', 'COMBER', 'RING_FRAME', 'SPEED_FRAME', 'WINDING', 'BUFFING') NULL DEFAULT NULL;
+
+ALTER TABLE machines
+    MODIFY COLUMN department ENUM('BLOWROOM', 'COMBER', 'RING_FRAME', 'SPEED_FRAME', 'WINDING', 'BUFFING') NOT NULL DEFAULT 'BLOWROOM';
+
+-- 11. Insert BUFFING machines (idempotent -- INSERT IGNORE skips duplicates)
+INSERT IGNORE INTO machines (name, type, department, location, maintenance_interval, last_maintenance_date, next_maintenance_date, status, created_by)
+VALUES
+
+-- ── Sheet 1: Preparatory Buffing ─────────────────────────────
+-- Breaker D/F Cots (Accotex/Inarco/Barkol | LD) | 20 Days shed, 0.2mm cut, Full 38.0 min 36.0
+('Breaker D/F - Cots No. 1 (Buffing)', 'Buffing Cots', 'BUFFING', 'Buffing Section', 20, '2026-09-10', '2026-09-30', 'ACTIVE', 1),
+
+-- Finisher D/F Cots (LRSB 851 & LDF3) | 20 Days shed, 0.2mm, Full 38.0 min 36.0
+('Finisher D/F - Cots No. 1 (Buffing)', 'Buffing Cots', 'BUFFING', 'Buffing Section', 20, '2026-09-10', '2026-09-30', 'ACTIVE', 1),
+('Finisher D/F - Cots No. 2 (Buffing)', 'Buffing Cots', 'BUFFING', 'Buffing Section', 20, '2026-09-10', '2026-09-30', 'ACTIVE', 1),
+('Finisher D/F - Cots No. 3 (Buffing)', 'Buffing Cots', 'BUFFING', 'Buffing Section', 20, '2026-09-10', '2026-09-30', 'ACTIVE', 1),
+
+-- Speed Frame Cots (Precitex/Inarco Easyfit, SH82) | 60 Days (45 alt), 0.2mm, Full 29.0 min 27.0
+('SF 1 - Cots Buffing', 'Buffing Cots', 'BUFFING', 'Buffing Section', 60, '2026-08-27', '2026-10-26', 'ACTIVE', 1),
+('SF 2 - Cots Buffing', 'Buffing Cots', 'BUFFING', 'Buffing Section', 60, '2026-09-16', '2026-11-15', 'ACTIVE', 1),
+('SF 3 - Cots Buffing', 'Buffing Cots', 'BUFFING', 'Buffing Section', 60, '2026-08-27', '2026-10-26', 'ACTIVE', 1),
+('SF 4 - Cots Buffing', 'Buffing Cots', 'BUFFING', 'Buffing Section', 60, '2026-08-19', '2026-10-18', 'ACTIVE', 1),
+
+-- Unilap Cots | 30 Days (45 alt), 0.2mm, Full 39.0 min 37.0
+('Unilap - Cots No. 1 (Buffing)', 'Buffing Cots', 'BUFFING', 'Buffing Section', 30, '2026-09-12', '2026-10-12', 'ACTIVE', 1),
+
+-- Comber Drawbox Cots | 30 Days (45 alt), 0.2mm, Full 39.0 min 37.0
+('Comber 1 - Drawbox Cots Buffing', 'Buffing Cots', 'BUFFING', 'Buffing Section', 30, '2026-09-12', '2026-10-12', 'ACTIVE', 1),
+('Comber 2 - Drawbox Cots Buffing', 'Buffing Cots', 'BUFFING', 'Buffing Section', 30, '2026-09-12', '2026-10-12', 'ACTIVE', 1),
+('Comber 3 - Drawbox Cots Buffing', 'Buffing Cots', 'BUFFING', 'Buffing Section', 30, '2026-09-12', '2026-10-12', 'ACTIVE', 1),
+('Comber 4 - Drawbox Cots Buffing', 'Buffing Cots', 'BUFFING', 'Buffing Section', 30, '2026-09-12', '2026-10-12', 'ACTIVE', 1),
+('Comber 5 - Drawbox Cots Buffing', 'Buffing Cots', 'BUFFING', 'Buffing Section', 30, '2026-09-12', '2026-10-12', 'ACTIVE', 1),
+
+-- Comber Detaching Cots | 90 Days (120 alt), 0.2mm, Full 24.5 min 23.0
+('Comber 1 - Detaching Cots Buffing', 'Buffing Cots', 'BUFFING', 'Buffing Section', 90, '2026-09-03', '2026-12-02', 'ACTIVE', 1),
+('Comber 2 - Detaching Cots Buffing', 'Buffing Cots', 'BUFFING', 'Buffing Section', 90, '2026-09-01', '2026-11-30', 'ACTIVE', 1),
+('Comber 3 - Detaching Cots Buffing', 'Buffing Cots', 'BUFFING', 'Buffing Section', 90, '2026-09-27', '2026-12-26', 'ACTIVE', 1),
+
+-- Comber Web Guide Cots | 120 Days, 0.2mm, Full 45.0 min 42.0
+('Comber 1 - Web Guide Cots Buffing', 'Buffing Cots', 'BUFFING', 'Buffing Section', 120, '2026-01-29', '2026-05-29', 'ACTIVE', 1),
+('Comber 2 - Web Guide Cots Buffing', 'Buffing Cots', 'BUFFING', 'Buffing Section', 120, '2026-09-01', '2026-12-30', 'ACTIVE', 1),
+('Comber 3 - Web Guide Cots Buffing', 'Buffing Cots', 'BUFFING', 'Buffing Section', 120, '2026-09-27', '2027-01-25', 'ACTIVE', 1),
+
+-- ── Sheet 2: Ring Frame Cots (LR9A & LRJ9AX) ─────────────────
+-- Compact Cots (No. 1-13) | 30 Days, 0.20 mm, Full 32.0/35.0 min 33.0
+('RF 1 - Compact Cots Buffing',  'Buffing Cots', 'BUFFING', 'Buffing Section', 30, '2026-08-05', '2026-09-04', 'ACTIVE', 1),
+('RF 2 - Compact Cots Buffing',  'Buffing Cots', 'BUFFING', 'Buffing Section', 30, '2026-08-06', '2026-09-05', 'ACTIVE', 1),
+('RF 3 - Compact Cots Buffing',  'Buffing Cots', 'BUFFING', 'Buffing Section', 30, '2026-08-07', '2026-09-06', 'ACTIVE', 1),
+('RF 4 - Compact Cots Buffing',  'Buffing Cots', 'BUFFING', 'Buffing Section', 30, '2026-08-09', '2026-09-08', 'ACTIVE', 1),
+('RF 5 - Compact Cots Buffing',  'Buffing Cots', 'BUFFING', 'Buffing Section', 30, '2026-08-08', '2026-09-07', 'ACTIVE', 1),
+('RF 6 - Compact Cots Buffing',  'Buffing Cots', 'BUFFING', 'Buffing Section', 30, '2026-08-11', '2026-09-10', 'ACTIVE', 1),
+('RF 7 - Compact Cots Buffing',  'Buffing Cots', 'BUFFING', 'Buffing Section', 30, '2026-08-12', '2026-09-11', 'ACTIVE', 1),
+('RF 8 - Compact Cots Buffing',  'Buffing Cots', 'BUFFING', 'Buffing Section', 30, '2026-08-15', '2026-09-14', 'ACTIVE', 1),
+('RF 9 - Compact Cots Buffing',  'Buffing Cots', 'BUFFING', 'Buffing Section', 30, '2026-08-16', '2026-09-15', 'ACTIVE', 1),
+('RF 10 - Compact Cots Buffing', 'Buffing Cots', 'BUFFING', 'Buffing Section', 30, '2026-08-13', '2026-09-12', 'ACTIVE', 1),
+('RF 11 - Compact Cots Buffing', 'Buffing Cots', 'BUFFING', 'Buffing Section', 30, '2026-08-14', '2026-09-13', 'ACTIVE', 1),
+('RF 12 - Compact Cots Buffing', 'Buffing Cots', 'BUFFING', 'Buffing Section', 30, '2026-08-18', '2026-09-17', 'ACTIVE', 1),
+('RF 13 - Compact Cots Buffing', 'Buffing Cots', 'BUFFING', 'Buffing Section', 30, '2026-08-19', '2026-09-18', 'ACTIVE', 1),
+
+-- Front & Back Cots (No. 1-13) | 30 Days, 0.20 mm, Full 30.0 min 28.0
+('RF 1 - Front & Back Cots Buffing',  'Buffing Cots', 'BUFFING', 'Buffing Section', 30, '2026-08-23', '2026-09-22', 'ACTIVE', 1),
+('RF 2 - Front & Back Cots Buffing',  'Buffing Cots', 'BUFFING', 'Buffing Section', 30, '2026-08-25', '2026-09-24', 'ACTIVE', 1),
+('RF 3 - Front & Back Cots Buffing',  'Buffing Cots', 'BUFFING', 'Buffing Section', 30, '2026-08-26', '2026-09-25', 'ACTIVE', 1),
+('RF 4 - Front & Back Cots Buffing',  'Buffing Cots', 'BUFFING', 'Buffing Section', 30, '2026-08-27', '2026-09-26', 'ACTIVE', 1),
+('RF 5 - Front & Back Cots Buffing',  'Buffing Cots', 'BUFFING', 'Buffing Section', 30, '2026-08-28', '2026-09-27', 'ACTIVE', 1),
+('RF 6 - Front & Back Cots Buffing',  'Buffing Cots', 'BUFFING', 'Buffing Section', 30, '2026-08-30', '2026-09-29', 'ACTIVE', 1),
+('RF 7 - Front & Back Cots Buffing',  'Buffing Cots', 'BUFFING', 'Buffing Section', 30, '2026-08-29', '2026-09-28', 'ACTIVE', 1),
+('RF 8 - Front & Back Cots Buffing',  'Buffing Cots', 'BUFFING', 'Buffing Section', 30, '2026-09-01', '2026-10-01', 'ACTIVE', 1),
+('RF 9 - Front & Back Cots Buffing',  'Buffing Cots', 'BUFFING', 'Buffing Section', 30, '2026-09-02', '2026-10-02', 'ACTIVE', 1),
+('RF 10 - Front & Back Cots Buffing', 'Buffing Cots', 'BUFFING', 'Buffing Section', 30, '2026-09-03', '2026-10-03', 'ACTIVE', 1),
+('RF 11 - Front & Back Cots Buffing', 'Buffing Cots', 'BUFFING', 'Buffing Section', 30, '2026-09-04', '2026-10-04', 'ACTIVE', 1),
+('RF 12 - Front & Back Cots Buffing', 'Buffing Cots', 'BUFFING', 'Buffing Section', 30, '2026-09-05', '2026-10-05', 'ACTIVE', 1),
+('RF 13 - Front & Back Cots Buffing', 'Buffing Cots', 'BUFFING', 'Buffing Section', 30, '2026-09-06', '2026-10-06', 'ACTIVE', 1),
+
+-- ── Sheet 3: Suessen Ring Frame Cots ─────────────────────────
+-- Suessen Compact & Front Cots (No. 14-16) | 30 Days, 0.10 mm, Compact min 28.2, Front min 26.5
+('RF 14 - Suessen Compact & Front Cots Buffing', 'Buffing Cots', 'BUFFING', 'Buffing Section', 30, '2026-08-01', '2026-08-31', 'ACTIVE', 1),
+('RF 15 - Suessen Compact & Front Cots Buffing', 'Buffing Cots', 'BUFFING', 'Buffing Section', 30, '2026-08-02', '2026-09-01', 'ACTIVE', 1),
+('RF 16 - Suessen Compact & Front Cots Buffing', 'Buffing Cots', 'BUFFING', 'Buffing Section', 30, '2026-08-04', '2026-09-03', 'ACTIVE', 1),
+
+-- Suessen RF Back Cots (No. 14-16) | 60 Days, 0.20 mm, min 27.2
+('RF 14 - Suessen Back Cots Buffing', 'Buffing Cots', 'BUFFING', 'Buffing Section', 60, '2026-08-20', '2026-10-19', 'ACTIVE', 1),
+('RF 15 - Suessen Back Cots Buffing', 'Buffing Cots', 'BUFFING', 'Buffing Section', 60, '2026-08-22', '2026-10-21', 'ACTIVE', 1),
+('RF 16 - Suessen Back Cots Buffing', 'Buffing Cots', 'BUFFING', 'Buffing Section', 60, '2026-08-21', '2026-10-20', 'ACTIVE', 1);
+
+-- Verify all departments including BUFFING
+SELECT department, COUNT(*) as machine_count FROM machines GROUP BY department;
+

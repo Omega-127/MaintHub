@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS users (
     email           VARCHAR(255)        NOT NULL UNIQUE,
     password_hash   VARCHAR(255)        NOT NULL,
     role            ENUM('ADMIN', 'TECHNICIAN') NOT NULL DEFAULT 'TECHNICIAN',
-    department      ENUM('BLOWROOM', 'COMBER') NULL DEFAULT NULL,
+    department      ENUM('BLOWROOM', 'COMBER', 'RING_FRAME', 'SPEED_FRAME', 'WINDING', 'BUFFING') NULL DEFAULT NULL,
     is_active       BOOLEAN             NOT NULL DEFAULT TRUE,
     created_at      TIMESTAMP           NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at      TIMESTAMP           NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS machines (
     id                      INT AUTO_INCREMENT PRIMARY KEY,
     name                    VARCHAR(255)    NOT NULL,
     type                    VARCHAR(100)    NOT NULL,
-    department              ENUM('BLOWROOM', 'COMBER') NOT NULL DEFAULT 'BLOWROOM',
+    department              ENUM('BLOWROOM', 'COMBER', 'RING_FRAME', 'SPEED_FRAME', 'WINDING', 'BUFFING') NOT NULL DEFAULT 'BLOWROOM',
     location                VARCHAR(255),
     maintenance_interval    INT             NOT NULL,
     last_maintenance_date   DATE,

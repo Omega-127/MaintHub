@@ -43,6 +43,7 @@ class Machine {
       case 'RING_FRAME':  return 'Ring Frame';
       case 'SPEED_FRAME': return 'Speed Frame';
       case 'WINDING':     return 'Winding';
+      case 'BUFFING':     return 'Buffing';
       default:            return 'Blowroom';
     }
   }
