@@ -18,10 +18,11 @@ class User {
   /// Human-readable department label
   String get departmentLabel {
     switch (department) {
-      case 'BLOWROOM':   return 'Blowroom';
-      case 'COMBER':     return 'Comber';
-      case 'RING_FRAME': return 'Ring Frame';
-      default:           return 'All Departments';
+      case 'BLOWROOM':    return 'Blowroom';
+      case 'COMBER':      return 'Comber';
+      case 'RING_FRAME':  return 'Ring Frame';
+      case 'SPEED_FRAME': return 'Speed Frame';
+      default:            return 'All Departments';
     }
   }
 

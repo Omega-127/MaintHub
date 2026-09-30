@@ -854,6 +854,479 @@ MACHINES = [
         "last_maintenance_date": date(2026, 9, 1),
         "next_maintenance_date": date(2026, 12, 1),
     },
+
+    # ── SPEED FRAME Department (LH-15 / SF 1-4, sourced from Speed_Frame_Maintenance_Schedule.xlsx) ──
+    # 1. Top & Bottom Aprons Replacement — 18 months (547 days)
+    {
+        "name":                  "SF 1 - Top & Bottom Apron Replacement",
+        "type":                  "Speed Frame",
+        "department":            "SPEED_FRAME",
+        "location":              "Speed Frame Section",
+        "maintenance_interval":  547,
+        "last_maintenance_date": date(2024, 11, 26),
+        "next_maintenance_date": date(2026, 5, 26),
+    },
+    {
+        "name":                  "SF 2 - Top & Bottom Apron Replacement",
+        "type":                  "Speed Frame",
+        "department":            "SPEED_FRAME",
+        "location":              "Speed Frame Section",
+        "maintenance_interval":  547,
+        "last_maintenance_date": date(2024, 11, 21),
+        "next_maintenance_date": date(2026, 5, 26),
+    },
+    {
+        "name":                  "SF 3 - Top & Bottom Apron Replacement",
+        "type":                  "Speed Frame",
+        "department":            "SPEED_FRAME",
+        "location":              "Speed Frame Section",
+        "maintenance_interval":  547,
+        "last_maintenance_date": date(2024, 11, 24),
+        "next_maintenance_date": date(2026, 5, 26),
+    },
+    {
+        "name":                  "SF 4 - Top & Bottom Apron Replacement",
+        "type":                  "Speed Frame",
+        "department":            "SPEED_FRAME",
+        "location":              "Speed Frame Section",
+        "maintenance_interval":  547,
+        "last_maintenance_date": date(2024, 11, 30),
+        "next_maintenance_date": date(2026, 5, 26),
+    },
+    # 2. Top & Bottom Aprons Washing — 6 months (180 days)
+    {
+        "name":                  "SF 1 - Apron Washing",
+        "type":                  "Speed Frame",
+        "department":            "SPEED_FRAME",
+        "location":              "Speed Frame Section",
+        "maintenance_interval":  180,
+        "last_maintenance_date": date(2025, 8, 1),
+        "next_maintenance_date": date(2026, 1, 28),   # OVERDUE
+    },
+    {
+        "name":                  "SF 2 - Apron Washing",
+        "type":                  "Speed Frame",
+        "department":            "SPEED_FRAME",
+        "location":              "Speed Frame Section",
+        "maintenance_interval":  180,
+        "last_maintenance_date": date(2025, 8, 5),
+        "next_maintenance_date": date(2026, 2, 1),   # OVERDUE
+    },
+    {
+        "name":                  "SF 3 - Apron Washing",
+        "type":                  "Speed Frame",
+        "department":            "SPEED_FRAME",
+        "location":              "Speed Frame Section",
+        "maintenance_interval":  180,
+        "last_maintenance_date": date(2025, 8, 16),
+        "next_maintenance_date": date(2026, 2, 12),  # OVERDUE
+    },
+    # 3. False Twister Replacement — 18 months (547 days)
+    {
+        "name":                  "SF 1 - False Twister Replacement",
+        "type":                  "Speed Frame",
+        "department":            "SPEED_FRAME",
+        "location":              "Speed Frame Section",
+        "maintenance_interval":  547,
+        "last_maintenance_date": date(2025, 7, 18),
+        "next_maintenance_date": date(2027, 1, 14),
+    },
+    {
+        "name":                  "SF 2 - False Twister Replacement",
+        "type":                  "Speed Frame",
+        "department":            "SPEED_FRAME",
+        "location":              "Speed Frame Section",
+        "maintenance_interval":  547,
+        "last_maintenance_date": date(2025, 7, 19),
+        "next_maintenance_date": date(2027, 1, 14),
+    },
+    {
+        "name":                  "SF 3 - False Twister Replacement",
+        "type":                  "Speed Frame",
+        "department":            "SPEED_FRAME",
+        "location":              "Speed Frame Section",
+        "maintenance_interval":  547,
+        "last_maintenance_date": date(2024, 8, 7),
+        "next_maintenance_date": date(2026, 2, 3),   # OVERDUE
+    },
+    {
+        "name":                  "SF 4 - False Twister Replacement",
+        "type":                  "Speed Frame",
+        "department":            "SPEED_FRAME",
+        "location":              "Speed Frame Section",
+        "maintenance_interval":  547,
+        "last_maintenance_date": date(2025, 9, 20),
+        "next_maintenance_date": date(2027, 3, 21),
+    },
+    # 4. Cone Drum Belt Replacement — 18 months (547 days)
+    {
+        "name":                  "SF 1 - Cone Drum Belt Replacement",
+        "type":                  "Speed Frame",
+        "department":            "SPEED_FRAME",
+        "location":              "Speed Frame Section",
+        "maintenance_interval":  547,
+        "last_maintenance_date": date(2024, 1, 18),
+        "next_maintenance_date": date(2025, 7, 18),  # OVERDUE
+    },
+    {
+        "name":                  "SF 2 - Cone Drum Belt Replacement",
+        "type":                  "Speed Frame",
+        "department":            "SPEED_FRAME",
+        "location":              "Speed Frame Section",
+        "maintenance_interval":  547,
+        "last_maintenance_date": date(2025, 12, 18),
+        "next_maintenance_date": date(2027, 6, 17),
+    },
+    {
+        "name":                  "SF 3 - Cone Drum Belt Replacement",
+        "type":                  "Speed Frame",
+        "department":            "SPEED_FRAME",
+        "location":              "Speed Frame Section",
+        "maintenance_interval":  547,
+        "last_maintenance_date": date(2024, 12, 4),
+        "next_maintenance_date": date(2026, 6, 4),
+    },
+    {
+        "name":                  "SF 4 - Cone Drum Belt Replacement",
+        "type":                  "Speed Frame",
+        "department":            "SPEED_FRAME",
+        "location":              "Speed Frame Section",
+        "maintenance_interval":  547,
+        "last_maintenance_date": date(2024, 3, 6),
+        "next_maintenance_date": date(2025, 9, 4),   # OVERDUE
+    },
+    # 5. Clearer Cloths Top Replacement — 3 years (1095 days)
+    {
+        "name":                  "SF 1 - Clearer Cloths Top Replacement",
+        "type":                  "Speed Frame",
+        "department":            "SPEED_FRAME",
+        "location":              "Speed Frame Section",
+        "maintenance_interval":  1095,
+        "last_maintenance_date": date(2022, 3, 30),
+        "next_maintenance_date": date(2025, 3, 30),  # OVERDUE
+    },
+    # 6. Clearer Cloths Bottom Replacement — 3 years (1095 days)
+    {
+        "name":                  "SF 1-4 - Clearer Cloths Bottom Replacement",
+        "type":                  "Speed Frame",
+        "department":            "SPEED_FRAME",
+        "location":              "Speed Frame Section",
+        "maintenance_interval":  1095,
+        "last_maintenance_date": date(2022, 6, 1),
+        "next_maintenance_date": date(2025, 6, 1),   # OVERDUE
+    },
+    # 7. Trub Level Check — 3 months (91 days)
+    {
+        "name":                  "SF 1 - Trub Level Check",
+        "type":                  "Speed Frame",
+        "department":            "SPEED_FRAME",
+        "location":              "Speed Frame Section",
+        "maintenance_interval":  91,
+        "last_maintenance_date": date(2026, 7, 1),
+        "next_maintenance_date": date(2026, 9, 30),
+    },
+    {
+        "name":                  "SF 2 - Trub Level Check",
+        "type":                  "Speed Frame",
+        "department":            "SPEED_FRAME",
+        "location":              "Speed Frame Section",
+        "maintenance_interval":  91,
+        "last_maintenance_date": date(2026, 7, 1),
+        "next_maintenance_date": date(2026, 9, 30),
+    },
+    {
+        "name":                  "SF 3 - Trub Level Check",
+        "type":                  "Speed Frame",
+        "department":            "SPEED_FRAME",
+        "location":              "Speed Frame Section",
+        "maintenance_interval":  91,
+        "last_maintenance_date": date(2026, 7, 1),
+        "next_maintenance_date": date(2026, 9, 30),
+    },
+    {
+        "name":                  "SF 4 - Trub Level Check",
+        "type":                  "Speed Frame",
+        "department":            "SPEED_FRAME",
+        "location":              "Speed Frame Section",
+        "maintenance_interval":  91,
+        "last_maintenance_date": date(2026, 7, 1),
+        "next_maintenance_date": date(2026, 9, 30),
+    },
+    # 8. Saddle Gauge & Height Gauge — 6 months (180 days)
+    {
+        "name":                  "SF 1 - Saddle Gauge & Height Gauge",
+        "type":                  "Speed Frame",
+        "department":            "SPEED_FRAME",
+        "location":              "Speed Frame Section",
+        "maintenance_interval":  180,
+        "last_maintenance_date": date(2026, 4, 1),
+        "next_maintenance_date": date(2026, 9, 28),
+    },
+    {
+        "name":                  "SF 2 - Saddle Gauge & Height Gauge",
+        "type":                  "Speed Frame",
+        "department":            "SPEED_FRAME",
+        "location":              "Speed Frame Section",
+        "maintenance_interval":  180,
+        "last_maintenance_date": date(2026, 4, 1),
+        "next_maintenance_date": date(2026, 9, 28),
+    },
+    {
+        "name":                  "SF 3 - Saddle Gauge & Height Gauge",
+        "type":                  "Speed Frame",
+        "department":            "SPEED_FRAME",
+        "location":              "Speed Frame Section",
+        "maintenance_interval":  180,
+        "last_maintenance_date": date(2026, 4, 1),
+        "next_maintenance_date": date(2026, 9, 28),
+    },
+    {
+        "name":                  "SF 4 - Saddle Gauge & Height Gauge",
+        "type":                  "Speed Frame",
+        "department":            "SPEED_FRAME",
+        "location":              "Speed Frame Section",
+        "maintenance_interval":  180,
+        "last_maintenance_date": date(2026, 4, 1),
+        "next_maintenance_date": date(2026, 9, 28),
+    },
+    # 9. Trub Lift Chains — 2 years (730 days)
+    {
+        "name":                  "SF 1 - Trub Lift Chains",
+        "type":                  "Speed Frame",
+        "department":            "SPEED_FRAME",
+        "location":              "Speed Frame Section",
+        "maintenance_interval":  730,
+        "last_maintenance_date": date(2024, 1, 1),
+        "next_maintenance_date": date(2026, 1, 1),   # OVERDUE
+    },
+    {
+        "name":                  "SF 2 - Trub Lift Chains",
+        "type":                  "Speed Frame",
+        "department":            "SPEED_FRAME",
+        "location":              "Speed Frame Section",
+        "maintenance_interval":  730,
+        "last_maintenance_date": date(2024, 1, 1),
+        "next_maintenance_date": date(2026, 1, 1),   # OVERDUE
+    },
+    {
+        "name":                  "SF 3 - Trub Lift Chains",
+        "type":                  "Speed Frame",
+        "department":            "SPEED_FRAME",
+        "location":              "Speed Frame Section",
+        "maintenance_interval":  730,
+        "last_maintenance_date": date(2024, 1, 1),
+        "next_maintenance_date": date(2026, 1, 1),   # OVERDUE
+    },
+    {
+        "name":                  "SF 4 - Trub Lift Chains",
+        "type":                  "Speed Frame",
+        "department":            "SPEED_FRAME",
+        "location":              "Speed Frame Section",
+        "maintenance_interval":  730,
+        "last_maintenance_date": date(2024, 1, 1),
+        "next_maintenance_date": date(2026, 1, 1),   # OVERDUE
+    },
+    # 10. Balancing Weight Chain — 2 years (730 days)
+    {
+        "name":                  "SF 1-4 - Balancing Weight Chain",
+        "type":                  "Speed Frame",
+        "department":            "SPEED_FRAME",
+        "location":              "Speed Frame Section",
+        "maintenance_interval":  730,
+        "last_maintenance_date": date(2020, 8, 1),
+        "next_maintenance_date": date(2022, 8, 1),   # OVERDUE — needs check
+    },
+    # 11. Spacer (Distance Clip) Changed — 4 years (1460 days)
+    {
+        "name":                  "SF 1-4 - Distance Clip Spacer Change",
+        "type":                  "Speed Frame",
+        "department":            "SPEED_FRAME",
+        "location":              "Speed Frame Section",
+        "maintenance_interval":  1460,
+        "last_maintenance_date": date(2018, 11, 1),
+        "next_maintenance_date": date(2022, 11, 1),  # OVERDUE
+    },
+    # 12. Flyer Cleaning — 30 days
+    {
+        "name":                  "SF 1-4 - Flyer Cleaning",
+        "type":                  "Speed Frame",
+        "department":            "SPEED_FRAME",
+        "location":              "Speed Frame Section",
+        "maintenance_interval":  30,
+        "last_maintenance_date": date(2025, 11, 22),
+        "next_maintenance_date": date(2025, 12, 22),  # OVERDUE
+    },
+    # 13. Waste Duct Cleaning — 1 month (30 days)
+    {
+        "name":                  "SF 1-4 - Waste Duct Cleaning",
+        "type":                  "Speed Frame",
+        "department":            "SPEED_FRAME",
+        "location":              "Speed Frame Section",
+        "maintenance_interval":  30,
+        "last_maintenance_date": date(2026, 2, 3),
+        "next_maintenance_date": date(2026, 3, 5),   # OVERDUE
+    },
+    # 14. Suction Tube Cleaning — 15 days
+    {
+        "name":                  "SF 1-4 - Suction Tube Cleaning",
+        "type":                  "Speed Frame",
+        "department":            "SPEED_FRAME",
+        "location":              "Speed Frame Section",
+        "maintenance_interval":  15,
+        "last_maintenance_date": date(2024, 10, 17),
+        "next_maintenance_date": date(2024, 11, 1),  # OVERDUE
+    },
+    # 15. Differential Gearbox Oil Change — 4 months (122 days)
+    {
+        "name":                  "SF 1 - Differential Gearbox Oil Change",
+        "type":                  "Speed Frame",
+        "department":            "SPEED_FRAME",
+        "location":              "Speed Frame Section",
+        "maintenance_interval":  122,
+        "last_maintenance_date": date(2026, 4, 7),
+        "next_maintenance_date": date(2026, 8, 7),   # OVERDUE
+    },
+    {
+        "name":                  "SF 2 - Differential Gearbox Oil Change",
+        "type":                  "Speed Frame",
+        "department":            "SPEED_FRAME",
+        "location":              "Speed Frame Section",
+        "maintenance_interval":  122,
+        "last_maintenance_date": date(2025, 9, 12),
+        "next_maintenance_date": date(2026, 1, 12),  # OVERDUE
+    },
+    {
+        "name":                  "SF 3 - Differential Gearbox Oil Change",
+        "type":                  "Speed Frame",
+        "department":            "SPEED_FRAME",
+        "location":              "Speed Frame Section",
+        "maintenance_interval":  122,
+        "last_maintenance_date": date(2026, 4, 9),
+        "next_maintenance_date": date(2026, 8, 9),   # OVERDUE
+    },
+    {
+        "name":                  "SF 4 - Differential Gearbox Oil Change",
+        "type":                  "Speed Frame",
+        "department":            "SPEED_FRAME",
+        "location":              "Speed Frame Section",
+        "maintenance_interval":  122,
+        "last_maintenance_date": date(2025, 10, 4),
+        "next_maintenance_date": date(2026, 2, 3),   # OVERDUE
+    },
+    # 16. Foot Step Spindle Oil & Spindle Collar Cleaning — 6 months (180 days)
+    {
+        "name":                  "SF 1 - Foot Step Spindle Oil & Collar Cleaning",
+        "type":                  "Speed Frame",
+        "department":            "SPEED_FRAME",
+        "location":              "Speed Frame Section",
+        "maintenance_interval":  180,
+        "last_maintenance_date": date(2026, 2, 19),
+        "next_maintenance_date": date(2026, 8, 18),  # OVERDUE
+    },
+    {
+        "name":                  "SF 2 - Foot Step Spindle Oil & Collar Cleaning",
+        "type":                  "Speed Frame",
+        "department":            "SPEED_FRAME",
+        "location":              "Speed Frame Section",
+        "maintenance_interval":  180,
+        "last_maintenance_date": date(2026, 3, 5),
+        "next_maintenance_date": date(2026, 9, 1),
+    },
+    {
+        "name":                  "SF 3 - Foot Step Spindle Oil & Collar Cleaning",
+        "type":                  "Speed Frame",
+        "department":            "SPEED_FRAME",
+        "location":              "Speed Frame Section",
+        "maintenance_interval":  180,
+        "last_maintenance_date": date(2026, 1, 27),
+        "next_maintenance_date": date(2026, 7, 26),  # OVERDUE
+    },
+    {
+        "name":                  "SF 4 - Foot Step Spindle Oil & Collar Cleaning",
+        "type":                  "Speed Frame",
+        "department":            "SPEED_FRAME",
+        "location":              "Speed Frame Section",
+        "maintenance_interval":  180,
+        "last_maintenance_date": date(2026, 1, 8),
+        "next_maintenance_date": date(2026, 7, 7),   # OVERDUE
+    },
+    # 17. Bottom Roller Greasing — 2 months (60 days)
+    {
+        "name":                  "SF 1-4 - Bottom Roller Greasing",
+        "type":                  "Speed Frame",
+        "department":            "SPEED_FRAME",
+        "location":              "Speed Frame Section",
+        "maintenance_interval":  60,
+        "last_maintenance_date": date(2026, 4, 9),
+        "next_maintenance_date": date(2026, 6, 8),   # OVERDUE
+    },
+    # 18. Arbour Greasing — 2 years (730 days)
+    {
+        "name":                  "SF 1 - Arbour Greasing",
+        "type":                  "Speed Frame",
+        "department":            "SPEED_FRAME",
+        "location":              "Speed Frame Section",
+        "maintenance_interval":  730,
+        "last_maintenance_date": date(2023, 9, 26),
+        "next_maintenance_date": date(2025, 9, 26),  # OVERDUE
+    },
+    {
+        "name":                  "SF 2 - Arbour Greasing",
+        "type":                  "Speed Frame",
+        "department":            "SPEED_FRAME",
+        "location":              "Speed Frame Section",
+        "maintenance_interval":  730,
+        "last_maintenance_date": date(2023, 10, 4),
+        "next_maintenance_date": date(2025, 10, 4),  # OVERDUE
+    },
+    {
+        "name":                  "SF 3 - Arbour Greasing",
+        "type":                  "Speed Frame",
+        "department":            "SPEED_FRAME",
+        "location":              "Speed Frame Section",
+        "maintenance_interval":  730,
+        "last_maintenance_date": date(2023, 9, 28),
+        "next_maintenance_date": date(2025, 9, 28),  # OVERDUE
+    },
+    {
+        "name":                  "SF 4 - Arbour Greasing",
+        "type":                  "Speed Frame",
+        "department":            "SPEED_FRAME",
+        "location":              "Speed Frame Section",
+        "maintenance_interval":  730,
+        "last_maintenance_date": date(2023, 10, 6),
+        "next_maintenance_date": date(2025, 10, 6),  # OVERDUE
+    },
+    # 19. Creel Roller Greasing / Trub Lifter — 3 months (91 days)
+    {
+        "name":                  "SF 1-4 - Creel Roller Greasing & Trub Lifter",
+        "type":                  "Speed Frame",
+        "department":            "SPEED_FRAME",
+        "location":              "Speed Frame Section",
+        "maintenance_interval":  91,
+        "last_maintenance_date": date(2025, 7, 15),
+        "next_maintenance_date": date(2025, 10, 14), # OVERDUE
+    },
+    # 20. Cone Drum Cam Wire Rope Inspection — 3 months (91 days)
+    {
+        "name":                  "SF 1-4 - Cone Drum Cam Wire Rope Inspection",
+        "type":                  "Speed Frame",
+        "department":            "SPEED_FRAME",
+        "location":              "Speed Frame Section",
+        "maintenance_interval":  91,
+        "last_maintenance_date": date(2026, 7, 1),
+        "next_maintenance_date": date(2026, 9, 30),
+    },
+    # 21. Cots Buffing — 60 days / 0.2 mm
+    {
+        "name":                  "SF 1-4 - Cots Buffing (Drafting Rollers)",
+        "type":                  "Speed Frame",
+        "department":            "SPEED_FRAME",
+        "location":              "Speed Frame Section",
+        "maintenance_interval":  60,
+        "last_maintenance_date": date(2026, 8, 1),
+        "next_maintenance_date": date(2026, 9, 30),
+    },
 ]
 
 
@@ -898,15 +1371,17 @@ def seed():
 
         # Show status summary by department
         all_m = Machine.query.all()
-        blowroom_m   = [m for m in all_m if m.department == "BLOWROOM"]
-        comber_m     = [m for m in all_m if m.department == "COMBER"]
-        ring_frame_m = [m for m in all_m if m.department == "RING_FRAME"]
-        overdue      = [m for m in all_m if m.next_maintenance_date < today and m.status == "ACTIVE"]
+        blowroom_m    = [m for m in all_m if m.department == "BLOWROOM"]
+        comber_m      = [m for m in all_m if m.department == "COMBER"]
+        ring_frame_m  = [m for m in all_m if m.department == "RING_FRAME"]
+        speed_frame_m = [m for m in all_m if m.department == "SPEED_FRAME"]
+        overdue       = [m for m in all_m if m.next_maintenance_date < today and m.status == "ACTIVE"]
 
         print(f"   Total machines in DB  : {len(all_m)}")
         print(f"   BLOWROOM machines     : {len(blowroom_m)}")
         print(f"   COMBER machines       : {len(comber_m)}")
         print(f"   RING FRAME machines   : {len(ring_frame_m)}")
+        print(f"   SPEED FRAME machines  : {len(speed_frame_m)}")
         print(f"   Currently OVERDUE     : {len(overdue)}")
         if overdue:
             print("\n   Overdue machines:")

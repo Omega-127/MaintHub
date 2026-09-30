@@ -39,9 +39,10 @@ class Machine {
   /// Human-readable department label
   String get departmentLabel {
     switch (department) {
-      case 'COMBER':     return 'Comber';
-      case 'RING_FRAME': return 'Ring Frame';
-      default:           return 'Blowroom';
+      case 'COMBER':      return 'Comber';
+      case 'RING_FRAME':  return 'Ring Frame';
+      case 'SPEED_FRAME': return 'Speed Frame';
+      default:            return 'Blowroom';
     }
   }
 

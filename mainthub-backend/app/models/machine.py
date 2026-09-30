@@ -9,7 +9,7 @@ class Machine(db.Model):
     name                   = db.Column(db.String(255), nullable=False)
     type                   = db.Column(db.String(100), nullable=False)
     department             = db.Column(
-                                 db.Enum("BLOWROOM", "COMBER", "RING_FRAME", name="machine_department", native_enum=False, length=20),
+                                 db.Enum("BLOWROOM", "COMBER", "RING_FRAME", "SPEED_FRAME", name="machine_department", native_enum=False, length=20),
                                  nullable=False,
                                  default="BLOWROOM",
                              )

@@ -37,10 +37,11 @@ class _MachineListScreenState extends State<MachineListScreen> {
 
     // Title: department-scoped or "All Machines"
     final title = switch (widget.department) {
-      'BLOWROOM'   => 'Blowroom Machines',
-      'COMBER'     => 'Comber Machines',
-      'RING_FRAME' => 'Ring Frame Machines',
-      _            => 'All Machines',
+      'BLOWROOM'    => 'Blowroom Machines',
+      'COMBER'      => 'Comber Machines',
+      'RING_FRAME'  => 'Ring Frame Machines',
+      'SPEED_FRAME' => 'Speed Frame Machines',
+      _             => 'All Machines',
     };
 
     // Filter: search + optional department
@@ -82,6 +83,13 @@ class _MachineListScreenState extends State<MachineListScreen> {
               selected: _activeDeptFilter == 'RING_FRAME',
               onTap: () => setState(() =>
                   _activeDeptFilter = _activeDeptFilter == 'RING_FRAME' ? null : 'RING_FRAME'),
+            ),
+            const SizedBox(width: 4),
+            _DeptFilterChip(
+              label: 'Speed Frame',
+              selected: _activeDeptFilter == 'SPEED_FRAME',
+              onTap: () => setState(() =>
+                  _activeDeptFilter = _activeDeptFilter == 'SPEED_FRAME' ? null : 'SPEED_FRAME'),
             ),
             const SizedBox(width: 8),
           ],
@@ -188,7 +196,11 @@ class _MachineCard extends StatelessWidget {
     // Dept badge color
     final deptColor = machine.department == 'COMBER'
         ? const Color(0xFF7B61FF)
-        : const Color(0xFF0077B6);
+        : machine.department == 'RING_FRAME'
+            ? const Color(0xFF00897B)
+            : machine.department == 'SPEED_FRAME'
+                ? const Color(0xFFE65100)
+                : const Color(0xFF0077B6);
 
     return Card(
       margin: const EdgeInsets.only(bottom: 12),

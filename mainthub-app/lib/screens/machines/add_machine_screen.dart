@@ -96,8 +96,10 @@ class _AddMachineScreenState extends State<AddMachineScreen> {
                   border: OutlineInputBorder(),
                 ),
                 items: const [
-                  DropdownMenuItem(value: 'BLOWROOM', child: Text('Blowroom')),
-                  DropdownMenuItem(value: 'COMBER',   child: Text('Comber')),
+                  DropdownMenuItem(value: 'BLOWROOM',    child: Text('Blowroom')),
+                  DropdownMenuItem(value: 'COMBER',      child: Text('Comber')),
+                  DropdownMenuItem(value: 'RING_FRAME',  child: Text('Ring Frame')),
+                  DropdownMenuItem(value: 'SPEED_FRAME', child: Text('Speed Frame')),
                 ],
                 onChanged: (v) => setState(() => _selectedDept = v!),
                 validator: (v) => v == null ? 'Select a department' : null,

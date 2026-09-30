@@ -110,7 +110,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     Text('Quick Actions', style: textTheme.titleLarge),
                     const SizedBox(height: 12),
 
-                    // --- ADMIN: see both departments ---
+                    // --- ADMIN: see all departments ---
                     if (isAdmin) ...[
                       // Blowroom department tile
                       _ActionTile(
@@ -128,6 +128,24 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         color:   const Color(0xFF7B61FF),
                         onTap:   () => Navigator.push(context,
                             MaterialPageRoute(builder: (_) => const MachineListScreen(department: 'COMBER'))),
+                      ),
+                      const SizedBox(height: 12),
+                      // Ring Frame department tile
+                      _ActionTile(
+                        icon:    Icons.rotate_right_outlined,
+                        label:   'Ring Frame Machines',
+                        color:   const Color(0xFF00897B),
+                        onTap:   () => Navigator.push(context,
+                            MaterialPageRoute(builder: (_) => const MachineListScreen(department: 'RING_FRAME'))),
+                      ),
+                      const SizedBox(height: 12),
+                      // Speed Frame department tile
+                      _ActionTile(
+                        icon:    Icons.speed_outlined,
+                        label:   'Speed Frame Machines',
+                        color:   const Color(0xFFE65100),
+                        onTap:   () => Navigator.push(context,
+                            MaterialPageRoute(builder: (_) => const MachineListScreen(department: 'SPEED_FRAME'))),
                       ),
                       const SizedBox(height: 12),
                       // All machines
@@ -161,11 +179,19 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       _ActionTile(
                         icon:    userDept == 'COMBER'
                                     ? Icons.settings_input_component_outlined
-                                    : Icons.factory_outlined,
+                                    : userDept == 'RING_FRAME'
+                                        ? Icons.rotate_right_outlined
+                                        : userDept == 'SPEED_FRAME'
+                                            ? Icons.speed_outlined
+                                            : Icons.factory_outlined,
                         label:   '${auth.user?.departmentLabel ?? ''} Machines',
                         color:   userDept == 'COMBER'
                                     ? const Color(0xFF7B61FF)
-                                    : const Color(0xFF0077B6),
+                                    : userDept == 'RING_FRAME'
+                                        ? const Color(0xFF00897B)
+                                        : userDept == 'SPEED_FRAME'
+                                            ? const Color(0xFFE65100)
+                                            : const Color(0xFF0077B6),
                         onTap:   () => Navigator.push(context,
                             MaterialPageRoute(builder: (_) => MachineListScreen(department: userDept))),
                       ),
@@ -202,8 +228,20 @@ class _DeptBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color  = department == 'COMBER' ? const Color(0xFF7B61FF) : const Color(0xFF0077B6);
-    final label  = department == 'COMBER' ? 'Comber' : 'Blowroom';
+    final color = department == 'COMBER'
+        ? const Color(0xFF7B61FF)
+        : department == 'RING_FRAME'
+            ? const Color(0xFF00897B)
+            : department == 'SPEED_FRAME'
+                ? const Color(0xFFE65100)
+                : const Color(0xFF0077B6);
+    final label = department == 'COMBER'
+        ? 'Comber'
+        : department == 'RING_FRAME'
+            ? 'Ring Frame'
+            : department == 'SPEED_FRAME'
+                ? 'Speed Frame'
+                : 'Blowroom';
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
       decoration: BoxDecoration(
