@@ -9,12 +9,10 @@ from your .env file via the Flask app context.
 Idempotent: skips machines that already exist (matched by name).
 """
 
-from app import create_app, db
+from app import db
 from app.models.machine import Machine
 from app.models.user import User
 from datetime import date
-
-app = create_app()
 
 # ── Machine seed data ─────────────────────────────────────────────────────────
 MACHINES = [
@@ -2777,7 +2775,11 @@ MACHINES = [
 ]
 
 
-def seed():
+def seed(app=None):
+    if app is None:
+        from app import create_app
+        app = create_app()
+
     with app.app_context():
         # Need at least one admin user to satisfy created_by FK
         admin = User.query.filter_by(role="ADMIN").first()

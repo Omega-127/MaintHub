@@ -90,6 +90,35 @@ def _auto_migrate(app):
             db.session.commit()
             app.logger.info("[migration] Created default admin user admin@mainthub.com")
 
+        # 4. Sync missing machines across all departments
+        from app.models.machine import Machine
+        try:
+            from seed import MACHINES
+            admin_user = User.query.filter_by(role="ADMIN").first()
+            if admin_user:
+                existing_names = {row[0] for row in db.session.query(Machine.name).all()}
+                to_insert = [
+                    Machine(
+                        name=m["name"],
+                        type=m["type"],
+                        department=m["department"],
+                        location=m["location"],
+                        maintenance_interval=m["maintenance_interval"],
+                        last_maintenance_date=m["last_maintenance_date"],
+                        next_maintenance_date=m["next_maintenance_date"],
+                        status="ACTIVE",
+                        created_by=admin_user.id,
+                    )
+                    for m in MACHINES if m["name"] not in existing_names
+                ]
+                if to_insert:
+                    db.session.add_all(to_insert)
+                    db.session.commit()
+                    app.logger.info(f"[migration] Seeded {len(to_insert)} missing machines across departments")
+        except Exception as e:
+            db.session.rollback()
+            app.logger.warning(f"[migration] Machine sync error: {e}")
+
     except Exception as e:
         db.session.rollback()
         app.logger.error(f"[migration] Auto-migration error: {e}")
