@@ -1,10 +1,13 @@
-from flask import Flask
+from flask import Flask, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_jwt_extended import JWTManager
 from flask_cors import CORS
 from flask_marshmallow import Marshmallow
 from dotenv import load_dotenv
+from sqlalchemy import inspect, text
+from werkzeug.exceptions import HTTPException
 import os
+import logging
 
 load_dotenv()
 
@@ -16,8 +19,6 @@ ma = Marshmallow()
 
 def _normalize_database_url(url: str) -> str:
     """Render/Railway/Heroku URLs need SQLAlchemy-compatible schemes."""
-    # Prefer psycopg2 (installed as psycopg2-binary). Newer SQLAlchemy may
-    # default postgresql:// to psycopg v3, which we do not ship.
     if url.startswith("postgres://"):
         url = "postgresql://" + url[len("postgres://"):]
     if url.startswith("postgresql://") and not url.startswith("postgresql+"):
@@ -31,6 +32,69 @@ def _is_local_mysql(url: str) -> bool:
     return "mysql" in url and ("localhost" in url or "127.0.0.1" in url)
 
 
+def _auto_migrate(app):
+    """
+    Idempotent migration to ensure schema consistency on deployment.
+    Adds missing columns to existing tables and seeds a default admin user.
+    """
+    try:
+        inspector = inspect(db.engine)
+        tables = inspector.get_table_names()
+
+        # 1. users table: ensure department and is_active exist
+        if "users" in tables:
+            user_cols = {c["name"] for c in inspector.get_columns("users")}
+            if "department" not in user_cols:
+                try:
+                    db.session.execute(text("ALTER TABLE users ADD COLUMN department VARCHAR(50) NULL"))
+                    db.session.commit()
+                    app.logger.info("[migration] Added 'department' column to users table")
+                except Exception as e:
+                    db.session.rollback()
+                    app.logger.warning(f"[migration] Could not add department to users: {e}")
+
+            if "is_active" not in user_cols:
+                try:
+                    db.session.execute(text("ALTER TABLE users ADD COLUMN is_active BOOLEAN NOT NULL DEFAULT 1"))
+                    db.session.commit()
+                except Exception as e:
+                    db.session.rollback()
+
+        # 2. machines table: ensure department exists
+        if "machines" in tables:
+            machine_cols = {c["name"] for c in inspector.get_columns("machines")}
+            if "department" not in machine_cols:
+                try:
+                    db.session.execute(text("ALTER TABLE machines ADD COLUMN department VARCHAR(50) NOT NULL DEFAULT 'BLOWROOM'"))
+                    db.session.commit()
+                    app.logger.info("[migration] Added 'department' column to machines table")
+                except Exception as e:
+                    db.session.rollback()
+                    app.logger.warning(f"[migration] Could not add department to machines: {e}")
+
+        # 3. Ensure default admin user admin@mainthub.com exists
+        from app.models.user import User
+        import bcrypt
+        admin = User.query.filter_by(email="admin@mainthub.com").first()
+        if not admin:
+            password_hash = bcrypt.hashpw(b"admin123", bcrypt.gensalt()).decode("utf-8")
+            default_admin = User(
+                full_name="Admin User",
+                email="admin@mainthub.com",
+                password_hash=password_hash,
+                role="ADMIN",
+                department=None,
+                is_active=True,
+            )
+            db.session.add(default_admin)
+            db.session.commit()
+            app.logger.info("[migration] Created default admin user admin@mainthub.com")
+
+    except Exception as e:
+        db.session.rollback()
+        app.logger.error(f"[migration] Auto-migration error: {e}")
+
+
 def create_app():
     app = Flask(__name__)
 
@@ -42,7 +106,6 @@ def create_app():
         )
     )
     # Dev convenience only: if local MySQL isn't running, fall back to SQLite.
-    # Never override remote production URLs (Render MySQL/Postgres).
     if _is_local_mysql(db_url):
         import socket
         try:
@@ -57,6 +120,10 @@ def create_app():
 
     app.config["SQLALCHEMY_DATABASE_URI"] = db_url
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+    app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
+        "pool_pre_ping": True,
+        "pool_recycle": 280,
+    }
     app.config["JWT_SECRET_KEY"] = os.getenv(
         "JWT_SECRET_KEY",
         "dev-secret-change-in-production"
@@ -76,6 +143,7 @@ def create_app():
 
     with app.app_context():
         db.create_all()
+        _auto_migrate(app)
 
     # ── Register blueprints (routes) ─────────────────────────
     from app.routes.auth        import auth_bp
@@ -90,13 +158,43 @@ def create_app():
     app.register_blueprint(dashboard_bp,     url_prefix="/api/dashboard")
     app.register_blueprint(notifications_bp, url_prefix="/api/notifications")
 
+    def _health_check():
+        db_status = "ok"
+        error_msg = None
+        try:
+            db.session.execute(text("SELECT 1"))
+        except Exception as e:
+            db_status = "error"
+            error_msg = str(e)
+
+        resp = {"status": "ok", "database": db_status}
+        if error_msg:
+            resp["database_error"] = error_msg
+        return jsonify(resp), (200 if db_status == "ok" else 500)
+
     @app.get("/health")
     def health():
-        return {"status": "ok"}, 200
+        return _health_check()
+
+    @app.get("/api/health")
+    def api_health():
+        return _health_check()
+
+    # ── Global Error Handling ─────────────────────────────────
+    @app.errorhandler(Exception)
+    def handle_exception(e):
+        if isinstance(e, HTTPException):
+            return jsonify({"error": e.description}), e.code
+
+        import traceback
+        logging.error(f"Unhandled Exception: {e}\n{traceback.format_exc()}")
+        return jsonify({
+            "error": str(e),
+            "type": type(e).__name__,
+        }), 500
 
     # ── Start background scheduler ───────────────────────────
     from app.services.scheduler import start_scheduler
     start_scheduler(app)
 
     return app
-

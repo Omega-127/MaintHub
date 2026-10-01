@@ -10,7 +10,7 @@ auth_bp = Blueprint("auth", __name__)
 # ── POST /api/auth/register ──────────────────────────────────
 @auth_bp.route("/register", methods=["POST"])
 def register():
-    data = request.get_json()
+    data = request.get_json(silent=True) or {}
 
     # Validate required fields
     required = ["full_name", "email", "password", "role"]
@@ -18,17 +18,21 @@ def register():
         if not data.get(field):
             return jsonify({"error": f"{field} is required"}), 400
 
-    # Check email not already taken
-    if User.query.filter_by(email=data["email"]).first():
+    email = str(data["email"]).strip().lower()
+    full_name = str(data["full_name"]).strip()
+    role = str(data["role"]).strip().upper()
+
+    # Check email not already taken (case-insensitive)
+    if User.query.filter(db.func.lower(User.email) == email).first():
         return jsonify({"error": "Email already registered"}), 409
 
     # Validate role
-    if data["role"] not in ["ADMIN", "TECHNICIAN"]:
+    if role not in ["ADMIN", "TECHNICIAN"]:
         return jsonify({"error": "Role must be ADMIN or TECHNICIAN"}), 400
 
     # Validate department for technicians
     department = data.get("department")
-    if data["role"] == "TECHNICIAN":
+    if role == "TECHNICIAN":
         if not department or department not in ["BLOWROOM", "COMBER", "RING_FRAME", "SPEED_FRAME", "WINDING", "BUFFING"]:
             return jsonify({"error": "Technicians must have a department: BLOWROOM, COMBER, RING_FRAME, SPEED_FRAME, WINDING or BUFFING"}), 400
     else:
@@ -36,23 +40,26 @@ def register():
 
     # Hash password
     password_hash = bcrypt.hashpw(
-        data["password"].encode("utf-8"),
+        str(data["password"]).encode("utf-8"),
         bcrypt.gensalt()
     ).decode("utf-8")
 
     # Create user
     user = User(
-        full_name=data["full_name"],
-        email=data["email"],
+        full_name=full_name,
+        email=email,
         password_hash=password_hash,
-        role=data["role"],
+        role=role,
         department=department,
     )
     db.session.add(user)
     db.session.commit()
 
+    access_token = create_access_token(identity=str(user.id))
+
     return jsonify({
         "message": "User registered successfully",
+        "access_token": access_token,
         "user": {
             "id":         user.id,
             "full_name":  user.full_name,
@@ -66,18 +73,20 @@ def register():
 # ── POST /api/auth/login ─────────────────────────────────────
 @auth_bp.route("/login", methods=["POST"])
 def login():
-    data = request.get_json()
+    data = request.get_json(silent=True) or {}
 
     if not data.get("email") or not data.get("password"):
         return jsonify({"error": "Email and password are required"}), 400
 
-    # Find user
-    user = User.query.filter_by(email=data["email"]).first()
+    email = str(data["email"]).strip().lower()
+
+    # Find user (case-insensitive)
+    user = User.query.filter(db.func.lower(User.email) == email).first()
     if not user or not user.is_active:
         return jsonify({"error": "Invalid credentials"}), 401
 
     # Check password
-    if not bcrypt.checkpw(data["password"].encode("utf-8"), user.password_hash.encode("utf-8")):
+    if not bcrypt.checkpw(str(data["password"]).encode("utf-8"), user.password_hash.encode("utf-8")):
         return jsonify({"error": "Invalid credentials"}), 401
 
     # Generate JWT
