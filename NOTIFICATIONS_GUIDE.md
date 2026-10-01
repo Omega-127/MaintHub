@@ -1,188 +1,213 @@
-# MainHub — In-App Notifications Guide
+# MaintHub — In-App Notifications & Scheduling Guide
 
-MainHub has a built-in notification system that automatically alerts technicians when maintenance is due. No emails — everything happens in the app.
+MaintHub features an automated background notification and scheduling engine that alerts technicians and maintenance administrators when machinery is due or overdue for servicing across all 6 textile mill departments.
 
 ---
 
 ## 🔔 How Notifications Work
 
-### Automatic Generation (Backend)
+### 1. Automatic Scheduler Evaluation (Backend)
 
-Every day at **6:00 AM**, APScheduler runs this process:
+Every day at **6:00 AM**, `APScheduler` runs an automated inspection in `app/services/scheduler.py`:
 
 ```
-1. Query all machines with: next_maintenance_date <= TODAY()
+1. Query active machines where: next_maintenance_date <= TODAY()
 2. For each due machine:
-   - Determine type: REMINDER (due today) or OVERDUE (past due)
-   - Create notification for ALL technicians
-   - Save to database
-3. Log the process
+   - If next_maintenance_date < TODAY() → Mark as OVERDUE (⚠️)
+   - If next_maintenance_date == TODAY() → Mark as REMINDER (🔔)
+3. For each active Technician and Admin:
+   - Check if an unread notification already exists for machine + user
+   - If not, create and persist a new notification row in the database
+4. Log results to server output
 ```
 
-### Example
+### 2. Concrete Example
 
-**Machine:** Pump-001  
-**Next Maintenance:** 2026-08-09  
-**Today:** 2026-08-10
+**Machine:** `RF-14 Ring Frame`  
+**Department:** `RING_FRAME`  
+**Location:** Shed 2, Line B  
+**Next Maintenance:** `2026-09-25`  
+**Today's Date:** `2026-10-01`  
 
-→ Status: **OVERDUE**
+→ Evaluation: **OVERDUE** (by 6 days)
 
-→ Notification created:
+→ Notification record created in MySQL:
 ```json
 {
-  "machine_id": 1,
-  "user_id": 2,  // technician
-  "title": "⚠️ OVERDUE: Pump-001",
-  "message": "Pump-001 (Pump) at Hall A was due on 09 Aug 2026.",
+  "id": 42,
+  "machine_id": 14,
+  "user_id": 3,
+  "title": "⚠️ OVERDUE: RF-14 Ring Frame",
+  "message": "Machine 'RF-14 Ring Frame' (Ring Frame) at Shed 2, Line B was due on 2026-09-25.",
   "notification_type": "OVERDUE",
   "is_sent": true,
-  "is_read": false
+  "is_read": false,
+  "created_at": "2026-10-01T06:00:00"
 }
 ```
 
 ---
 
-## 📱 Frontend Display
+## 📱 Mobile App Presentation
 
-### Notification Types
+### Notification Classifications
 
-| Type | Icon | Color | When |
-|------|------|-------|------|
-| REMINDER | 🔔 | Blue | Due today |
-| OVERDUE | ⚠️ | Red | Past due date |
-| COMPLETED | ✅ | Green | Maintenance done |
+| Type | Badge / Icon | Indicator Color | Condition |
+|------|--------------|-----------------|-----------|
+| **REMINDER** | 🔔 Due Today | Amber / Blue | `next_maintenance_date == TODAY()` |
+| **OVERDUE** | ⚠️ Overdue | Crimson Red | `next_maintenance_date < TODAY()` |
+| **COMPLETED** | ✅ Completed | Green | Triggered when technician marks machine complete |
 
-### User Views
+### User Interface Views
 
-**1. Pending Maintenance Screen**
+1. **Dashboard KPI Banner & Overdue Carousel:**
+   - Highlights the top 5 most critical overdue machines with direct navigation to machine detail.
+2. **Pending Maintenance Screen (`lib/screens/maintanance/pending_screen.dart`):**
+   - Displays all overdue and due machines filtered by the user's assigned department.
+   - Includes a quick **"Mark Complete"** button to log service on the spot.
+3. **Machine Details Screen (`lib/screens/machines/machine_details_screen.dart`):**
+   - Shows maintenance schedule badges, previous service notes, and technician logs.
+
+---
+
+## 🔄 Lifecycle Workflow
+
 ```
-Shows only OVERDUE machines
-- Pump-001 (⚠️ OVERDUE)
-- Motor-B (⚠️ OVERDUE)
-- Loom-C (⚠️ OVERDUE)
-```
-
-**2. Notifications List** (future implementation)
-```
-All notifications for user
-- ⚠️ OVERDUE: Pump-001 — 09 Aug 2026
-- 🔔 REMINDER: Motor-B — today
-- ✅ COMPLETED: Loom-C — yesterday
-```
-
-**3. Machine Detail Screen**
-```
-View machine + "Mark Complete" button
-→ Tap to mark done
-→ Creates COMPLETED notification for all users
-→ Recalculates next maintenance date
+Admin registers equipment:
+  Machine: AC-12 Autoconer
+  Department: WINDING
+  Interval: 30 days
+  First maintenance: 2026-10-01
+  ↓
+Backend automatically sets:
+  next_maintenance_date = 2026-10-01 + 30 days = 2026-10-31
+  ↓
+At 6:00 AM on 2026-10-31:
+  APScheduler evaluates AC-12 Autoconer as due today
+  ↓
+Dispatches notification to Winding technicians:
+  Title: "🔔 Due Today: AC-12 Autoconer"
+  ↓
+Technician opens MaintHub app:
+  Views alert on Dashboard & Pending screen
+  Performs service and taps "Mark Complete"
+  Adds optional service notes (e.g. "Replaced tension discs")
+  ↓
+Backend processes completion:
+  Logs audit record in maintenance_history
+  Sets last_maintenance_date = 2026-10-31
+  Calculates next_maintenance_date = 2026-10-31 + 30 = 2026-11-30
+  Status resets to ACTIVE
+  ↓
+Cycle repeats automatically in 30 days
 ```
 
 ---
 
-## 🔄 The Full Workflow
+## 🛠️ Backend Scheduler Implementation
 
-```
-Admin adds machine:
-  Name: Pump-001
-  Type: Pump
-  Interval: 90 days
-  First maintenance: 2026-08-01
-  ↓
-Backend calculates:
-  next_maintenance_date = 2026-08-01 + 90 = 2026-10-30
-  ↓
-6:00 AM on 2026-10-30:
-  APScheduler finds Pump-001 is due
-  ↓
-Creates notification:
-  Title: "🔔 Due Today: Pump-001"
-  For: All technicians
-  ↓
-Technician opens app:
-  Sees notification in Pending list
-  Taps "Mark Complete"
-  ↓
-Backend:
-  Creates COMPLETED notification
-  Updates: last_maintenance_date = 2026-10-30
-  Recalculates: next_maintenance_date = 2026-10-30 + 90 = 2026-12-28
-  ↓
-Cycle repeats in 90 days
-```
-
----
-
-## 🛠️ Backend Implementation
-
-### Scheduler Code
-
-**File:** `app/services/scheduler.py`
+**File:** `mainthub-backend/app/services/scheduler.py`
 
 ```python
+from apscheduler.schedulers.background import BackgroundScheduler
+from datetime import date, datetime, timezone
+
 def check_due_machines(app):
-    """Runs daily at 6 AM"""
     with app.app_context():
-        # Find all active machines due today or overdue
+        from app import db
+        from app.models.machine import Machine
+        from app.models.notification import Notification
+        from app.models.user import User
+
+        today = date.today()
         due_machines = Machine.query.filter(
             Machine.next_maintenance_date <= today,
             Machine.status == "ACTIVE"
         ).all()
 
-        # Get all technicians to notify
-        technicians = User.query.filter_by(
-            role="TECHNICIAN",
-            is_active=True
+        if not due_machines:
+            return
+
+        technicians = User.query.filter(
+            User.role.in_(["TECHNICIAN", "ADMIN"]),
+            User.is_active == True
         ).all()
 
-        # Create notifications for each technician
         for machine in due_machines:
             is_overdue = machine.next_maintenance_date < today
             notif_type = "OVERDUE" if is_overdue else "REMINDER"
-            
+            title = f"{'⚠️ OVERDUE' if is_overdue else '🔔 Due Today'}: {machine.name}"
+            message = (
+                f"Machine '{machine.name}' ({machine.type}) at {machine.location or 'N/A'} "
+                f"{'was due on' if is_overdue else 'is due for'} maintenance "
+                f"on {machine.next_maintenance_date}."
+            )
+
             for tech in technicians:
-                notif = Notification(
+                # Prevent duplicate alerts for the same machine and user
+                existing = Notification.query.filter_by(
                     machine_id=machine.id,
                     user_id=tech.id,
-                    title=f"{'⚠️ OVERDUE' if is_overdue else '🔔 Due Today'}: {machine.name}",
-                    message=f"Machine '{machine.name}' is due for maintenance.",
-                    notification_type=notif_type,
-                    is_sent=True,
-                    sent_at=datetime.now(timezone.utc)
-                )
-                db.session.add(notif)
-        
+                    is_sent=False
+                ).first()
+
+                if not existing:
+                    notif = Notification(
+                        machine_id=machine.id,
+                        user_id=tech.id,
+                        title=title,
+                        message=message,
+                        notification_type=notif_type,
+                        is_sent=True,
+                        sent_at=datetime.now(timezone.utc)
+                    )
+                    db.session.add(notif)
+
         db.session.commit()
+
+def start_scheduler(app):
+    scheduler = BackgroundScheduler()
+    scheduler.add_job(
+        func=lambda: check_due_machines(app),
+        trigger="cron",
+        hour=6,
+        minute=0,
+        id="daily_maintenance_check",
+        replace_existing=True
+    )
+    scheduler.start()
+    return scheduler
 ```
 
-### API Endpoints
+---
 
-**Get User's Notifications**
-```
-GET /api/notifications/
-Authorization: Bearer {token}
+## 🔌 API Endpoints for Notifications
 
-Response:
+### 1. List User's Notifications
+- **Method / URL:** `GET /api/notifications/`
+- **Header:** `Authorization: Bearer <jwt_token>`
+
+#### Response (`200 OK`)
+```json
 [
   {
-    "id": 1,
-    "machine_id": 1,
-    "title": "⚠️ OVERDUE: Pump-001",
-    "message": "Pump-001 (Pump) at Hall A was due on 09 Aug 2026.",
+    "id": 12,
+    "machine_id": 5,
+    "title": "⚠️ OVERDUE: B-02 Bale Opener",
+    "message": "Machine 'B-02 Bale Opener' (Bale Opener) at Shed 1 was due on 2026-09-28.",
     "notification_type": "OVERDUE",
     "is_read": false,
-    "created_at": "2026-08-10T06:00:00"
-  },
-  ...
+    "created_at": "2026-10-01 06:00:00"
+  }
 ]
 ```
 
-**Mark Notification as Read**
-```
-PUT /api/notifications/{id}/read
-Authorization: Bearer {token}
+### 2. Acknowledge Notification
+- **Method / URL:** `PUT /api/notifications/<id>/read`
+- **Header:** `Authorization: Bearer <jwt_token>`
 
-Response:
+#### Response (`200 OK`)
+```json
 {
   "message": "Notification marked as read"
 }
@@ -190,249 +215,53 @@ Response:
 
 ---
 
-## 📱 Frontend Implementation
+## ⚙️ Customizing the Scheduler
 
-### Fetching Notifications
-
-**File:** `lib/services/notification_service.dart`
-
-```dart
-class NotificationService {
-  Future<List<Notification>> getNotifications() async {
-    final response = await _client.get('/notifications/');
-    return (response.data as List)
-        .map((json) => Notification.fromJson(json))
-        .toList();
-  }
-
-  Future<void> markAsRead(int notifId) async {
-    await _client.put('/notifications/$notifId/read');
-  }
-}
-```
-
-### Display in UI
-
-**File:** `lib/screens/maintenance/pending_screen.dart`
-
-```dart
-// Shows overdue machines as notifications
-ListView.builder(
-  itemCount: overdueMachines.length,
-  itemBuilder: (_, i) {
-    final machine = overdueMachines[i];
-    return Card(
-      child: ListTile(
-        leading: Icon(Icons.warning_rounded, color: Colors.red),
-        title: Text(machine.name),
-        subtitle: Text('Due: ${machine.nextMaintenanceDate}'),
-        trailing: ElevatedButton(
-          onPressed: () => markComplete(machine.id),
-          child: Text('Mark Complete'),
-        ),
-      ),
-    );
-  },
-)
-```
-
----
-
-## 🔧 Configuration
-
-### Change Scheduler Time
-
-Edit `app/services/scheduler.py`:
+### Modifying Job Execution Time
+To alter the scheduler trigger time (for instance, to 8:30 AM), adjust `app/services/scheduler.py`:
 
 ```python
 scheduler.add_job(
     func=lambda: check_due_machines(app),
     trigger="cron",
-    hour=6,           # ← Change this
-    minute=0,         # ← Or this
+    hour=8,
+    minute=30,
     id="daily_maintenance_check",
     replace_existing=True
 )
 ```
 
-Examples:
-- `hour=6, minute=0` → 6:00 AM (default)
-- `hour=8, minute=30` → 8:30 AM
-- `hour=14, minute=0` → 2:00 PM
-
-### Disable Notifications for a Machine
-
-```python
-# Set machine status to INACTIVE
-machine.status = "INACTIVE"
-db.session.commit()
-# Scheduler will skip it
-```
-
----
-
-## 📊 Notification Database Structure
-
-**Table:** `notifications`
-
-| Column | Type | Purpose |
-|--------|------|---------|
-| `id` | INT | Primary key |
-| `machine_id` | INT | Which machine (FK) |
-| `user_id` | INT | Which technician (FK) |
-| `title` | VARCHAR | Short alert title |
-| `message` | TEXT | Full message |
-| `notification_type` | ENUM | REMINDER, OVERDUE, COMPLETED |
-| `is_sent` | BOOLEAN | Was it sent/created? |
-| `is_read` | BOOLEAN | Did user see it? |
-| `sent_at` | DATETIME | When it was created |
-| `created_at` | DATETIME | Timestamp |
-
----
-
-## 🧪 Testing Notifications
-
-### Manual Test (Backend)
-
-```bash
-# Connect to your MySQL
-mysql -h localhost -u root mainthub_db
-
-# Check for notifications created today
-SELECT * FROM notifications WHERE DATE(created_at) = CURDATE();
-
-# Check for overdue machines
-SELECT * FROM machines 
-WHERE next_maintenance_date < CURDATE() 
-AND status = 'ACTIVE';
-```
-
-### Manual Test (Frontend)
-
-1. Start the app
-2. Dashboard → "Pending Maintenance"
-3. If no overdue machines show, add one manually:
-   - Admin → Add Machine → set `next_maintenance_date` to yesterday
-   - Run scheduler manually or wait for 6 AM
-   - Open app → Pending Maintenance should show it
-
-### Automated Test (Pytest)
-
-```python
-def test_notification_created_for_overdue_machine():
-    # Create machine that's overdue
-    machine = Machine(
-        name="Test-001",
-        next_maintenance_date=date.today() - timedelta(days=1),
-        status="ACTIVE"
-    )
-    db.session.add(machine)
-    db.session.commit()
-    
-    # Run scheduler
-    from app.services.scheduler import check_due_machines
-    check_due_machines(app)
-    
-    # Assert notification was created
-    notification = Notification.query.filter_by(machine_id=machine.id).first()
-    assert notification is not None
-    assert notification.notification_type == "OVERDUE"
-```
-
----
-
-## 🚀 Future Enhancements
-
-### Push Notifications (Optional)
-If you want phone notifications even when app is closed, add Firebase Cloud Messaging:
-
-1. Generate Firebase credentials
-2. Install `firebase-admin` in backend
-3. Send notification via Firebase when machine is due
-4. Add Firebase plugin to Flutter app
-5. Handle notification tap → open app to relevant machine
-
-### Email Notifications (Optional)
-If needed later, add SMTP to send emails alongside notifications:
-
-```python
-# In scheduler.py, after creating notification:
-send_email_to_technician(
-    tech.email,
-    subject=f"Maintenance Due: {machine.name}",
-    body=notification.message
-)
-```
-
-### Notification Grouping (Optional)
-Group multiple notifications by type:
-- "3 machines overdue"
-- "5 due today"
-- "2 completed today"
-
----
-
-## 📞 Troubleshooting
-
-### Notifications Not Creating
-
-**Check 1: Is scheduler running?**
-```bash
-# Start backend and look for this in logs:
-[Scheduler] Started — daily check at 6:00 AM
-```
-
-**Check 2: Are there machines due?**
+### Disabling Alerts for Out-of-Service Equipment
+Set the machine status to `INACTIVE`:
 ```sql
-SELECT * FROM machines 
-WHERE next_maintenance_date <= CURDATE() 
-AND status = 'ACTIVE';
+UPDATE machines SET status = 'INACTIVE' WHERE id = 14;
+```
+The scheduler automatically ignores machines that are not `ACTIVE`.
+
+---
+
+## 🧪 Testing the Notification Flow
+
+### Test Manually via Backend Terminal
+You can run an immediate evaluation in Python without waiting until 6:00 AM:
+
+```bash
+cd mainthub-backend
+python -c "from app import create_app; from app.services.scheduler import check_due_machines; app = create_app(); check_due_machines(app)"
 ```
 
-If empty → no machines are due, notifications won't create.
-
-**Check 3: Are technicians active?**
+### Check Database Records
 ```sql
-SELECT * FROM users 
-WHERE role = 'TECHNICIAN' 
-AND is_active = TRUE;
+SELECT 
+    n.id, 
+    m.name AS machine_name, 
+    u.full_name AS recipient, 
+    n.title, 
+    n.notification_type, 
+    n.created_at
+FROM notifications n
+JOIN machines m ON n.machine_id = m.id
+JOIN users u ON n.user_id = u.id
+ORDER BY n.created_at DESC 
+LIMIT 10;
 ```
-
-If empty → no notifications will be created (no one to notify).
-
-### User Not Seeing Notifications
-
-**Check 1: Are they logged in?**
-- Notifications are user-specific
-- Must be authenticated to fetch
-
-**Check 2: Check app logs**
-```bash
-flutter run -v
-# Look for API errors when fetching notifications
-```
-
-**Check 3: Verify API response**
-```bash
-curl -H "Authorization: Bearer {token}" \
-     http://localhost:5000/api/notifications/
-```
-
-Should return a list (empty `[]` if none, or populated list).
-
----
-
-## ✅ Checklist — Notifications Working
-
-- [ ] APScheduler starts when backend runs (see log message)
-- [ ] Add a machine with `next_maintenance_date` = today
-- [ ] Wait for 6 AM or trigger scheduler manually (restart backend)
-- [ ] Notification appears in database: `SELECT * FROM notifications;`
-- [ ] App fetches it: `GET /api/notifications/` returns the notification
-- [ ] App displays it: Pending Maintenance screen shows machine
-- [ ] Technician marks complete → notification type changes to COMPLETED
-
----
-
-*Last updated: August 2026*
-*MainHub Team*

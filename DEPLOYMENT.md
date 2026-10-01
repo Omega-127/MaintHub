@@ -133,104 +133,87 @@ users
 
 Render auto-deploys your Flask app every time you push to `main`.
 
-### Step 1: Add Dockerfile to Backend
+### Step 1: Backend Deployment Options on Render
 
-Make sure `mainthub-backend/Dockerfile` exists and contains:
+You can deploy the backend using either **Option A (Render Blueprint - Recommended)** or **Option B (Manual Web Service)**.
 
-```dockerfile
-FROM python:3.11-slim
+#### Option A: Render Blueprint (`render.yaml`) — Automated Setup
+The repository includes a ready-to-use `render.yaml` blueprint:
+1. In Render Dashboard, click **New +** → **Blueprint**.
+2. Select the **MaintHub** repository.
+3. Render automatically detects `render.yaml` and configures:
+   - **Runtime:** Python 3.11
+   - **Root Directory:** `mainthub-backend`
+   - **Build Command:** `pip install -r requirements.txt`
+   - **Start Command:** `gunicorn run:app --bind 0.0.0.0:$PORT`
+   - **Health Check Path:** `/health`
+4. Set the `DATABASE_URL` environment variable to your Railway connection string.
+5. Click **Apply**.
 
-WORKDIR /app
+#### Option B: Manual Web Service Setup
+1. Go to **https://render.com** → **New +** → **Web Service**
+2. Connect your GitHub account and select **MaintHub**
+3. Configure the service:
 
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+| Setting | Value (Python Runtime) | Value (Docker Runtime) |
+|---------|------------------------|------------------------|
+| **Name** | `mainthub-backend` | `mainthub-backend` |
+| **Region** | Singapore (closest to India) | Singapore |
+| **Branch** | `main` | `main` |
+| **Root Directory** | `mainthub-backend` | `mainthub-backend` |
+| **Runtime** | `Python` | `Docker` |
+| **Build Command** | `pip install -r requirements.txt` | *(auto-detected)* |
+| **Start Command** | `gunicorn run:app --bind 0.0.0.0:$PORT` | *(auto-detected)* |
+| **Health Check Path** | `/health` | `/health` |
+| **Instance Type** | `Free` | `Free` |
 
-COPY . .
+### Step 2: Set Environment Variables on Render
 
-CMD ["python", "run.py"]
-```
-
-### Step 2: Update run.py for Production
-
-Make sure `run.py` reads host and port from environment:
-
-```python
-from app import create_app
-import os
-
-app = create_app()
-
-if __name__ == "__main__":
-    app.run(
-        host="0.0.0.0",
-        port=int(os.getenv("PORT", 5000)),
-        debug=False   # ← Always False in production
-    )
-```
-
-### Step 3: Create Render Service
-
-1. Go to **https://render.com** → **"New"** → **"Web Service"**
-2. Connect your GitHub account
-3. Select the **MainHub** repository
-4. Configure:
-
-| Setting | Value |
-|---------|-------|
-| Name | `mainthub-backend` |
-| Region | Singapore (closest to India) |
-| Branch | `main` |
-| Root Directory | `mainthub-backend` |
-| Runtime | `Docker` |
-| Instance Type | `Free` |
-
-5. Click **"Create Web Service"**
-
-### Step 4: Set Environment Variables on Render
-
-In your Render service → **"Environment"** tab → add these:
+In your Render service → **Environment** tab → add these variables:
 
 ```
 DATABASE_URL        = mysql+pymysql://root:PASSWORD@HOST:PORT/mainthub_db
 JWT_SECRET_KEY      = generate-a-strong-random-key-min-32-chars
 FLASK_ENV           = production
+PYTHON_VERSION      = 3.11.11
 ```
 
+> **Note on DATABASE_URL:** Make sure the URL uses the `mysql+pymysql://` driver prefix. If Railway provides `mysql://...`, change the scheme to `mysql+pymysql://`.
+>
 > **Generate a strong JWT key:**
 > ```bash
 > python -c "import secrets; print(secrets.token_hex(32))"
 > ```
 
-### Step 5: Trigger First Deploy
+### Step 3: Trigger First Deploy & Automated Database Boot
 
-Render auto-deploys on push to `main`. To trigger manually:
+Render auto-deploys on push to `main`:
 
 ```bash
-# Push your latest code to main
 git checkout main
 git merge develop
 git push origin main
 ```
 
-Watch the deploy logs in Render dashboard. A successful deploy ends with:
-```
-Your service is live 🎉
-```
+Upon successful startup, the backend automatically runs `_auto_migrate()`:
+1. Self-heals database schema (ensures `department` and `is_active` columns exist on `users` and `machines`).
+2. Creates the default admin account: `admin@mainthub.com` / `admin123`.
+3. Synchronizes all 295 machines across all 6 textile departments (`BLOWROOM`, `COMBER`, `RING_FRAME`, `SPEED_FRAME`, `WINDING`, `BUFFING`).
 
-### Step 6: Get Your Backend URL
+### Step 4: Verify Backend Health
 
-Once deployed, Render gives you a URL like:
+Once live, Render assigns your service a public URL, for example:
 ```
 https://mainthub-backend.onrender.com
 ```
 
-Test it:
+Verify your deployment using the `/health` endpoint:
 ```bash
-curl https://mainthub-backend.onrender.com/api/machines/
-# Should return: []
+curl https://mainthub-backend.onrender.com/health
+# Response: {"status":"ok","database":"ok"}
 ```
 
-✅ **Backend deployed.**
+✅ **Backend deployed and database synchronized.**
 
 ---
 
@@ -611,7 +594,7 @@ git status
 
 | Service | URL |
 |---------|-----|
-| GitHub Repo | https://github.com/your-org/MaintHub |
+| GitHub Repo | https://github.com/Omega-127/MaintHub |
 | Render Dashboard | https://render.com/dashboard |
 | Railway Dashboard | https://railway.app/dashboard |
 | Backend (Live) | https://mainthub-backend.onrender.com |

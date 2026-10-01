@@ -33,7 +33,7 @@ class AuthService {
     required String email,
     required String password,
     String  role       = 'TECHNICIAN',
-    String? department,           // BLOWROOM | COMBER | null (for ADMIN)
+    String? department,           // BLOWROOM | COMBER | RING_FRAME | SPEED_FRAME | WINDING | BUFFING | null (for ADMIN)
   }) async {
     final payload = <String, dynamic>{
       'full_name': fullName,

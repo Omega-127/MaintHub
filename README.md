@@ -1,468 +1,255 @@
 # MaintHub — Machine Maintenance Management System
 
-[![Status](https://img.shields.io/badge/Status-In%20Development-yellow)]()
+[![Status](https://img.shields.io/badge/Status-Production%20Ready-brightgreen)]()
 [![License](https://img.shields.io/badge/License-MIT-blue)](LICENSE)
 [![Python](https://img.shields.io/badge/Python-3.9%2B-blue)](https://www.python.org/)
+[![Flask](https://img.shields.io/badge/Flask-3.0.3-black)](https://flask.palletsprojects.com/)
 [![Flutter](https://img.shields.io/badge/Flutter-3.0%2B-blue)](https://flutter.dev)
+[![Database](https://img.shields.io/badge/Database-MySQL%208.0%20%7C%20SQLite-orange)](https://www.mysql.com/)
 
-A full-stack **Machine Maintenance Management System** for automating maintenance scheduling, notifications, and tracking. Built with Flask (Python) backend and Flutter mobile app.
+A modern, full-stack **Machine Maintenance Management System (CMMS)** designed for industrial textile manufacturing facilities. Automates equipment maintenance scheduling, predictive overdue alerting, technician assignments, and service history tracking across all manufacturing departments.
 
-> **Project Timeline:** August 2026 – November 2026 (16 weeks)  
-> **Status:** Week 1-2 Complete (Backend & Frontend Built) ✅
+Built with a high-performance **Python/Flask** backend, **MySQL** database with connection pooling and auto-migration, and a cross-platform **Flutter** mobile application.
 
 ---
 
-## 🎯 Features
+## 🎯 Key Highlights
 
-### ✅ Completed Features
+- **🏭 6 Textile Mill Departments:** Full support for `BLOWROOM`, `COMBER`, `RING_FRAME`, `SPEED_FRAME`, `WINDING`, and `BUFFING`.
+- **⚙️ 295 Pre-Seeded Machines:** Complete catalog synchronized directly from industry maintenance schedules.
+- **👥 Role-Based Access Control (RBAC):**
+  - **Technicians:** Automatically scoped to their assigned department to view relevant machinery, upcoming tasks, and overdue alerts.
+  - **Administrators:** Facility-wide visibility with instant department-switching tabs, equipment CRUD, and scheduling management.
+- **⚡ Self-Healing Database & Auto-Migration:** Automated schema migrations (`_auto_migrate`) and default administrator provisioning on startup.
+- **⏰ Automated Background Scheduler:** Daily background evaluation (APScheduler at 06:00 AM) that detects due machinery and dispatches in-app notifications.
+- **🛡️ Cloud Connection Resilience:** Engineered with pre-pinging (`pool_pre_ping=True`) and connection recycling (`pool_recycle=280`) to eliminate cloud database disconnects on Render and Railway, plus SQLite fallback for offline local testing.
 
-**Backend (Flask API)**
-- ✅ User authentication — login/register with JWT tokens
-- ✅ Role-based access control — Admin vs Technician
-- ✅ Machine management — CRUD operations for machines
-- ✅ Auto-scheduling — next maintenance date calculation
-- ✅ Maintenance tracking — complete maintenance history
-- ✅ Dashboard KPIs — total, active, overdue, upcoming machines
-- ✅ Notifications system — auto-generated alerts
-- ✅ Background scheduler — APScheduler runs daily at 6 AM
-- ✅ All 5 API routes implemented and tested
+---
 
-**Frontend (Flutter App)**
-- ✅ Splash screen — auto-login check on app start
-- ✅ Login/Register screens — email + password authentication
-- ✅ Dashboard — KPI cards showing machine status overview
-- ✅ Machine list — searchable, filterable machine registry
-- ✅ Machine detail — view machine info + mark complete
-- ✅ Add machine — admin-only form with date picker
-- ✅ Pending maintenance — shows overdue machines only
-- ✅ State management — Provider pattern for clean architecture
-- ✅ API integration — Dio HTTP client with auto-JWT injection
-- ✅ Secure storage — tokens stored in flutter_secure_storage
+## 🚀 Features Breakdown
 
-**Database (MySQL)**
-- ✅ 4 core tables — users, machines, maintenance_history, notifications
-- ✅ Schema auto-creation — init.sql runs on Docker startup
-- ✅ Seed admin account — auto-created for first login
-- ✅ Proper indexing — optimized queries for scheduler
-- ✅ Foreign keys & cascades — data integrity maintained
+### ✅ Backend (Flask 3.0 REST API)
+- ✅ **Authentication & Authorization:** Secure JWT access tokens with BCrypt password hashing and role enforcement.
+- ✅ **Department Scoping:** Automated query filtering matching the technician's assigned department.
+- ✅ **Equipment Management:** Full CRUD operations for machinery with customizable service intervals (days).
+- ✅ **Automated Next-Date Engine:** Recalculates `next_maintenance_date = today + interval` automatically upon maintenance completion.
+- ✅ **Maintenance History:** Complete audit trail of service events, notes, timestamps, and technician IDs.
+- ✅ **Executive Dashboard:** Aggregates facility KPIs (Total, Active, Inactive, Under Maintenance, Overdue, and Upcoming 7-day machinery).
+- ✅ **Background Scheduler:** APScheduler daily 6:00 AM worker generating reminders and overdue alerts.
+- ✅ **Health Check Endpoints:** `/health` and `/api/health` probes for cloud uptime and database monitoring.
 
-### 🔄 In Progress
+### ✅ Frontend (Flutter Mobile App)
+- ✅ **Splash & Auto-Authentication:** Token verification on app start with hardware-backed secure storage.
+- ✅ **Role-Aware Registration & Login:** Technicians select their designated department during signup; Admins manage all departments.
+- ✅ **Interactive Dashboard:** Live KPI stat cards with department filtering tabs and quick-action overdue alerts.
+- ✅ **Searchable Machine Registry:** Real-time search across machine name, model, type, and location.
+- ✅ **Actionable Machine Details:** View equipment specifications, next scheduled maintenance, and log completed service.
+- ✅ **Add Machine Form:** Admin-exclusive screen with interval configuration and date picker.
+- ✅ **Pending Maintenance Queue:** Dedicated view highlighting machines that are overdue for servicing.
+- ✅ **Clean Architecture:** Provider state management (`AuthProvider`, `MachineProvider`) and Dio HTTP client with JWT interceptor.
 
-- 🟡 Equipment catalog — pre-loaded machine types with maintenance intervals (from Excel)
-- 🟡 Add from catalog — quick-add machines from predefined list
-- ✅ In-app notifications dashboard — view all alerts
-- 🟡 Mobile refinements — better UX on small screens
-
-### 📋 Not Yet Started
-
-- ✅ In-app notifications — APScheduler creates alerts automatically
-- ⬜ QR code scanning — for machine tracking
-- ⬜ Analytics dashboard — charts and reports
-- ⬜ Multi-language support
-- ⬜ Offline mode — sync when online
+### ✅ Database & Infrastructure
+- ✅ **4 Core Relational Tables:** `users`, `machines`, `maintenance_history`, and `notifications`.
+- ✅ **Dockerized Environment:** Pre-configured MySQL 8.0 and phpMyAdmin in `docker-compose.yml`.
+- ✅ **Zero-Downtime Deployment:** Tested on Railway (managed MySQL) and Render (Gunicorn web service).
 
 ---
 
 ## 📊 Tech Stack
 
-### Backend
-| Component | Technology | Version |
-|-----------|-----------|---------|
-| Framework | Flask | 3.0.3 |
-| ORM | SQLAlchemy | 2.0.19 |
-| Database | MySQL | 8.0 |
-| Auth | JWT (Flask-JWT-Extended) | 4.6.0 |
-| Scheduler | APScheduler | 3.10.4 |
-| Containerization | Docker | Latest |
-
-### Frontend
-| Component | Technology | Version |
-|-----------|-----------|---------|
-| Framework | Flutter | 3.0+ |
-| State Mgmt | Provider | 6.1.2 |
-| HTTP Client | Dio | 5.4.0 |
-| Storage | flutter_secure_storage | 9.0.0 |
-| Date Formatting | intl | 0.19.0 |
-
-### Infrastructure (Production)
-| Layer | Service | Purpose |
-|-------|---------|---------|
-| Database | Railway | Managed MySQL |
-| Backend | Render | Flask deployment |
-| Frontend | Google Play / Direct APK | Android distribution |
+| Domain | Technology | Version | Purpose |
+|--------|------------|---------|---------|
+| **Backend Framework** | Flask | 3.0.3 | High-performance RESTful API |
+| **ORM & Database Client** | SQLAlchemy / PyMySQL | 2.0.19 / 1.1.0 | Database abstraction & connection pooling |
+| **Database** | MySQL / SQLite | 8.0 | Relational database (SQLite local fallback) |
+| **Authentication** | Flask-JWT-Extended | 4.6.0 | Stateless Bearer token auth |
+| **Password Security** | BCrypt | 4.1.2 | Cryptographic password hashing |
+| **Background Scheduler** | APScheduler | 3.10.4 | Daily cron evaluation of service dates |
+| **WSGI Server** | Gunicorn | 21.2.0 | Production-grade WSGI HTTP server |
+| **Mobile Framework** | Flutter / Dart | 3.0+ | Cross-platform Android & iOS client |
+| **State Management** | Provider | 6.1.2 | Reactive application state |
+| **Mobile Networking** | Dio | 5.4.0 | HTTP client with automatic token interceptor |
+| **Secure KeyStore** | flutter_secure_storage | 9.0.0 | Hardware-backed encrypted storage |
 
 ---
 
-## 🚀 Quick Start
+## 📁 Repository Structure
 
-### Prerequisites
-- Python 3.9+
-- Flutter SDK 3.0+
-- MySQL 8.0+ (or Docker)
-- Git
+```
+MaintHub/
+├── README.md                           ← Master overview (this file)
+├── CONTRIBUTING.md                     ← Team collaboration & Git Flow guidelines
+├── DEPLOYMENT.md                       ← Production deployment on Railway + Render
+├── NOTIFICATIONS_GUIDE.md              ← Background scheduler & notification engine
+├── docker-compose.yml                  ← Local MySQL 8.0 & phpMyAdmin services
+├── init.sql                            ← Database DDL schema & 295 machine seeds
+├── migrate_add_departments.sql         ← Standalone migration script
+├── render.yaml                         ← Render Infrastructure-as-Code manifest
+├── LICENSE                             ← MIT License
+│
+├── docs/                               ← 📚 Detailed Documentation Suite
+│   ├── API_SPECIFICATION.md            ← Exhaustive REST API specification & payloads
+│   ├── DATABASE_SCHEMA.md              ← Entity diagrams, table schemas & indexes
+│   ├── DATABASE_GUIDE.md               ← DB setup, seeding, queries & pooling guide
+│   ├── ARCHITECTURE.md                 ← Multi-tier system architecture & RBAC model
+│   └── SETUP.md                        ← Step-by-step local developer setup guide
+│
+├── mainthub-backend/                   ← 🐍 Flask Backend Service
+│   ├── README.md                       ← Backend specific documentation
+│   ├── run.py                          ← Server entry point
+│   ├── seed.py                         ← Machine catalog definitions (295 machines)
+│   ├── Dockerfile                      ← Container specification
+│   ├── Procfile                        ← Gunicorn web process definition
+│   ├── render.yaml                     ← Service configuration for Render
+│   ├── requirements.txt                ← Python package dependencies
+│   └── app/
+│       ├── __init__.py                 ← App factory, connection pooling, auto-migration
+│       ├── models/                     ← SQLAlchemy database models
+│       ├── routes/                     ← REST API Blueprints (Auth, Machines, etc.)
+│       └── services/                   ← Scheduler background service
+│
+├── mainthub-app/                       ← 📱 Flutter Mobile Application
+│   ├── README.md                       ← Mobile app documentation & APK build instructions
+│   ├── pubspec.yaml                    ← Flutter dependencies
+│   └── lib/
+│       ├── main.dart                   ← Mobile entry point
+│       ├── config/                     ← API URLs (app_config.dart), theme
+│       ├── models/                     ← Data classes (User, Machine, Dashboard)
+│       ├── providers/                  ← State stores (AuthProvider, MachineProvider)
+│       ├── services/                   ← Dio API client & service wrappers
+│       └── screens/                    ← UI Screens (Auth, Dashboard, Machines, etc.)
+│
+└── *.xlsx                              ← Industry Maintenance Schedule Spreadsheets
+    ├── comber_schedules.xlsx
+    ├── Preparatory_Buffing_Schedule.xlsx
+    ├── Ring_Frame_Maintenance_Schedule.xlsx
+    ├── Speed_Frame_Maintenance_Schedule.xlsx
+    └── Winding_Maintenance_Schedule.xlsx
+```
 
-### 30-Second Setup
+---
 
-**Backend:**
+## ⚡ Quick Start
+
+### 1. Database & Backend
 ```bash
+# Clone the repository
+git clone https://github.com/Omega-127/MaintHub.git
+cd MaintHub
+
+# Start MySQL database in Docker (optional — SQLite auto-fallback is supported)
+docker-compose up -d mysql
+
+# Setup Python environment
 cd mainthub-backend
 python -m venv venv
-venv\Scripts\activate
+.\venv\Scripts\activate          # Windows PowerShell (or source venv/bin/activate on Unix)
 pip install -r requirements.txt
+
+# Run backend (auto-migrates schema and syncs 295 machines)
 python run.py
-# Backend at http://localhost:5000
+# Server runs on http://localhost:5000
 ```
 
-**Database:**
+### 2. Flutter Mobile App
 ```bash
-# From repo root
-docker-compose up -d mysql
-```
-
-**Frontend:**
-```bash
-cd mainthub-app
+cd ../mainthub-app
 flutter pub get
+
+# Configure backend URL in lib/config/app_config.dart
+# - For Android Emulator: 'http://10.0.2.2:5000/api'
+# - For Physical Device:  'http://<YOUR_LOCAL_IP>:5000/api'
+# - For Production:       'https://mainthub-backend.onrender.com/api'
+
 flutter run
-# Opens on Android emulator/device
 ```
 
 ---
 
-## 📁 Project Structure
+## 🔐 Default Administrator Login
 
-```
-mainthub/
-│
-├── README.md                       ← You are here
-├── CONTRIBUTING.md                 ← Team guidelines
-├── DEPLOYMENT.md                   ← Production deploy guide
-├── docker-compose.yml              ← MySQL + phpMyAdmin
-├── init.sql                        ← Database schema
-├── .gitignore
-│
-├── mainthub-backend/               ✅ COMPLETE
-│   ├── run.py                      ← Start server
-│   ├── requirements.txt            ← Python packages
-│   ├── Dockerfile                  ← Container image
-│   ├── .env.example
-│   └── app/
-│       ├── __init__.py            ← Flask factory + scheduler
-│       ├── models/                ← SQLAlchemy models (4 tables)
-│       ├── routes/                ← 5 API blueprints
-│       └── services/              ← Business logic + scheduler
-│
-├── mainthub-app/                   ✅ COMPLETE
-│   ├── pubspec.yaml               ← Flutter dependencies
-│   ├── android/                   ← Android config
-│   └── lib/
-│       ├── main.dart              ← App entry point
-│       ├── config/                ← Theme, URLs
-│       ├── models/                ← Data classes (User, Machine, Dashboard)
-│       ├── services/              ← API client + business logic
-│       ├── providers/             ← State management (Auth, Machine)
-│       └── screens/               ← 8 UI screens
-│           ├── auth/              ← Login, Splash
-│           ├── dashboard/         ← KPI overview
-│           ├── machines/          ← List, detail, add
-│           └── maintenance/       ← Pending maintenance
-│
-└── docs/                           ← Documentation
-    ├── API_SPECIFICATION.md        ← All endpoints
-    ├── DATABASE_SCHEMA.md          ← Table structure
-    ├── DATABASE_GUIDE.md           ← How to use the DB
-    ├── ARCHITECTURE.md             ← System design
-    └── SETUP.md                    ← Detailed setup guide
-```
+The backend automatically provisions an administrator account on first launch:
+
+| Credential | Value |
+|------------|-------|
+| **Email** | `admin@mainthub.com` |
+| **Password** | `admin123` |
+| **Role** | `ADMIN` |
+| **Department Access** | Full mill-wide access (all 6 departments) |
+
+> 🔒 **Security Notice:** Always update the default administrator password in production environments!
 
 ---
 
-## 🔌 API Endpoints (Complete List)
+## 🔌 API Endpoints Summary
 
-### Authentication
-```
-POST   /api/auth/register           Register new user
-POST   /api/auth/login              Login user → access token
-GET    /api/auth/me                 Get current user info
-```
+| Blueprint | Method | Endpoint | Description | Access |
+|-----------|--------|----------|-------------|--------|
+| **Health** | `GET` | `/health`, `/api/health` | Service and database probe | Public |
+| **Auth** | `POST` | `/api/auth/register` | Register new user / technician | Public |
+| **Auth** | `POST` | `/api/auth/login` | Login and obtain JWT token | Public |
+| **Auth** | `GET` | `/api/auth/me` | Current authenticated profile | Authenticated |
+| **Machines** | `GET` | `/api/machines/` | List machines (dept scoped) | Authenticated |
+| **Machines** | `GET` | `/api/machines/types` | List distinct machine types | Authenticated |
+| **Machines** | `GET` | `/api/machines/departments`| List 6 textile departments | Authenticated |
+| **Machines** | `GET` | `/api/machines/due` | List overdue machines | Authenticated |
+| **Machines** | `GET` | `/api/machines/<id>` | Get single machine details | Authenticated |
+| **Machines** | `POST` | `/api/machines/` | Register new machine | Admin Only |
+| **Machines** | `PUT` | `/api/machines/<id>` | Update machine specifications | Admin Only |
+| **Machines** | `DELETE`| `/api/machines/<id>` | Remove machine from registry | Admin Only |
+| **Maintenance** | `POST` | `/api/maintenance/<id>/complete` | Log completed maintenance | Authenticated |
+| **Maintenance** | `GET` | `/api/maintenance/<id>/history` | View machine service history | Authenticated |
+| **Maintenance** | `GET` | `/api/maintenance/due` | Query due machinery | Authenticated |
+| **Dashboard** | `GET` | `/api/dashboard/` | Real-time facility KPIs | Authenticated |
+| **Notifications**| `GET` | `/api/notifications/` | Get user in-app alerts | Authenticated |
+| **Notifications**| `PUT` | `/api/notifications/<id>/read` | Mark alert as acknowledged | Authenticated |
 
-### Machines (CRUD)
-```
-GET    /api/machines/               List all machines
-POST   /api/machines/               Create machine (admin only)
-GET    /api/machines/<id>           Get machine details
-PUT    /api/machines/<id>           Update machine (admin only)
-DELETE /api/machines/<id>           Delete machine (admin only)
-```
-
-### Maintenance
-```
-POST   /api/maintenance/<id>/complete    Mark maintenance as done
-GET    /api/maintenance/<id>/history     Get maintenance history
-```
-
-### Dashboard
-```
-GET    /api/dashboard/              Get KPI summary + recent maintenance
-```
-
-### Notifications
-```
-GET    /api/notifications/          Get user's notifications
-PUT    /api/notifications/<id>/read Mark notification as read
-```
-
-Full API spec: See `docs/API_SPECIFICATION.md`
+Detailed schemas, query parameters, and JSON payloads: see [`docs/API_SPECIFICATION.md`](docs/API_SPECIFICATION.md).
 
 ---
 
-## 🗄️ Database Schema
+## 🏭 Department Catalog Summary
 
-**4 Core Tables:**
-
-| Table | Purpose | Key Fields |
-|-------|---------|-----------|
-| `users` | User accounts | id, email, password_hash, role (ADMIN/TECHNICIAN) |
-| `machines` | Equipment registry | id, name, type, next_maintenance_date, status |
-| `maintenance_history` | Maintenance events | id, machine_id, technician_id, status (COMPLETED/OVERDUE) |
-| `notifications` | Alerts sent to users | id, machine_id, user_id, type (REMINDER/OVERDUE) |
-
-**Auto-Scheduling:**
-- APScheduler runs daily at 6 AM
-- Finds all machines with `next_maintenance_date <= TODAY()`
-- Creates notifications for all technicians
-- When technician marks complete → `next_maintenance_date` recalculates automatically
+| Department | Equipment Types | Seeded Count |
+|------------|-----------------|--------------|
+| **BLOWROOM** | Bale Opener, Uniclean, Mono Cylinder, Carding | 24 |
+| **COMBER** | Lap Former, Comber, Draw Frame | 27 |
+| **RING FRAME** | Ring Spinning Frames RF-01 to RF-37 | 37 |
+| **SPEED FRAME** | Speed / Roving Frames SF-01 to SF-50 | 50 |
+| **WINDING** | Autoconers AC-01 to AC-105 | 105 |
+| **BUFFING** | Cot Buffing & Maintenance Equipment | 52 |
+| **TOTAL** | **Comprehensive Textile Mill Inventory** | **295 Machines** |
 
 ---
 
-## 🔐 Default Login (Development)
+## 📚 Complete Documentation Index
 
-| Field | Value |
-|-------|-------|
-| Email | admin@mainthub.com |
-| Password | admin123 |
-| Role | ADMIN |
-
-**Change after first login in production!**
-
----
-
-## 🧪 Testing
-
-### Backend — Pytest
-
-```bash
-cd mainthub-backend
-pytest                              # Run all tests
-pytest --cov=app tests/             # With coverage
-pytest tests/test_auth.py -v        # Specific test file
-```
-
-**Minimum coverage:** 70%
-
-### Frontend — Flutter Test
-
-```bash
-cd mainthub-app
-flutter test                        # Run all tests
-flutter test test/providers/        # Test specific folder
-```
-
----
-
-## 🚀 Deployment
-
-### Production Stack
-- **Database:** Railway (MySQL managed)
-- **Backend:** Render (Flask auto-deploy from GitHub)
-- **Frontend:** Android APK (direct distribution or Play Store)
-
-**See `DEPLOYMENT.md` for complete step-by-step guide.**
-
-### Quick Deploy Checklist
-- [ ] Push code to GitHub `main` branch
-- [ ] Render auto-deploys Flask backend
-- [ ] Update `app_config.dart` with Render URL
-- [ ] Build APK: `flutter build apk --release`
-- [ ] Distribute APK to team
-
----
-
-## 📞 Team Workflow
-
-### Branch Strategy
-- `main` — production-ready code
-- `develop` — integration branch (latest working)
-- `feature/*` — new features
-- `bugfix/*` — bug fixes
-
-See `CONTRIBUTING.md` for detailed branching & commit conventions.
-
-### Code Review
-- Minimum 1 approval before merge
-- No self-merging
-- Address all comments before merge
-
-### Daily Workflow
-1. Pull latest `develop`
-2. Create `feature/your-feature` branch
-3. Commit with conventional commits (`feat:`, `fix:`, etc.)
-4. Push and create Pull Request
-5. Wait for review → merge
-6. Delete branch
-
----
-
-## 🆘 Troubleshooting
-
-### Backend Won't Start
-```bash
-# Check Python version
-python --version          # need 3.9+
-
-# Reinstall dependencies
-pip install -r requirements.txt
-
-# Check database connection
-echo $DATABASE_URL
-```
-
-### Flutter Build Fails
-```bash
-# Clean and rebuild
-flutter clean
-flutter pub get
-flutter run -v            # verbose for detailed errors
-```
-
-### Database Connection Error
-```bash
-# Check MySQL is running
-docker ps                 # should show mainthub-mysql
-
-# Check connection string format
-DATABASE_URL=mysql+pymysql://user:pass@host:port/dbname
-```
-
-### API Calls Fail on Physical Device
-```
-Update app_config.dart with your PC's actual IP (192.168.x.x)
-Not 10.0.2.2 — that only works on emulators
-```
-
-See `DEPLOYMENT.md` troubleshooting section for more.
-
----
-
-## 📚 Documentation
-
-| Document | What It Covers |
-|----------|---------------|
-| `README.md` | Project overview (this file) |
-| `CONTRIBUTING.md` | Team guidelines, branching, commits, code style |
-| `DEPLOYMENT.md` | Production deployment on Railway + Render |
-| `docs/API_SPECIFICATION.md` | All REST endpoints with examples |
-| `docs/DATABASE_SCHEMA.md` | Table structure and relationships |
-| `docs/DATABASE_GUIDE.md` | Using MySQL, useful queries |
-| `docs/ARCHITECTURE.md` | System design and patterns |
-
----
-
-## 🎯 Next Steps (Week 2+)
-
-### Week 2
-- [ ] Load equipment catalog from Excel
-- [ ] Add "Quick Add from Catalog" feature
-- [ ] Add email notifications (SMTP)
-- [ ] Polish UI based on feedback
-
-### Week 3-4
-- [ ] Analytics dashboard (charts, reports)
-- [ ] Maintenance history filtering
-- [ ] Technician assignment feature
-- [ ] Export maintenance reports as PDF
-
-### Week 5+
-- [ ] QR code scanning for machines
-- [ ] Offline mode (sync when online)
-- [ ] Multi-language support
-- [ ] Play Store submission
-
----
-
-## 📊 Project Stats
-
-| Metric | Value |
-|--------|-------|
-| Lines of Code | ~3500+ |
-| Python Files | 15+ |
-| Dart Files | 20+ |
-| API Endpoints | 12 |
-| Flutter Screens | 8 |
-| Database Tables | 4 |
-| Test Coverage Target | 70%+ |
-| Team Size | 1-4 developers |
-
----
-
-## 📅 Timeline Status
-
-| Phase | Weeks | Status | Focus |
-|-------|-------|--------|-------|
-| **1: Foundation** | 1-2 | ✅ Done | Architecture, DB, Setup |
-| **2: Core Features** | 3-5 | 🔄 In Progress | Catalog, Notifications |
-| **3: Refinement** | 6-8 | 🔲 Next | Polish, Analytics |
-| **4: Testing** | 9-11 | 🔲 Later | QA, Edge cases |
-| **5: Deployment** | 12-13 | 🔲 Later | Production setup |
-| **6: Documentation** | 14-16 | 🔲 Later | Final docs, demo |
+| Guide | Description |
+|-------|-------------|
+| [**API Specification**](docs/API_SPECIFICATION.md) | Full endpoint contracts, request/response bodies, HTTP codes, and RBAC rules |
+| [**Database Schema**](docs/DATABASE_SCHEMA.md) | Entity relationship diagram, table structures, column constraints, and indexes |
+| [**Database Operations Guide**](docs/DATABASE_GUIDE.md) | Docker setup, auto-migration engine, maintenance queries, and connection pooling |
+| [**System Architecture**](docs/ARCHITECTURE.md) | Architecture diagram, component design, state management, and security model |
+| [**Local Setup Guide**](docs/SETUP.md) | Step-by-step developer onboarding for Windows, macOS, Linux, and Android |
+| [**Deployment Guide**](DEPLOYMENT.md) | Production deployment instructions for Railway (MySQL) and Render (Flask) |
+| [**Notifications Guide**](NOTIFICATIONS_GUIDE.md) | APScheduler job execution, overdue criteria, and alert delivery |
+| [**Contributing Guide**](CONTRIBUTING.md) | Branching guidelines, conventional commits, code review standards |
+| [**Mobile App Guide**](mainthub-app/README.md) | Flutter application architecture, screen flows, and APK release generation |
+| [**Backend Guide**](mainthub-backend/README.md) | Flask server setup, environment variables, and Docker containerization |
 
 ---
 
 ## 🤝 Contributing
 
-Read `CONTRIBUTING.md` for:
-- How to set up your dev environment
-- Branch naming conventions
-- Commit message format
-- Code style guidelines
-- Pull request process
-- Code review standards
+We welcome contributions! Please review [`CONTRIBUTING.md`](CONTRIBUTING.md) before submitting pull requests.
 
-**TL;DR:** Branch from `develop`, commit with `feat:` or `fix:`, push, create PR, get 1 approval, merge.
+1. Create a feature branch: `git checkout -b feature/your-feature`
+2. Commit your changes following [Conventional Commits](https://www.conventionalcommits.org/): `git commit -m 'feat: add equipment report export'`
+3. Push to the branch: `git push origin feature/your-feature`
+4. Open a Pull Request for review.
 
 ---
 
 ## 📜 License
 
-This project is licensed under the **MIT License** — see `LICENSE` file for details.
-
----
-
-
-
----
-
-## 🙋 Questions?
-
-1. Check `docs/` folder for detailed guides
-2. Check `CONTRIBUTING.md` for team standards
-3. Check `DEPLOYMENT.md` for production questions
-4. Ask in team chat (Slack/WhatsApp)
-5. Create GitHub Issue for bugs/features
-
----
-
-## ⭐ If This Helped
-
-- ⭐ Star this repo
-- 🍴 Fork for your own use
-- 🐛 Report issues
-- 💡 Suggest improvements
-- 👥 Share with your team
-
----
-
-**Happy coding! 🚀**
-
-*Last updated: August 2026*  
-*mainthub Team*
+This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.

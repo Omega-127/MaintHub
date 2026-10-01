@@ -20,7 +20,7 @@ def get_dashboard():
     query = Machine.query
     if user.role == "ADMIN":
         dept_filter = request.args.get("department")
-        if dept_filter and dept_filter in ("BLOWROOM", "COMBER"):
+        if dept_filter and dept_filter in ("BLOWROOM", "COMBER", "RING_FRAME", "SPEED_FRAME", "WINDING", "BUFFING"):
             query = query.filter(Machine.department == dept_filter)
     else:
         if user.department:

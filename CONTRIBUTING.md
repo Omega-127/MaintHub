@@ -35,7 +35,7 @@ Thank you for being part of the MainHub team! This guide covers everything you n
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/your-org/MaintHub.git
+git clone https://github.com/Omega-127/MaintHub.git
 cd MaintHub
 ```
 

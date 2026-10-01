@@ -2,7 +2,7 @@ class Machine {
   final int     id;
   final String  name;
   final String  type;
-  final String  department; // 'BLOWROOM' | 'COMBER' | 'RING_FRAME'
+  final String  department; // 'BLOWROOM' | 'COMBER' | 'RING_FRAME' | 'SPEED_FRAME' | 'WINDING' | 'BUFFING'
   final String? location;
   final int     maintenanceInterval;
   final String? lastMaintenanceDate;
