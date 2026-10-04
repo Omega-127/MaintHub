@@ -21,19 +21,27 @@ class Machine {
     required this.status,
   });
 
-  bool get isOverdue {
+  DateTime? get _nextDateOnly {
     final next = DateTime.tryParse(nextMaintenanceDate);
+    if (next == null) return null;
+    return DateTime(next.year, next.month, next.day);
+  }
+
+  DateTime get _todayOnly {
+    final today = DateTime.now();
+    return DateTime(today.year, today.month, today.day);
+  }
+
+  bool get isOverdue {
+    final next = _nextDateOnly;
     if (next == null) return false;
-    return next.isBefore(DateTime.now());
+    return next.isBefore(_todayOnly);
   }
 
   bool get isDueToday {
-    final next = DateTime.tryParse(nextMaintenanceDate);
+    final next = _nextDateOnly;
     if (next == null) return false;
-    final today = DateTime.now();
-    return next.year == today.year &&
-           next.month == today.month &&
-           next.day == today.day;
+    return next == _todayOnly;
   }
 
   /// Human-readable department label

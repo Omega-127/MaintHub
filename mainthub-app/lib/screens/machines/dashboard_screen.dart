@@ -4,6 +4,7 @@ import '../../config/theme.dart';
 import '../../models/dashboard.dart';
 import '../../providers/auth_provider.dart';
 import '../../services/dashboard_service.dart';
+import '../../services/overdue_alert_service.dart';
 import 'login_screen.dart';
 import 'machine_list_screen.dart';
 import 'add_machine_screen.dart';
@@ -16,7 +17,8 @@ class DashboardScreen extends StatefulWidget {
   State<DashboardScreen> createState() => _DashboardScreenState();
 }
 
-class _DashboardScreenState extends State<DashboardScreen> {
+class _DashboardScreenState extends State<DashboardScreen>
+    with WidgetsBindingObserver {
   final _dashService = DashboardService();
   DashboardSummary? _summary;
   bool _isLoading = true;
@@ -24,19 +26,37 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _load();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      OverdueAlertService.instance.checkAndNotify();
+    }
   }
 
   Future<void> _load() async {
     try {
       final summary = await _dashService.getSummary();
       setState(() { _summary = summary; _isLoading = false; });
+      // Refresh device notifications for overdue / due-today machines.
+      await OverdueAlertService.instance.checkAndNotify();
     } catch (_) {
       setState(() => _isLoading = false);
     }
   }
 
-  void _logout() async {
+  Future<void> _logout() async {
+    await OverdueAlertService.instance.stopPeriodicChecks();
+    if (!mounted) return;
     await context.read<AuthProvider>().logout();
     if (!mounted) return;
     Navigator.pushReplacement(

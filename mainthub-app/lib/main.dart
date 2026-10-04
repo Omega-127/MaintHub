@@ -4,9 +4,11 @@ import 'config/theme.dart';
 import 'providers/auth_provider.dart';
 import 'providers/machine_provider.dart';
 import 'screens/splash_screen.dart';
+import 'services/overdue_alert_service.dart';
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await OverdueAlertService.instance.initialize();
   runApp(const MyApp());
 }
 

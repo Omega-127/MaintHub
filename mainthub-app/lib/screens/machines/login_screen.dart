@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../config/theme.dart';
 import '../../providers/auth_provider.dart';
+import '../../services/overdue_alert_service.dart';
 import 'dashboard_screen.dart';
 import 'signup_screen.dart';
 
@@ -34,6 +35,7 @@ class _LoginScreenState extends State<LoginScreen> {
     if (!mounted) return;
 
     if (success) {
+      OverdueAlertService.instance.checkAndNotify(force: true);
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (_) => const DashboardScreen()),

@@ -43,11 +43,13 @@ def check_due_machines(app):
             )
 
             for tech in technicians:
-                # Avoid duplicate notifications for same machine+user on same day
-                existing = Notification.query.filter_by(
-                    machine_id=machine.id,
-                    user_id=tech.id,
-                    is_sent=False
+                # Avoid duplicate notifications for same machine+user on same calendar day
+                start_of_day = datetime.combine(today, datetime.min.time())
+                existing = Notification.query.filter(
+                    Notification.machine_id == machine.id,
+                    Notification.user_id == tech.id,
+                    Notification.notification_type == notif_type,
+                    Notification.created_at >= start_of_day,
                 ).first()
 
                 if not existing:

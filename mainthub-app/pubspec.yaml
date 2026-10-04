@@ -1,6 +1,6 @@
 name: flutter_package_1
 description: "A new Flutter package project."
-version: 1.0.1+2
+version: 1.1.0+3
 homepage:
 
 environment:
@@ -15,7 +15,9 @@ dependencies:
   provider: ^6.1.2
   intl: ^0.19.0
   google_fonts: ^8.2.1
-
+  flutter_local_notifications: ^22.3.1
+  permission_handler: ^13.0.2
+  shared_preferences: ^2.5.5
 dev_dependencies:
   flutter_test:
     sdk: flutter
