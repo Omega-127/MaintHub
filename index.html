@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="MaintHub — machine maintenance scheduling for textile mills. Track overdue work, department queues, and service history from your phone.">
+<title>MaintHub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@450;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --font:"Archivo",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+  --navy:#0b1230;
+  --blue:#2f6fe6;
+  --teal:#2fd6c0;
+  --amb:#ffb340;
+  --coral:#ff6b6b;
+  --glass:rgba(255,255,255,.13);
+  --edge:rgba(255,255,255,.42);
+  --edge2:rgba(255,255,255,.22);
+  --text:rgba(255,255,255,.92);
+  --mute:rgba(255,255,255,.58);
+  --pad:clamp(16px,4vw,24px);
+  --safe-l:env(safe-area-inset-left,0px);
+  --safe-r:env(safe-area-inset-right,0px);
+  --safe-b:env(safe-area-inset-bottom,0px);
+  --safe-t:env(safe-area-inset-top,0px);
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{margin:0;background:var(--navy);color:var(--text);font-family:var(--font);-webkit-font-smoothing:antialiased;line-height:1.5;overflow-x:clip}
+img{display:block;max-width:100%;height:auto}
+a{color:inherit}
+:focus-visible{outline:3px solid #fff;outline-offset:3px}
+
+/* Shared liquid glass */
+.glass{
+  background:var(--glass);
+  border:1px solid var(--edge2);
+  box-shadow:inset 0 1.5px 0 var(--edge),inset 0 -1px 0 var(--edge2),0 18px 36px -18px rgba(0,0,0,.7);
+  backdrop-filter:blur(22px) saturate(190%);
+  -webkit-backdrop-filter:blur(22px) saturate(190%);
+}
+
+/* —— Hero —— */
+.hero{position:relative;min-height:100vh;min-height:100dvh;height:100vh;height:100dvh;overflow:hidden;background:var(--navy)}
+.hero canvas{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none}
+.dock{
+  position:absolute;
+  left:calc(var(--pad) + var(--safe-l));
+  right:calc(var(--pad) + var(--safe-r));
+  bottom:calc(var(--pad) + var(--safe-b));
+  color:#fff;z-index:2;max-width:100%;
+}
+.name{font-weight:750;font-size:clamp(2rem,10vw,3.8rem);line-height:1;letter-spacing:-.04em}
+.opts{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.opt{
+  display:inline-flex;align-items:center;justify-content:center;
+  min-height:44px;padding:0 18px;border-radius:999px;
+  font-weight:600;font-size:clamp(.88rem,2.8vw,.95rem);color:#fff;text-decoration:none;
+  background:var(--glass);border:1px solid var(--edge2);
+  box-shadow:inset 0 1.5px 0 var(--edge),inset 0 -1px 0 var(--edge2),0 18px 36px -18px rgba(0,0,0,.7);
+  backdrop-filter:blur(20px) saturate(190%);-webkit-backdrop-filter:blur(20px) saturate(190%);
+  transition:transform .25s cubic-bezier(.2,.8,.2,1),background .25s;
+  -webkit-tap-highlight-color:transparent;
+}
+.opt.primary{background:var(--blue);border-color:rgba(255,255,255,.3);box-shadow:inset 0 1.5px 0 rgba(255,255,255,.5),0 14px 30px -12px rgba(47,111,230,.9)}
+.rise{opacity:0;transform:translateY(18px);animation:rise .9s cubic-bezier(.2,.8,.2,1) forwards;animation-delay:var(--d,.3s)}
+@keyframes rise{to{opacity:1;transform:none}}
+
+/* —— Page —— */
+.page{position:relative;overflow-x:clip;background:var(--navy);padding-bottom:var(--safe-b)}
+.orb{position:absolute;border-radius:50%;pointer-events:none;z-index:0}
+.orb--a{width:min(520px,70vw);height:min(520px,70vw);background:rgba(47,111,230,.22);top:8%;right:-12%}
+.orb--b{width:min(420px,60vw);height:min(420px,60vw);background:rgba(47,214,192,.14);top:42%;left:-14%}
+.orb--c{width:min(380px,55vw);height:min(380px,55vw);background:rgba(255,179,64,.12);bottom:12%;right:8%}
+.orb--d{width:min(300px,45vw);height:min(300px,45vw);background:rgba(255,107,107,.1);top:68%;left:30%}
+
+.wrap{position:relative;z-index:1;width:min(1120px,100%);margin-inline:auto;padding-inline:max(var(--pad),var(--safe-l)) max(var(--pad),var(--safe-r))}
+.band{padding:clamp(48px,10vw,110px) 0}
+.kicker{font-family:var(--mono);font-size:clamp(.68rem,2.5vw,.75rem);letter-spacing:.1em;text-transform:uppercase;color:var(--mute);margin:0 0 12px}
+.h2{font-size:clamp(1.55rem,6.5vw,3rem);line-height:1.1;letter-spacing:-.035em;font-weight:800;margin:0 0 14px;max-width:18ch;color:#fff}
+.lede{font-size:clamp(.98rem,3.4vw,1.18rem);color:var(--mute);max-width:42ch;margin:0}
+
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .7s cubic-bezier(.2,.8,.2,1),transform .7s cubic-bezier(.2,.8,.2,1);transition-delay:var(--d,0s)}
+.reveal.is-in{opacity:1;transform:none}
+.reveal-x{opacity:0;transform:translateY(24px);transition:opacity .75s cubic-bezier(.2,.8,.2,1),transform .75s cubic-bezier(.2,.8,.2,1);transition-delay:var(--d,0s)}
+.reveal-x.is-in{opacity:1;transform:none}
+
+/* Statement */
+.statement p{font-size:clamp(1.2rem,5.2vw,2.15rem);line-height:1.25;letter-spacing:-.03em;font-weight:700;max-width:22ch;margin:0;color:#fff}
+.statement .aside{margin-top:20px;font-size:clamp(.95rem,3.2vw,1rem);color:var(--mute);max-width:36ch}
+.statement .panel{padding:clamp(20px,4.5vw,40px);border-radius:clamp(18px,4vw,28px)}
+
+/* Feature splits */
+.split{display:grid;gap:clamp(28px,5vw,64px);align-items:center}
+.copy .h2{max-width:14ch}
+.copy-panel{padding:clamp(18px,4vw,36px);border-radius:clamp(18px,4vw,28px)}
+.points{list-style:none;margin:22px 0 0;padding:0;display:grid;gap:12px}
+.points li{display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:start;font-size:clamp(.95rem,3.2vw,1.02rem);color:var(--mute)}
+.points li::before{content:"";width:8px;height:8px;margin-top:.55em;border-radius:50%;background:var(--dot,var(--blue));box-shadow:0 0 0 4px rgba(255,255,255,.08);flex-shrink:0}
+.points li strong{display:block;color:#fff;font-weight:700;margin-bottom:2px}
+
+/* Device */
+.shot{display:flex;justify-content:center;align-items:center;width:100%;overflow:visible}
+.device{
+  width:min(280px,72vw);
+  max-width:100%;
+  margin:0;
+  padding:clamp(8px,2.2vw,11px);
+  border-radius:clamp(28px,8vw,44px);
+  background:rgba(255,255,255,.14);
+  border:1px solid rgba(255,255,255,.34);
+  box-shadow:
+    inset 0 1.5px 0 rgba(255,255,255,.55),
+    inset 0 -1px 0 rgba(255,255,255,.18),
+    0 30px 60px -24px rgba(0,0,0,.75),
+    0 0 0 1px rgba(11,18,48,.35);
+  backdrop-filter:blur(24px) saturate(190%);
+  -webkit-backdrop-filter:blur(24px) saturate(190%);
+  transition:transform .9s cubic-bezier(.2,.8,.2,1);
+}
+.device--tilt,.device--tilt-r{transform:none}
+.device__screen{
+  position:relative;
+  width:100%;
+  aspect-ratio:1080 / 2308;
+  border-radius:clamp(20px,6vw,34px);
+  overflow:hidden;
+  background:#0a0f24;
+  box-shadow:inset 0 0 0 1px rgba(0,0,0,.35);
+}
+.device__screen img{
+  position:absolute;inset:0;width:100%;height:100%;
+  object-fit:cover;object-position:top center;
+}
+
+/* Depts */
+.depts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:32px}
+.dept{padding:clamp(16px,3.5vw,24px) clamp(14px,3vw,20px);border-radius:clamp(16px,3.5vw,22px);min-height:96px}
+.dept b{display:block;font-size:clamp(1rem,3.5vw,1.12rem);letter-spacing:-.02em;font-weight:700;color:#fff}
+.dept span{display:block;margin-top:6px;font-family:var(--mono);font-size:clamp(.62rem,2.4vw,.7rem);letter-spacing:.06em;text-transform:uppercase;color:var(--mute)}
+
+/* API */
+.api-grid{display:grid;gap:12px;margin-top:28px}
+.endpoints{padding:4px clamp(14px,3.5vw,22px);border-radius:clamp(16px,3.5vw,24px)}
+.endpoint{
+  display:grid;grid-template-columns:auto minmax(0,1fr);
+  gap:6px 12px;padding:14px 0;
+  border-bottom:1px solid rgba(255,255,255,.1);font-size:.95rem;
+}
+.endpoint:last-child{border-bottom:0}
+.method{font-family:var(--mono);font-size:.68rem;font-weight:500;letter-spacing:.04em;padding:5px 9px;border-radius:999px;background:rgba(47,111,230,.35);border:1px solid rgba(158,192,255,.35);color:#c5dbff;align-self:start;white-space:nowrap}
+.path{font-family:var(--mono);font-size:clamp(.72rem,2.8vw,.84rem);color:rgba(255,255,255,.9);padding-top:4px;overflow-wrap:anywhere;word-break:break-word}
+.note{font-size:clamp(.82rem,2.8vw,.88rem);color:var(--mute);grid-column:2}
+.api-aside{padding:clamp(20px,4vw,28px);border-radius:clamp(16px,3.5vw,24px);display:flex;flex-direction:column;justify-content:center}
+.api-aside h3{margin:0 0 10px;font-size:1.1rem;letter-spacing:-.02em;color:#fff}
+.api-aside p{margin:0 0 16px;color:var(--mute);font-size:.95rem}
+.api-aside a{color:#c5dbff;font-weight:600;text-decoration:none;border-bottom:1px solid rgba(197,219,255,.35);word-break:break-word}
+
+/* Setup */
+.steps{counter-reset:step;display:grid;gap:10px;margin-top:28px;padding:0;list-style:none}
+.step{display:grid;grid-template-columns:44px minmax(0,1fr);gap:6px 12px;padding:clamp(16px,3.5vw,22px);border-radius:clamp(16px,3.5vw,22px)}
+.step::before{counter-increment:step;content:counter(step,decimal-leading-zero);font-family:var(--mono);font-size:.9rem;color:#9ec0ff;font-weight:500;padding-top:2px}
+.step h3{margin:0 0 8px;font-size:clamp(1.05rem,3.5vw,1.15rem);letter-spacing:-.02em;color:#fff}
+.step p{margin:0;color:var(--mute);max-width:48ch;font-size:clamp(.92rem,3.2vw,1rem)}
+.step code{font-family:var(--mono);font-size:.82em;padding:.15em .4em;border-radius:6px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.14);color:#e8eefc;overflow-wrap:anywhere;word-break:break-word}
+.setup-link{display:inline-flex;margin-top:20px;font-weight:700;color:#c5dbff;text-decoration:none;border-bottom:1px solid rgba(197,219,255,.35);min-height:44px;align-items:center}
+
+/* CTA */
+.cta-panel{padding:clamp(20px,4.5vw,44px);border-radius:clamp(18px,4vw,28px);display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:22px}
+.cta-panel .h2{margin-bottom:10px}
+.cta-actions-col{display:flex;flex-direction:column;gap:12px;align-items:flex-start}
+.cta-actions{display:flex;flex-wrap:wrap;gap:10px}
+.cta-fallback{font-size:.84rem;color:var(--mute)}
+.cta-fallback a{color:#c5dbff;font-weight:600;text-decoration:none;border-bottom:1px solid rgba(197,219,255,.35);transition:color .2s,border-color .2s}
+.cta-fallback a:hover{color:#fff;border-bottom-color:#fff}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;
+  min-height:48px;padding:0 22px;border-radius:999px;
+  font-weight:700;font-size:.95rem;text-decoration:none;border:1px solid transparent;
+  transition:transform .25s cubic-bezier(.2,.8,.2,1),background .2s;
+  -webkit-tap-highlight-color:transparent;
+}
+.btn--solid{background:var(--blue);color:#fff;border-color:rgba(255,255,255,.3);box-shadow:inset 0 1.5px 0 rgba(255,255,255,.5),0 14px 30px -12px rgba(47,111,230,.9)}
+.btn--ghost{color:#fff;background:var(--glass);border-color:var(--edge2);box-shadow:inset 0 1.5px 0 var(--edge),inset 0 -1px 0 var(--edge2);backdrop-filter:blur(20px) saturate(190%);-webkit-backdrop-filter:blur(20px) saturate(190%)}
+
+.download-status{
+  flex-basis:100%;
+  width:100%;
+  margin-top:6px;
+  padding:16px 20px;
+  border-radius:18px;
+  background:rgba(47,111,230,.18);
+  border:1px solid rgba(158,192,255,.32);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.2);
+  display:none;
+  grid-template-columns:auto 1fr;
+  gap:16px;
+  align-items:flex-start;
+  animation:statusFadeIn .35s cubic-bezier(.2,.8,.2,1) forwards;
+}
+@keyframes statusFadeIn{
+  from{opacity:0;transform:translateY(8px)}
+  to{opacity:1;transform:none}
+}
+.status-spinner{
+  width:22px;
+  height:22px;
+  border-radius:50%;
+  border:2.5px solid rgba(255,255,255,.2);
+  border-top-color:var(--teal);
+  animation:spin 1s linear infinite;
+  margin-top:2px;
+  flex-shrink:0;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.status-body strong{display:block;color:#fff;font-size:.95rem;margin-bottom:4px}
+.status-body p{margin:0;font-size:.88rem;color:rgba(255,255,255,.86);line-height:1.45}
+.status-body em{color:var(--teal);font-style:normal;font-weight:600}
+.status-alt{margin-top:8px;font-size:.82rem;color:var(--mute)}
+.status-alt a{color:#9ec0ff;font-weight:600;text-decoration:none;border-bottom:1px solid rgba(158,192,255,.4)}
+.status-alt a:hover{color:#fff;border-bottom-color:#fff}
+
+/* Footer */
+.foot{position:relative;z-index:1;padding:24px 0 calc(36px + var(--safe-b));color:var(--mute);font-size:.88rem;border-top:1px solid rgba(255,255,255,.1)}
+.foot-row{display:flex;flex-wrap:wrap;gap:14px 24px;justify-content:space-between;align-items:center}
+.foot nav{display:flex;flex-wrap:wrap;gap:8px 16px}
+.foot a{color:rgba(255,255,255,.75);text-decoration:none;min-height:44px;display:inline-flex;align-items:center}
+
+/* —— Breakpoints —— */
+@media (max-width:599px){
+  .opt.primary{flex:1 1 100%;width:100%}
+  .cta-actions-col{width:100%}
+  .cta-actions{width:100%;flex-direction:column}
+  .btn{width:100%}
+  .foot-row{flex-direction:column;align-items:flex-start}
+  .endpoint{grid-template-columns:1fr;gap:6px}
+  .note{grid-column:1}
+  .method{justify-self:start}
+}
+@media (max-width:379px){
+  .depts{grid-template-columns:1fr}
+  .opts .opt:not(.primary){flex:1 1 calc(50% - 4px)}
+}
+@media (min-width:600px){
+  .device{width:min(300px,56vw)}
+  .cta-actions-col{align-items:flex-end}
+}
+@media (min-width:720px){
+  .depts{grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+}
+@media (min-width:800px){
+  .api-grid{grid-template-columns:1.25fr .75fr;gap:16px;align-items:stretch}
+}
+@media (min-width:900px){
+  .split{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+  .split--flip .copy{order:2}
+  .split--flip .shot{order:1}
+  .reveal-x{transform:translateX(var(--from,36px))}
+  .reveal-x.is-in{transform:none}
+  .device--tilt{transform:rotate(-2deg)}
+  .device--tilt-r{transform:rotate(2deg)}
+  .reveal-x.is-in .device--tilt,
+  .reveal-x.is-in .device--tilt-r{transform:rotate(0)}
+  .device{width:min(300px,100%)}
+}
+@media (max-height:520px) and (orientation:landscape){
+  .hero{min-height:100svh;height:auto;padding-bottom:140px}
+  .dock{position:relative;left:auto;right:auto;bottom:auto;padding:calc(12px + var(--safe-t)) var(--pad) calc(12px + var(--safe-b))}
+  .hero canvas{position:absolute}
+}
+@media (hover:hover) and (pointer:fine){
+  .opt:hover{transform:translateY(-2px);background:rgba(255,255,255,.22)}
+  .opt.primary:hover{background:#4b84f0}
+  .btn:hover{transform:translateY(-2px)}
+  .btn--solid:hover{background:#4b84f0}
+  .btn--ghost:hover{background:rgba(255,255,255,.22)}
+  .api-aside a:hover,.setup-link:hover{border-bottom-color:#c5dbff}
+  .foot a:hover{color:#fff}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .rise,.reveal,.reveal-x{animation:none;transition:none;opacity:1;transform:none}
+  .device--tilt,.device--tilt-r,.reveal-x.is-in .device--tilt,.reveal-x.is-in .device--tilt-r{transform:none}
+}
+</style>
+</head>
+<body>
+
+<section class="hero" aria-label="MaintHub">
+<canvas id="c" role="img" aria-label="A train of meshing gears turning, with a check mark in the largest gear"></canvas>
+<div class="dock">
+  <div class="name rise" style="--d:.3s">MaintHub</div>
+  <div class="opts">
+    <a class="opt primary rise" style="--d:.45s" href="#download">Download for Android</a>
+    <a class="opt rise" style="--d:.52s" href="#features">Features</a>
+    <a class="opt rise" style="--d:.59s" href="#api">API docs</a>
+    <a class="opt rise" style="--d:.66s" href="#setup">Setup guide</a>
+  </div>
+</div>
+</section>
+
+<main class="page">
+  <div class="orb orb--a" aria-hidden="true"></div>
+  <div class="orb orb--b" aria-hidden="true"></div>
+  <div class="orb orb--c" aria-hidden="true"></div>
+  <div class="orb orb--d" aria-hidden="true"></div>
+
+  <section class="band statement">
+    <div class="wrap">
+      <div class="panel glass reveal">
+        <p>Maintenance schedules for every machine on the floor — before they go overdue.</p>
+        <p class="aside">Built for textile mills running Blowroom through Buffing. Technicians see their department. Admins see the whole plant.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="band" id="features" style="padding-top:0">
+    <div class="wrap">
+      <div class="split">
+        <div class="copy copy-panel glass reveal">
+          <p class="kicker">Dashboard</p>
+          <h2 class="h2">Plant health in four numbers</h2>
+          <p class="lede">Total, active, overdue, and due soon — updated from the same schedule the shop floor works against.</p>
+          <ul class="points">
+            <li style="--dot:var(--blue)"><div><strong>Department shortcuts</strong>Jump straight into Blowroom, Comber, Ring Frame, and the rest.</div></li>
+            <li style="--dot:var(--coral)"><div><strong>Overdue stays visible</strong>Red counts don’t hide behind menus. Open Pending Maintenance and clear the queue.</div></li>
+          </ul>
+        </div>
+        <div class="shot reveal-x" style="--from:40px">
+          <figure class="device device--tilt">
+            <div class="device__screen">
+              <img src="screens/Screenshot_20261011-180558.png" alt="MaintHub dashboard showing machine totals, overdue count, and department quick actions" width="1080" height="2308" loading="lazy">
+            </div>
+          </figure>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band" style="padding-top:0">
+    <div class="wrap">
+      <div class="split split--flip">
+        <div class="copy copy-panel glass reveal">
+          <p class="kicker">Machine registry</p>
+          <h2 class="h2">Find the asset. See the next date.</h2>
+          <p class="lede">Filter by department, search by name, and read status without opening a spreadsheet.</p>
+          <ul class="points">
+            <li style="--dot:#2fd6c0"><div><strong>OK vs overdue</strong>Status and next service date sit on every row.</div></li>
+            <li style="--dot:var(--blue)"><div><strong>Add from the floor</strong>Admins can register a machine with interval and first date in one form.</div></li>
+          </ul>
+        </div>
+        <div class="shot reveal-x" style="--from:-40px">
+          <figure class="device device--tilt-r">
+            <div class="device__screen">
+              <img src="screens/Screenshot_20261011-180611.png" alt="Machine list filtered by department with OK and overdue status badges" width="1080" height="2308" loading="lazy">
+            </div>
+          </figure>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band" style="padding-top:0">
+    <div class="wrap">
+      <div class="split">
+        <div class="copy copy-panel glass reveal">
+          <p class="kicker">Pending queue</p>
+          <h2 class="h2">What needs a wrench today</h2>
+          <p class="lede">A single list of machines past their interval — department, due date, section. Tap through to log the job.</p>
+          <ul class="points">
+            <li style="--dot:var(--amb)"><div><strong>Morning alerts</strong>A daily backend pass flags due and overdue work so the queue stays current.</div></li>
+            <li style="--dot:var(--teal)"><div><strong>History stays with the machine</strong>Completing service rolls the next date forward by the interval.</div></li>
+          </ul>
+        </div>
+        <div class="shot reveal-x" style="--from:40px">
+          <figure class="device device--tilt">
+            <div class="device__screen">
+              <img src="screens/Screenshot_20261011-180618.png" alt="Pending Maintenance list of overdue Blowroom machines" width="1080" height="2308" loading="lazy">
+            </div>
+          </figure>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band" style="padding-top:0">
+    <div class="wrap">
+      <div class="split split--flip">
+        <div class="copy copy-panel glass reveal">
+          <p class="kicker">Administration</p>
+          <h2 class="h2">Register a machine once</h2>
+          <p class="lede">Name, type, department, location, interval in days, first maintenance date. Then the schedule runs itself.</p>
+          <ul class="points">
+            <li style="--dot:var(--blue)"><div><strong>Role-aware access</strong>Technicians stay scoped to their department. Admins switch across the mill.</div></li>
+            <li style="--dot:var(--teal)"><div><strong>Seeded for real floors</strong>Hundreds of machines from textile maintenance schedules ship ready to assign.</div></li>
+          </ul>
+        </div>
+        <div class="shot reveal-x" style="--from:-40px">
+          <figure class="device device--tilt-r">
+            <div class="device__screen">
+              <img src="screens/Screenshot_20261011-180622.png" alt="Add Machine form with department and first maintenance date fields" width="1080" height="2308" loading="lazy">
+            </div>
+          </figure>
+        </div>
+      </div>
+
+      <div class="reveal" style="margin-top:clamp(56px,10vw,88px)">
+        <p class="kicker">Departments</p>
+        <h2 class="h2" style="max-width:16ch">Six sections of the mill, one app</h2>
+        <div class="depts">
+          <div class="dept glass reveal" style="--d:.05s"><b>Blowroom</b><span>Opening &amp; cleaning</span></div>
+          <div class="dept glass reveal" style="--d:.1s"><b>Comber</b><span>Combing line</span></div>
+          <div class="dept glass reveal" style="--d:.15s"><b>Ring Frame</b><span>Spinning</span></div>
+          <div class="dept glass reveal" style="--d:.2s"><b>Speed Frame</b><span>Roving</span></div>
+          <div class="dept glass reveal" style="--d:.25s"><b>Winding</b><span>Package winding</span></div>
+          <div class="dept glass reveal" style="--d:.3s"><b>Buffing</b><span>Preparatory</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band" id="api" style="padding-top:0">
+    <div class="wrap">
+      <div class="reveal">
+        <p class="kicker">API</p>
+        <h2 class="h2">REST for the plant system</h2>
+        <p class="lede">JWT auth, department-scoped queries, dashboard aggregates, and maintenance history — Flask behind the Flutter client.</p>
+      </div>
+      <div class="api-grid">
+        <div class="endpoints glass reveal" style="--d:.08s">
+          <div class="endpoint">
+            <span class="method">POST</span>
+            <span class="path">/api/auth/login</span>
+            <span class="note">Issue JWT for technician or admin</span>
+          </div>
+          <div class="endpoint">
+            <span class="method">GET</span>
+            <span class="path">/api/dashboard/</span>
+            <span class="note">Totals, overdue, due-soon KPIs</span>
+          </div>
+          <div class="endpoint">
+            <span class="method">GET</span>
+            <span class="path">/api/machines/</span>
+            <span class="note">Registry filtered by department role</span>
+          </div>
+          <div class="endpoint">
+            <span class="method">POST</span>
+            <span class="path">/api/maintenance/{id}/complete</span>
+            <span class="note">Log service; advance next date</span>
+          </div>
+        </div>
+        <aside class="api-aside glass reveal" style="--d:.16s">
+          <h3>Full specification</h3>
+          <p>Payloads, status codes, and RBAC rules live in the repo docs.</p>
+          <a href="https://github.com/Omega-127/MaintHub/blob/main/docs/API_SPECIFICATION.md" target="_blank" rel="noopener">Open API_SPECIFICATION.md</a>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <section class="band" id="setup" style="padding-top:0">
+    <div class="wrap">
+      <div class="reveal">
+        <p class="kicker">Setup</p>
+        <h2 class="h2">From clone to first login</h2>
+        <p class="lede">MySQL (or SQLite locally), Flask API, Flutter app pointed at your host.</p>
+      </div>
+      <ol class="steps">
+        <li class="step glass reveal">
+          <div>
+            <h3>Database</h3>
+            <p>Bring up MySQL with <code>docker-compose up -d mysql</code>, or use the SQLite fallback for a quick local pass.</p>
+          </div>
+        </li>
+        <li class="step glass reveal" style="--d:.08s">
+          <div>
+            <h3>Backend</h3>
+            <p>Install Python deps in <code>mainthub-backend</code>, set env for the DB, run the Flask app. Schema migrates on start.</p>
+          </div>
+        </li>
+        <li class="step glass reveal" style="--d:.16s">
+          <div>
+            <h3>Mobile app</h3>
+            <p>Point the Flutter client at your API base URL, then build or run on Android. Detail lives in the setup guide.</p>
+          </div>
+        </li>
+      </ol>
+      <a class="setup-link reveal" href="https://github.com/Omega-127/MaintHub/blob/main/docs/SETUP.md" target="_blank" rel="noopener">Read docs/SETUP.md</a>
+    </div>
+  </section>
+
+  <section class="band" id="download" style="padding-top:0">
+    <div class="wrap">
+      <div class="cta-panel glass reveal">
+        <div>
+          <p class="kicker">Get the app</p>
+          <h2 class="h2">Put the schedule in someone’s pocket</h2>
+          <p class="lede">Android build for technicians and admins on the mill floor.</p>
+          <p id="apk-meta" style="margin:10px 0 0;font-family:var(--mono);font-size:0.78rem;color:var(--teal)">v1.1.0 · ~50 MB · Android 8.0+</p>
+        </div>
+        <div class="cta-actions-col">
+          <div class="cta-actions">
+            <a class="btn btn--solid" id="apk-download-btn" href="https://github.com/Omega-127/MaintHub/releases/download/v1.1.0/mainthub110.apk" download="mainthub.apk">Download for Android</a>
+            <a class="btn btn--ghost" href="https://github.com/Omega-127/MaintHub" target="_blank" rel="noopener">View on GitHub</a>
+          </div>
+          <div class="cta-fallback">
+            Download didn&rsquo;t start? <a href="https://github.com/Omega-127/MaintHub/releases" target="_blank" rel="noopener" id="apk-releases-fallback">Download manually from GitHub Releases &rarr;</a>
+          </div>
+        </div>
+
+        <div id="download-status" class="download-status glass" role="status" aria-live="polite">
+          <div class="status-spinner" aria-hidden="true"></div>
+          <div class="status-body">
+            <strong>Starting APK download (~50 MB)...</strong>
+            <p>The file is ~50 MB, so it may take a few moments depending on your network. Please wait and keep this tab open. If Android asks, tap <em>"Download anyway"</em>.</p>
+            <div class="status-alt">
+              Still waiting or download stalled? <a href="https://github.com/Omega-127/MaintHub/releases" target="_blank" rel="noopener" class="releases-direct-link">Download directly from GitHub Releases &rarr;</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <div class="wrap foot-row">
+      <div>MaintHub · Machine maintenance for textile mills</div>
+      <nav aria-label="Footer">
+        <a href="#features">Features</a>
+        <a href="#api">API</a>
+        <a href="#setup">Setup</a>
+        <a href="https://github.com/Omega-127/MaintHub/blob/main/docs/ARCHITECTURE.md" target="_blank" rel="noopener">Architecture</a>
+      </nav>
+    </div>
+  </footer>
+</main>
+
+<script>
+(function(){
+var BG='#0b1230',BLUE='#2f6fe6',TEAL='#2fd6c0',AMB='#ffb340',N1='#1b2f78',N2='#24408f',CORAL='#ff6b6b';
+var SP={
+ land:{DW:800,DH:450,m:9,list:[['A',0,0,22,BLUE],['B','A',-38,14,TEAL],['C','A',158,18,N2],['D','A',62,12,AMB],['E','B',8,20,N1],['F','C',212,16,N1],['G','E',-62,24,N2],['H','D',118,14,N1],['I','C',108,20,N1],['J','E',52,12,CORAL]]},
+ port:{DW:450,DH:800,m:8.325,list:[['A',0,0,22,BLUE],['B','A',-78,14,TEAL],['C','A',104,18,N2],['D','A',-8,12,AMB],['E','B',-150,20,N1],['F','C',150,16,N1],['G','C',48,22,N1],['H','B',-20,12,N2],['I','E',-62,16,N2],['J','F',100,12,N1]]}
+};
+function mod(a,b){return((a%b)+b)%b}
+function rgb(h){return[parseInt(h.substr(1,2),16),parseInt(h.substr(3,2),16),parseInt(h.substr(5,2),16)]}
+function shade(h,f){var c=rgb(h).map(function(v){return Math.max(0,Math.min(255,Math.round(v*f)))});return'rgb('+c+')'}
+function build(S){
+  var G=[],M={},W0=.16,A;
+  S.list.forEach(function(r){
+    var nm=r[0],par=r[1],th=r[2]*Math.PI/180,n=r[3],col=r[4],R=n*S.m/2,g;
+    if(!par){g={x:S.DW/2,y:S.DH/2,phi:-Math.PI/2,sig:1};A=g}
+    else{var P=M[par],d=P.R+R,pp=2*Math.PI/P.n,xa=mod(P.phi-th+pp/2,pp)-pp/2,L=2*Math.PI*P.R/P.n;
+      g={x:P.x+d*Math.cos(th),y:P.y+d*Math.sin(th),phi:th+Math.PI-(xa*P.R+L/2)/R,sig:-P.sig}}
+    g.n=n;g.R=R;g.col=col;g.m=S.m;g.Rr=R-1.2*S.m;g.Ro=R+S.m;
+    var pp2=2*Math.PI/n,p=new Path2D(),pts=[[g.Rr-.5*S.m,-.3],[g.Rr,-.3],[g.Ro,-.15],[g.Ro,.15],[g.Rr,.3],[g.Rr-.5*S.m,.3]];
+    p.arc(0,0,g.Rr,0,6.2832);
+    for(var k=0;k<n;k++){pts.forEach(function(q,i){var a=(k+q[1])*pp2,x=q[0]*Math.cos(a),y=q[0]*Math.sin(a);i?p.lineTo(x,y):p.moveTo(x,y)});p.closePath()}
+    g.path=p;g.name=nm;M[nm]=g;G.push(g)});
+  G.forEach(function(g){g.w=g.sig*W0*A.n/g.n});
+  return{G:G,A:A,S:S}
+}
+var cv=document.getElementById('c'),ctx=cv.getContext('2d'),L,sc,ox,oy,dpr,px=0,py=0,tx=0,ty=0;
+var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+var LAY={land:build(SP.land),port:build(SP.port)};
+var hero=cv.parentElement;
+function size(){
+  dpr=Math.min(devicePixelRatio||1,2);
+  var w=hero.clientWidth,h=hero.clientHeight;
+  cv.width=Math.round(w*dpr);cv.height=Math.round(h*dpr);
+  L=w>=h?LAY.land:LAY.port;
+  sc=Math.max(w/L.S.DW,h/L.S.DH);ox=(w-L.S.DW*sc)/2;oy=(h-L.S.DH*sc)/2;
+}
+function draw(t){
+  var w=hero.clientWidth,h=hero.clientHeight;
+  ctx.setTransform(dpr,0,0,dpr,0,0);ctx.fillStyle=BG;ctx.fillRect(0,0,w,h);
+  ctx.setTransform(dpr*sc,0,0,dpr*sc,dpr*(ox+px*10*sc),dpr*(oy+py*8*sc));
+  L.G.forEach(function(g){
+    ctx.save();ctx.translate(g.x+4,g.y+7);ctx.rotate(g.phi+g.w*t);ctx.fillStyle='rgba(0,0,0,.28)';ctx.fill(g.path);ctx.restore()});
+  L.G.forEach(function(g){
+    ctx.save();ctx.translate(g.x,g.y);ctx.rotate(g.phi+g.w*t);
+    ctx.fillStyle=g.col;ctx.fill(g.path);
+    ctx.strokeStyle=shade(g.col,1.22);ctx.lineWidth=g.m*.12;ctx.beginPath();ctx.arc(0,0,g.Rr*.84,0,6.2832);ctx.stroke();
+    if(g.n>=16){ctx.fillStyle=BG;for(var k=0;k<5;k++){var a=k*1.2566+.3;ctx.beginPath();ctx.arc(g.Rr*.64*Math.cos(a),g.Rr*.64*Math.sin(a),g.Rr*.12,0,6.2832);ctx.fill()}}
+    ctx.fillStyle=shade(g.col,.55);ctx.beginPath();ctx.arc(0,0,g.Rr*.42,0,6.2832);ctx.fill();
+    ctx.restore()});
+  var A=L.A,cyc=3.4,p=(t%cyc)/cyc;
+  if(!reduce||t===0){ctx.strokeStyle='rgba(110,165,255,'+(.6*(1-p)).toFixed(3)+')';ctx.lineWidth=3;ctx.beginPath();ctx.arc(A.x,A.y,A.R*(.9+2.2*p),0,6.2832);ctx.stroke()}
+  var hr=A.Rr*.42,k=hr/17,s=1+.1*Math.max(0,Math.sin(t*2*Math.PI/cyc));
+  ctx.strokeStyle='#fff';ctx.lineWidth=5.2*k*s;ctx.lineCap='round';ctx.lineJoin='round';ctx.beginPath();
+  ctx.moveTo(A.x+(41.5-50)*k*s,A.y+(50.5-50)*k*s);ctx.lineTo(A.x+(47.7-50)*k*s,A.y+(56.7-50)*k*s);ctx.lineTo(A.x+(59-50)*k*s,A.y+(44.3-50)*k*s);ctx.stroke();
+}
+var t0=performance.now(),raf,running=true;
+function loop(now){
+  if(!running)return;
+  px+=(tx-px)*.05;py+=(ty-py)*.05;
+  draw((now-t0)/1000);raf=requestAnimationFrame(loop)}
+size();
+if(reduce){draw(0);addEventListener('resize',function(){size();draw(0)})}
+else{
+  addEventListener('resize',size);
+  addEventListener('pointermove',function(e){
+    var r=hero.getBoundingClientRect();
+    if(e.clientY<r.top||e.clientY>r.bottom){tx=0;ty=0;return}
+    tx=(e.clientX-r.left)/r.width-.5;ty=(e.clientY-r.top)/r.height-.5
+  });
+  document.addEventListener('visibilitychange',function(){if(document.hidden){cancelAnimationFrame(raf);running=false}else{running=true;t0=performance.now();raf=requestAnimationFrame(loop)}});
+  if('IntersectionObserver' in window){
+    new IntersectionObserver(function(ents){
+      ents.forEach(function(en){
+        if(en.isIntersecting){if(!running){running=true;t0=performance.now();raf=requestAnimationFrame(loop)}}
+        else{running=false;cancelAnimationFrame(raf)}
+      })
+    },{threshold:.05}).observe(hero);
+  }
+  raf=requestAnimationFrame(loop);
+}
+})();
+
+(function(){
+  var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var nodes=document.querySelectorAll('.reveal,.reveal-x');
+  if(reduce||!('IntersectionObserver' in window)){
+    nodes.forEach(function(n){n.classList.add('is-in')});
+    return;
+  }
+  var io=new IntersectionObserver(function(ents){
+    ents.forEach(function(en){
+      if(en.isIntersecting){en.target.classList.add('is-in');io.unobserve(en.target)}
+    })
+  },{rootMargin:'0px 0px -8% 0px',threshold:.12});
+  nodes.forEach(function(n){io.observe(n)});
+})();
+
+(function(){
+  var btn = document.getElementById('apk-download-btn');
+  var statusBox = document.getElementById('download-status');
+  var fallbackLinks = document.querySelectorAll('#apk-releases-fallback, .releases-direct-link');
+  if(!btn) return;
+
+  btn.addEventListener('click', function(){
+    if(statusBox){
+      statusBox.style.display = 'grid';
+      statusBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+    var origText = btn.textContent;
+    btn.textContent = 'Downloading... please wait';
+    btn.style.opacity = '0.85';
+    setTimeout(function(){
+      btn.textContent = origText;
+      btn.style.opacity = '';
+    }, 6000);
+  });
+
+  fetch('https://api.github.com/repos/Omega-127/MaintHub/releases')
+    .then(function(res){ return res.json(); })
+    .then(function(releases){
+      if(!Array.isArray(releases) || !releases.length) return;
+      for(var i = 0; i < releases.length; i++){
+        var r = releases[i];
+        if(!r.assets || !r.assets.length) continue;
+        var apk = r.assets.find(function(a){ return a.name && a.name.toLowerCase().endsWith('.apk'); });
+        if(apk && apk.browser_download_url){
+          btn.href = apk.browser_download_url;
+          var meta = document.getElementById('apk-meta');
+          if(meta && r.tag_name){
+            var mb = (apk.size / (1024 * 1024)).toFixed(1);
+            meta.textContent = (r.name || r.tag_name) + ' · ' + mb + ' MB · Android 8.0+';
+          }
+          if(r.html_url){
+            fallbackLinks.forEach(function(el){ el.href = r.html_url; });
+          }
+          break;
+        }
+      }
+    })
+    .catch(function(){ /* Fallback remains the static release URL */ });
+})();
+</script>
+</body>
+</html>
