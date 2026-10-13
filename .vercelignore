@@ -1,0 +1,10 @@
+# Ignore backend and mobile app from Vercel static deployment
+mainthub-backend/
+mainthub-app/
+.venv/
+.idea/
+docs/
+*.sql
+*.xlsx
+docker-compose.yml
+render.yaml
