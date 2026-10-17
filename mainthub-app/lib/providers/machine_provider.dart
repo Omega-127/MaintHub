@@ -14,6 +14,8 @@ class MachineProvider extends ChangeNotifier {
   String        get error          => _error;
   List<Machine> get overdueMachines =>
       _machines.where((m) => m.isOverdue && m.status == 'ACTIVE').toList();
+  List<Machine> get dueSoonMachines =>
+      _machines.where((m) => m.isDueSoon && m.status == 'ACTIVE').toList();
 
   Future<void> loadMachines() async {
     _isLoading = true;
