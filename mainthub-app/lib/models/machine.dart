@@ -44,6 +44,19 @@ class Machine {
     return next == _todayOnly;
   }
 
+  bool get isDueSoon {
+    final next = _nextDateOnly;
+    if (next == null) return false;
+    final diff = next.difference(_todayOnly).inDays;
+    return diff >= 0 && diff <= 7;
+  }
+
+  int? get daysUntilDue {
+    final next = _nextDateOnly;
+    if (next == null) return null;
+    return next.difference(_todayOnly).inDays;
+  }
+
   /// Human-readable department label
   String get departmentLabel {
     switch (department) {

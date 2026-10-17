@@ -9,6 +9,7 @@ import 'login_screen.dart';
 import 'machine_list_screen.dart';
 import 'add_machine_screen.dart';
 import '../maintanance/pending_screen.dart';
+import '../maintanance/due_soon_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -114,13 +115,51 @@ class _DashboardScreenState extends State<DashboardScreen>
                     // KPI Cards
                     if (_summary != null) ...[
                       _kpiRow([
-                        _KpiCard('Total',    _summary!.totalMachines, Icons.precision_manufacturing, AppTheme.primary),
-                        _KpiCard('Active',   _summary!.active,        Icons.check_circle,            AppTheme.success),
+                        _KpiCard(
+                          'Total',
+                          _summary!.totalMachines,
+                          Icons.precision_manufacturing,
+                          AppTheme.primary,
+                          onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => MachineListScreen(department: userDept),
+                            ),
+                          ),
+                        ),
+                        _KpiCard(
+                          'Active',
+                          _summary!.active,
+                          Icons.check_circle,
+                          AppTheme.success,
+                        ),
                       ]),
                       const SizedBox(height: 12),
                       _kpiRow([
-                        _KpiCard('Overdue',  _summary!.overdue,       Icons.warning_rounded,         AppTheme.danger),
-                        _KpiCard('Due Soon', _summary!.upcoming7Days, Icons.schedule,                AppTheme.warning),
+                        _KpiCard(
+                          'Overdue',
+                          _summary!.overdue,
+                          Icons.warning_rounded,
+                          AppTheme.danger,
+                          onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => PendingMaintenanceScreen(department: userDept),
+                            ),
+                          ),
+                        ),
+                        _KpiCard(
+                          'Due Soon',
+                          _summary!.upcoming7Days,
+                          Icons.schedule,
+                          AppTheme.warning,
+                          onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => DueSoonScreen(department: userDept),
+                            ),
+                          ),
+                        ),
                       ]),
                     ],
 
@@ -186,23 +225,6 @@ class _DashboardScreenState extends State<DashboardScreen>
                             MaterialPageRoute(builder: (_) => const MachineListScreen(department: 'BUFFING'))),
                       ),
                       const SizedBox(height: 12),
-                      // All machines
-                      _ActionTile(
-                        icon:    Icons.list_alt,
-                        label:   'All Machines',
-                        color:   AppTheme.primary,
-                        onTap:   () => Navigator.push(context,
-                            MaterialPageRoute(builder: (_) => const MachineListScreen())),
-                      ),
-                      const SizedBox(height: 12),
-                      _ActionTile(
-                        icon:    Icons.warning_rounded,
-                        label:   'Pending Maintenance',
-                        color:   AppTheme.danger,
-                        onTap:   () => Navigator.push(context,
-                            MaterialPageRoute(builder: (_) => const PendingMaintenanceScreen())),
-                      ),
-                      const SizedBox(height: 12),
                       _ActionTile(
                         icon:    Icons.add_circle,
                         label:   'Add Machine',
@@ -240,14 +262,6 @@ class _DashboardScreenState extends State<DashboardScreen>
                                                     : const Color(0xFF0077B6),
                         onTap:   () => Navigator.push(context,
                             MaterialPageRoute(builder: (_) => MachineListScreen(department: userDept))),
-                      ),
-                      const SizedBox(height: 12),
-                      _ActionTile(
-                        icon:    Icons.warning_rounded,
-                        label:   'Pending Maintenance',
-                        color:   AppTheme.danger,
-                        onTap:   () => Navigator.push(context,
-                            MaterialPageRoute(builder: (_) => const PendingMaintenanceScreen())),
                       ),
                     ],
                   ],
@@ -316,36 +330,53 @@ class _KpiCard extends StatelessWidget {
   final int    value;
   final IconData icon;
   final Color  color;
+  final VoidCallback? onTap;
 
-  const _KpiCard(this.label, this.value, this.icon, this.color);
+  const _KpiCard(this.label, this.value, this.icon, this.color, {this.onTap});
 
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Icon(icon, color: color, size: 28),
-            const SizedBox(height: 12),
-            Text(
-              '$value',
-              style: textTheme.headlineMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: color,
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Icon(icon, color: color, size: 28),
+                  if (onTap != null)
+                    Icon(
+                      Icons.arrow_forward_ios,
+                      size: 12,
+                      color: AppTheme.textLight.withOpacity(0.5),
+                    ),
+                ],
               ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              label,
-              style: textTheme.bodySmall?.copyWith(
-                color: AppTheme.textLight,
-                fontWeight: FontWeight.w500,
+              const SizedBox(height: 12),
+              Text(
+                '$value',
+                style: textTheme.headlineMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: color,
+                ),
               ),
-            ),
-          ],
+              const SizedBox(height: 4),
+              Text(
+                label,
+                style: textTheme.bodySmall?.copyWith(
+                  color: AppTheme.textLight,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

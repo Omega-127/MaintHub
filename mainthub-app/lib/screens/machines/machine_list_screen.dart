@@ -218,7 +218,9 @@ class _MachineCard extends StatelessWidget {
                 ? const Color(0xFFE65100)
                 : machine.department == 'WINDING'
                     ? const Color(0xFF6A1B9A)
-                    : const Color(0xFF0077B6);
+                    : machine.department == 'BUFFING'
+                        ? const Color(0xFF00695C)
+                        : const Color(0xFF0077B6);
 
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
