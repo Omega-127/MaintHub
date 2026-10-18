@@ -6,6 +6,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
+RUN python -c "import uuid; open('build_id.txt', 'w').write(uuid.uuid4().hex)"
 
 ENV PORT=5000
 

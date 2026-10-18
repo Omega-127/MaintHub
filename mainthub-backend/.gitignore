@@ -44,3 +44,6 @@ htmlcov/
 
 # Logs
 *.log
+
+# Deployment build artifact
+build_id.txt

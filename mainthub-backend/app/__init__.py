@@ -124,6 +124,55 @@ def _auto_migrate(app):
         app.logger.error(f"[migration] Auto-migration error: {e}")
 
 
+def _get_deployment_id() -> str:
+    """
+    Returns a persistent identifier for the current backend deployment build.
+    This value remains identical across idle spin-downs and wake-ups on Render free tier,
+    but changes whenever a new deployment/build is created.
+    """
+    # 1. Explicit environment variable override
+    deploy_id = os.getenv("DEPLOY_ID") or os.getenv("BUILD_ID")
+    if deploy_id and deploy_id.strip():
+        return deploy_id.strip()
+
+    # 2. Render Git commit SHA (injected by Render build environment)
+    render_commit = os.getenv("RENDER_GIT_COMMIT")
+    if render_commit and render_commit.strip():
+        return render_commit.strip()
+
+    # 3. Build ID file generated during deployment build step (e.g. render buildCommand / docker build)
+    app_dir = os.path.dirname(os.path.abspath(__file__))
+    candidates = [
+        os.path.join(os.path.dirname(app_dir), "build_id.txt"),
+        os.path.join(app_dir, "build_id.txt"),
+    ]
+    for c in candidates:
+        if os.path.exists(c):
+            try:
+                with open(c, "r", encoding="utf-8") as f:
+                    val = f.read().strip()
+                    if val:
+                        return val
+            except Exception:
+                pass
+
+    # 4. Git commit from local repository if available
+    try:
+        import subprocess
+        commit = subprocess.check_output(
+            ["git", "rev-parse", "HEAD"],
+            stderr=subprocess.DEVNULL,
+            text=True
+        ).strip()
+        if commit:
+            return commit
+    except Exception:
+        pass
+
+    # 5. Default static fallback
+    return "mainthub-static-deploy"
+
+
 def create_app():
     app = Flask(__name__)
 
@@ -153,16 +202,38 @@ def create_app():
         "pool_pre_ping": True,
         "pool_recycle": 280,
     }
-    app.config["JWT_SECRET_KEY"] = os.getenv(
+
+    # ── JWT and Session Persistence Configuration ───────────
+    # Keep user logged in until the user decides to log out or backend redeploys.
+    # JWT_ACCESS_TOKEN_EXPIRES = False disables automatic inactivity expiration.
+    # Tying the secret key to deployment ID ensures older sessions are invalidated on redeployment.
+    deployment_id = _get_deployment_id()
+    base_secret = os.getenv(
         "JWT_SECRET_KEY",
         "dev-secret-change-in-production"
     )
+    app.config["DEPLOYMENT_ID"] = deployment_id
+    app.config["JWT_SECRET_KEY"] = f"{base_secret}:{deployment_id}"
+    app.config["JWT_ACCESS_TOKEN_EXPIRES"] = False
 
     # ── Initialize extensions ────────────────────────────────
     db.init_app(app)
     jwt.init_app(app)
     ma.init_app(app)
     CORS(app)
+
+    # ── JWT Error Handlers (consistently return 401 for auth rejections) ──
+    @jwt.invalid_token_loader
+    def _invalid_token_callback(reason):
+        return jsonify({"error": "invalid_token", "message": f"Invalid token or backend redeployed: {reason}"}), 401
+
+    @jwt.expired_token_loader
+    def _expired_token_callback(header, payload):
+        return jsonify({"error": "token_expired", "message": "Token has expired"}), 401
+
+    @jwt.unauthorized_loader
+    def _missing_token_callback(reason):
+        return jsonify({"error": "authorization_required", "message": reason}), 401
 
     # ── Import models to register schemas for table creation ──
     from app.models.user import User
@@ -196,7 +267,11 @@ def create_app():
             db_status = "error"
             error_msg = str(e)
 
-        resp = {"status": "ok", "database": db_status}
+        resp = {
+            "status": "ok",
+            "database": db_status,
+            "deployment_id": app.config.get("DEPLOYMENT_ID"),
+        }
         if error_msg:
             resp["database_error"] = error_msg
         return jsonify(resp), (200 if db_status == "ok" else 500)

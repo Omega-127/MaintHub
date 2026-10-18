@@ -6,7 +6,7 @@ services:
     name: mainthub-backend
     runtime: python
     plan: free
-    buildCommand: pip install -r requirements.txt
+    buildCommand: python -c "import uuid; open('build_id.txt', 'w').write(uuid.uuid4().hex)" && pip install -r requirements.txt
     startCommand: gunicorn run:app --bind 0.0.0.0:$PORT
     healthCheckPath: /health
     envVars:

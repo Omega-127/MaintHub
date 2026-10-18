@@ -148,3 +148,5 @@ $RECYCLE.BIN/
 *.tmp
 *.temp
 generate_app_icons.py
+build_id.txt
+**/build_id.txt
