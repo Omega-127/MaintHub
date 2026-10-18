@@ -70,14 +70,14 @@ class Machine {
   }
 
   factory Machine.fromJson(Map<String, dynamic> json) => Machine(
-    id:                   json['id'],
-    name:                 json['name'],
-    type:                 json['type'],
-    department:           json['department'] ?? 'BLOWROOM',
-    location:             json['location'],
-    maintenanceInterval:  json['maintenance_interval'],
-    lastMaintenanceDate:  json['last_maintenance_date'],
-    nextMaintenanceDate:  json['next_maintenance_date'],
-    status:               json['status'],
+    id:                   (json['id'] as num?)?.toInt() ?? 0,
+    name:                 json['name']?.toString() ?? '',
+    type:                 json['type']?.toString() ?? '',
+    department:           json['department']?.toString() ?? 'BLOWROOM',
+    location:             json['location']?.toString(),
+    maintenanceInterval:  (json['maintenance_interval'] as num?)?.toInt() ?? 0,
+    lastMaintenanceDate:  json['last_maintenance_date']?.toString(),
+    nextMaintenanceDate:  json['next_maintenance_date']?.toString() ?? '',
+    status:               json['status']?.toString() ?? 'ACTIVE',
   );
 }

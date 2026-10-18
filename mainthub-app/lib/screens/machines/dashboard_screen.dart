@@ -10,7 +10,6 @@ import 'machine_list_screen.dart';
 import 'add_machine_screen.dart';
 import '../maintanance/pending_screen.dart';
 import '../maintanance/due_soon_screen.dart';
-import '../../models/app_notification.dart';
 import '../../services/notification_service.dart';
 import '../../services/notification_navigator.dart';
 import '../notifications/notifications_screen.dart';
@@ -55,23 +54,43 @@ class _DashboardScreenState extends State<DashboardScreen>
     }
   }
 
+  String? _loadError;
+
   Future<void> _load() async {
+    setState(() {
+      _isLoading = _summary == null;
+      _loadError = null;
+    });
+
     try {
-      final summaryFuture = _dashService.getSummary();
-      final notifsFuture = _notifService.getNotifications();
-      final results = await Future.wait([summaryFuture, notifsFuture]);
-      final summary = results[0] as DashboardSummary;
-      final notifs = results[1] as List<AppNotification>;
+      DashboardSummary? summary;
+      try {
+        summary = await _dashService.getSummary();
+      } catch (e) {
+        debugPrint('[Dashboard] summary load failed: $e');
+        _loadError = 'Could not connect to server. Please check your internet or retry.';
+      }
+
+      int unread = _unreadNotifications;
+      try {
+        final notifs = await _notifService.getNotifications();
+        unread = notifs.where((n) => !n.isRead).length;
+      } catch (e) {
+        debugPrint('[Dashboard] notifications fetch failed: $e');
+      }
 
       if (mounted) {
         setState(() {
-          _summary = summary;
-          _unreadNotifications = notifs.where((n) => !n.isRead).length;
+          if (summary != null) {
+            _summary = summary;
+            _loadError = null;
+          }
+          _unreadNotifications = unread;
           _isLoading = false;
         });
       }
-      // Refresh device notifications for overdue / due-today machines.
-      await OverdueAlertService.instance.checkAndNotify();
+      // Refresh device notifications for overdue / due-today machines asynchronously.
+      OverdueAlertService.instance.checkAndNotify();
     } catch (_) {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -198,6 +217,32 @@ class _DashboardScreenState extends State<DashboardScreen>
                           ),
                         ),
                       ]),
+                    ] else ...[
+                      Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFFFF8E1),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: const Color(0xFFFFE082)),
+                        ),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.info_outline, color: Color(0xFFFFA000)),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Text(
+                                _loadError ?? 'Unable to fetch machine statistics.',
+                                style: const TextStyle(fontSize: 13, color: Color(0xFF5D4037)),
+                              ),
+                            ),
+                            TextButton.icon(
+                              onPressed: _load,
+                              icon: const Icon(Icons.refresh, size: 16),
+                              label: const Text('Retry'),
+                            ),
+                          ],
+                        ),
+                      ),
                     ],
 
                     const SizedBox(height: 28),

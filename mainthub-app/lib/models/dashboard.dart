@@ -16,11 +16,11 @@ class DashboardSummary {
     });
 
     factory DashboardSummary.fromJson(Map<String, dynamic> json) => DashboardSummary(
-       totalMachines:    json['total_machines'],
-       active:           json['active'],
-       inactive:         json['inactive'],
-       underMaintenance: json['under_maintenance'],
-       overdue:          json['overdue'],
-       upcoming7Days:    json['upcoming_7_days'],
+       totalMachines:    (json['total_machines'] as num?)?.toInt() ?? 0,
+       active:           (json['active'] as num?)?.toInt() ?? 0,
+       inactive:         (json['inactive'] as num?)?.toInt() ?? 0,
+       underMaintenance: (json['under_maintenance'] as num?)?.toInt() ?? 0,
+       overdue:          (json['overdue'] as num?)?.toInt() ?? 0,
+       upcoming7Days:    (json['upcoming_7_days'] as num?)?.toInt() ?? 0,
   );   
 }

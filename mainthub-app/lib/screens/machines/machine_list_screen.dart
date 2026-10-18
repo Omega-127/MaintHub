@@ -235,7 +235,39 @@ class _MachineListScreenState extends State<MachineListScreen> {
             child: provider.isLoading
                 ? const Center(child: CircularProgressIndicator())
                 : filtered.isEmpty
-                    ? const Center(child: Text('No machines found'))
+                    ? Center(
+                        child: Padding(
+                          padding: const EdgeInsets.all(24),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              if (provider.error.isNotEmpty) ...[
+                                const Icon(Icons.cloud_off_rounded, size: 48, color: AppTheme.danger),
+                                const SizedBox(height: 12),
+                                Text(
+                                  provider.error,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 15,
+                                    color: AppTheme.danger,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                                const SizedBox(height: 16),
+                                ElevatedButton.icon(
+                                  onPressed: () => provider.loadMachines(),
+                                  icon: const Icon(Icons.refresh),
+                                  label: const Text('Retry'),
+                                ),
+                              ] else ...[
+                                const Icon(Icons.precision_manufacturing_outlined, size: 48, color: AppTheme.textLight),
+                                const SizedBox(height: 12),
+                                const Text('No machines found', style: TextStyle(color: AppTheme.textLight)),
+                              ],
+                            ],
+                          ),
+                        ),
+                      )
                     : ListView.builder(
                         padding:     const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                         itemCount:   filtered.length,

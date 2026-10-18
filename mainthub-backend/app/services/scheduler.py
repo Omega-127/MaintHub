@@ -32,6 +32,19 @@ def check_due_machines(app):
             User.is_active == True
         ).all()
 
+        start_of_day = datetime.combine(today, datetime.min.time())
+        existing_records = Notification.query.filter(
+            Notification.created_at >= start_of_day
+        ).with_entities(
+            Notification.machine_id,
+            Notification.user_id,
+            Notification.notification_type
+        ).all()
+        existing_set = set(existing_records)
+
+        now_utc = datetime.now(timezone.utc)
+        to_create = []
+
         for machine in due_machines:
             is_overdue = machine.next_maintenance_date < today
             notif_type = "OVERDUE" if is_overdue else "REMINDER"
@@ -47,29 +60,25 @@ def check_due_machines(app):
                 if tech.role == "TECHNICIAN" and tech.department and machine.department and tech.department != machine.department:
                     continue
 
-                # Avoid duplicate notifications for same machine+user on same calendar day
-                start_of_day = datetime.combine(today, datetime.min.time())
-                existing = Notification.query.filter(
-                    Notification.machine_id == machine.id,
-                    Notification.user_id == tech.id,
-                    Notification.notification_type == notif_type,
-                    Notification.created_at >= start_of_day,
-                ).first()
-
-                if not existing:
-                    notif = Notification(
+                key = (machine.id, tech.id, notif_type)
+                if key not in existing_set:
+                    to_create.append(Notification(
                         machine_id=machine.id,
                         user_id=tech.id,
                         title=title,
                         message=message,
                         notification_type=notif_type,
                         is_sent=True,
-                        sent_at=datetime.now(timezone.utc)
-                    )
-                    db.session.add(notif)
+                        sent_at=now_utc
+                    ))
+                    existing_set.add(key)
 
-        db.session.commit()
-        print(f"[Scheduler] {today} — Notifications created for {len(due_machines)} machine(s).")
+        if to_create:
+            db.session.add_all(to_create)
+            db.session.commit()
+            print(f"[Scheduler] {today} — Created {len(to_create)} notification(s) for {len(due_machines)} machine(s).")
+        else:
+            print(f"[Scheduler] {today} — All notifications already up to date.")
 
 def start_scheduler(app):
     scheduler = BackgroundScheduler()
