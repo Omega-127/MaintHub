@@ -51,7 +51,15 @@ class _SplashScreenState extends State<SplashScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.build_circle, size: 80, color: Colors.white),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(22),
+              child: Image.asset(
+                'assets/icon/app_icon.png',
+                width: 88,
+                height: 88,
+                fit: BoxFit.contain,
+              ),
+            ),
             const SizedBox(height: 20),
             const Text(
               'MainHub',

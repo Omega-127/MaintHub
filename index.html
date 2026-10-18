@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="MaintHub — machine maintenance scheduling for textile mills. Track overdue work, department queues, and service history from your phone.">
 <title>MaintHub</title>
+<link rel="icon" type="image/svg+xml" href="icon/mainthub-icon.svg">
+<link rel="alternate icon" type="image/png" sizes="32x32" href="icon/mainthub-icon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="icon/mainthub-icon-180.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@450;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -293,7 +296,10 @@ a{color:inherit}
 <section class="hero" aria-label="MaintHub">
 <canvas id="c" role="img" aria-label="A train of meshing gears turning, with a check mark in the largest gear"></canvas>
 <div class="dock">
-  <div class="name rise" style="--d:.3s">MaintHub</div>
+  <div class="rise" style="--d:.3s; display:inline-flex; align-items:center; gap:16px;">
+    <img src="icon/mainthub-icon.svg" alt="MaintHub Icon" width="56" height="56" style="width:clamp(44px,6vw,56px); height:clamp(44px,6vw,56px); border-radius:14px; box-shadow:0 8px 24px -4px rgba(47,111,230,.5); border:1px solid rgba(255,255,255,.3);" />
+    <div class="name">MaintHub</div>
+  </div>
   <div class="opts">
     <a class="opt primary rise" style="--d:.45s" href="#download">Download for Android</a>
     <a class="opt rise" style="--d:.52s" href="#features">Features</a>
