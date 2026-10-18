@@ -20,6 +20,12 @@ def format_date(dt):
         return "-"
     if hasattr(dt, "strftime"):
         return dt.strftime("%d-%m-%Y")
+    if isinstance(dt, str):
+        try:
+            from datetime import datetime
+            return datetime.strptime(dt.split("T")[0], "%Y-%m-%d").strftime("%d-%m-%Y")
+        except Exception:
+            return dt
     return str(dt)
 
 
@@ -37,7 +43,7 @@ def build_department_sheet(ws, department, machines):
     today = date.today()
     dept_label = DEPARTMENT_NAMES.get(department, department)
     ws.title = dept_label[:31]
-    ws.views.sheetView[0].showGridLines = True
+    ws.sheet_view.showGridLines = True
 
     # Compute max history length across machines in this department
     max_history = 0
@@ -68,18 +74,19 @@ def build_department_sheet(ws, department, machines):
     headers = base_headers + history_headers
     total_cols = len(headers)
 
-    # Styles
-    font_title = Font(name="Calibri", size=15, bold=True, color="FFFFFF")
-    font_sub   = Font(name="Calibri", size=10, italic=True, color="475569")
-    font_hdr   = Font(name="Calibri", size=11, bold=True, color="FFFFFF")
-    font_data  = Font(name="Calibri", size=10, color="0F172A")
-    font_bold  = Font(name="Calibri", size=10, bold=True, color="0F172A")
+    # Styles: 8-character ARGB hex strings (FF = 100% opaque alpha)
+    # OpenPyXL pads 6-character hex strings with '00' which causes 100% transparent text in Excel viewers!
+    font_title = Font(name="Calibri", size=15, bold=True, color="FFFFFFFF")
+    font_sub   = Font(name="Calibri", size=10, italic=True, color="FF475569")
+    font_hdr   = Font(name="Calibri", size=11, bold=True, color="FFFFFFFF")
+    font_data  = Font(name="Calibri", size=10, color="FF0F172A")
+    font_bold  = Font(name="Calibri", size=10, bold=True, color="FF0F172A")
 
-    fill_title = PatternFill(start_color="1E3A8A", end_color="1E3A8A", fill_type="solid")  # Navy Blue
-    fill_sub   = PatternFill(start_color="F1F5F9", end_color="F1F5F9", fill_type="solid")
-    fill_hdr   = PatternFill(start_color="2F6FE6", end_color="2F6FE6", fill_type="solid")  # Brand Blue
-    fill_even  = PatternFill(start_color="FFFFFF", end_color="FFFFFF", fill_type="solid")
-    fill_odd   = PatternFill(start_color="F8FAFC", end_color="F8FAFC", fill_type="solid")  # Slate-50
+    fill_title = PatternFill(start_color="FF1E3A8A", end_color="FF1E3A8A", fill_type="solid")  # Navy Blue
+    fill_sub   = PatternFill(start_color="FFF1F5F9", end_color="FFF1F5F9", fill_type="solid")
+    fill_hdr   = PatternFill(start_color="FF2F6FE6", end_color="FF2F6FE6", fill_type="solid")  # Brand Blue
+    fill_even  = PatternFill(start_color="FFFFFFFF", end_color="FFFFFFFF", fill_type="solid")
+    fill_odd   = PatternFill(start_color="FFF8FAFC", end_color="FFF8FAFC", fill_type="solid")  # Slate-50
 
     align_center = Alignment(horizontal="center", vertical="center")
     align_left   = Alignment(horizontal="left",   vertical="center")
@@ -87,26 +94,30 @@ def build_department_sheet(ws, department, machines):
     align_hdr    = Alignment(horizontal="center", vertical="center", wrap_text=True)
 
     border_thin = Border(
-        left=Side(style="thin", color="CBD5E1"),
-        right=Side(style="thin", color="CBD5E1"),
-        top=Side(style="thin", color="CBD5E1"),
-        bottom=Side(style="thin", color="CBD5E1"),
+        left=Side(style="thin", color="FFCBD5E1"),
+        right=Side(style="thin", color="FFCBD5E1"),
+        top=Side(style="thin", color="FFCBD5E1"),
+        bottom=Side(style="thin", color="FFCBD5E1"),
     )
 
     # Row 1: Department Title
     ws.merge_cells(start_row=1, start_column=1, end_row=1, end_column=total_cols)
-    cell_title = ws.cell(row=1, column=1, value=f"{dept_label.upper()} DEPARTMENT - MAINTENANCE SCHEDULE")
-    cell_title.font = font_title
-    cell_title.fill = fill_title
-    cell_title.alignment = align_center
+    for col_c in range(1, total_cols + 1):
+        c = ws.cell(row=1, column=col_c)
+        c.fill = fill_title
+        c.font = font_title
+        c.alignment = align_center
+    ws.cell(row=1, column=1, value=f"{dept_label.upper()} DEPARTMENT - MAINTENANCE SCHEDULE")
     ws.row_dimensions[1].height = 36
 
     # Row 2: Subtitle
     ws.merge_cells(start_row=2, start_column=1, end_row=2, end_column=total_cols)
-    cell_sub = ws.cell(row=2, column=1, value=f"MaintHub Maintenance Management System  |  Generated on: {today.strftime('%d-%m-%Y')}  |  Total Machines: {len(machines)}")
-    cell_sub.font = font_sub
-    cell_sub.fill = fill_sub
-    cell_sub.alignment = align_center
+    for col_c in range(1, total_cols + 1):
+        c = ws.cell(row=2, column=col_c)
+        c.fill = fill_sub
+        c.font = font_sub
+        c.alignment = align_center
+    ws.cell(row=2, column=1, value=f"MaintHub Maintenance Management System  |  Generated on: {today.strftime('%d-%m-%Y')}  |  Total Machines: {len(machines)}")
     ws.row_dimensions[2].height = 20
 
     # Row 3: Blank separator
@@ -181,14 +192,14 @@ def build_department_sheet(ws, department, machines):
             # Highlight status
             if col_idx == 7:
                 if status_display == "OVERDUE":
-                    c.font = Font(name="Calibri", size=10, bold=True, color="DC2626")
-                    c.fill = PatternFill(start_color="FEE2E2", end_color="FEE2E2", fill_type="solid")
+                    c.font = Font(name="Calibri", size=10, bold=True, color="FFDC2626")
+                    c.fill = PatternFill(start_color="FFFEE2E2", end_color="FFFEE2E2", fill_type="solid")
                 elif status_display == "ACTIVE":
-                    c.font = Font(name="Calibri", size=10, bold=True, color="16A34A")
-                    c.fill = PatternFill(start_color="DCFCE7", end_color="DCFCE7", fill_type="solid")
+                    c.font = Font(name="Calibri", size=10, bold=True, color="FF16A34A")
+                    c.fill = PatternFill(start_color="FFDCFCE7", end_color="FFDCFCE7", fill_type="solid")
                 elif status_display == "UNDER_MAINTENANCE":
-                    c.font = Font(name="Calibri", size=10, bold=True, color="D97706")
-                    c.fill = PatternFill(start_color="FEF3C7", end_color="FEF3C7", fill_type="solid")
+                    c.font = Font(name="Calibri", size=10, bold=True, color="FFD97706")
+                    c.fill = PatternFill(start_color="FFFEF3C7", end_color="FFFEF3C7", fill_type="solid")
 
         current_row += 1
 

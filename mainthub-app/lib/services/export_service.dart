@@ -41,13 +41,10 @@ class ExportService {
     // Determine target save directory
     Directory? targetDir;
     if (Platform.isAndroid) {
-      final publicDownload = Directory('/storage/emulated/0/Download');
-      if (await publicDownload.exists()) {
-        targetDir = publicDownload;
-      }
+      targetDir = await getExternalStorageDirectory() ?? await getApplicationDocumentsDirectory();
+    } else {
+      targetDir = await getDownloadsDirectory() ?? await getApplicationDocumentsDirectory();
     }
-
-    targetDir ??= await getDownloadsDirectory() ?? await getApplicationDocumentsDirectory();
 
     final filePath = '${targetDir.path}/$fileName';
     final file = File(filePath);
@@ -83,6 +80,8 @@ class ExportService {
 
       if (!context.mounted) return;
 
+      const xlsxMime = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+
       // Offer immediate open action
       ScaffoldMessenger.of(context).hideCurrentSnackBar();
       ScaffoldMessenger.of(context).showSnackBar(
@@ -94,14 +93,14 @@ class ExportService {
             label: 'OPEN',
             textColor: Colors.white,
             onPressed: () {
-              OpenFilex.open(file.path);
+              OpenFilex.open(file.path, type: xlsxMime);
             },
           ),
         ),
       );
 
       // Attempt to launch viewer automatically
-      await OpenFilex.open(file.path);
+      await OpenFilex.open(file.path, type: xlsxMime);
     } catch (e) {
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).hideCurrentSnackBar();

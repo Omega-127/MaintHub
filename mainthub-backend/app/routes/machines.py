@@ -102,6 +102,8 @@ def export_department_excel(department=None):
     # Technicians are restricted to their own department
     if user.role != "ADMIN":
         target_dept = user.department
+        if not target_dept:
+            return jsonify({"error": "Technician has no assigned department"}), 400
 
     if not target_dept or target_dept.upper() == "ALL":
         if user.role != "ADMIN":
@@ -119,6 +121,9 @@ def export_department_excel(department=None):
                 as_attachment=True,
                 download_name=filename,
             )
+
+    if not target_dept:
+        return jsonify({"error": "No department specified"}), 400
 
     target_dept = target_dept.upper()
     if target_dept not in valid_depts:
