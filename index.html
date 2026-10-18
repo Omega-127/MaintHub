@@ -296,10 +296,7 @@ a{color:inherit}
 <section class="hero" aria-label="MaintHub">
 <canvas id="c" role="img" aria-label="A train of meshing gears turning, with a check mark in the largest gear"></canvas>
 <div class="dock">
-  <div class="rise" style="--d:.3s; display:inline-flex; align-items:center; gap:16px;">
-    <img src="icon/mainthub-icon.svg" alt="MaintHub Icon" width="56" height="56" style="width:clamp(44px,6vw,56px); height:clamp(44px,6vw,56px); border-radius:14px; box-shadow:0 8px 24px -4px rgba(47,111,230,.5); border:1px solid rgba(255,255,255,.3);" />
-    <div class="name">MaintHub</div>
-  </div>
+  <div class="name rise" style="--d:.3s">MaintHub</div>
   <div class="opts">
     <a class="opt primary rise" style="--d:.45s" href="#download">Download for Android</a>
     <a class="opt rise" style="--d:.52s" href="#features">Features</a>
@@ -357,6 +354,7 @@ a{color:inherit}
           <ul class="points">
             <li style="--dot:#2fd6c0"><div><strong>OK vs overdue</strong>Status and next service date sit on every row.</div></li>
             <li style="--dot:var(--blue)"><div><strong>Add from the floor</strong>Admins can register a machine with interval and first date in one form.</div></li>
+            <li style="--dot:var(--amb)"><div><strong>Excel schedule export</strong>Download formatted maintenance sheets by department or multi-tab workbooks.</div></li>
           </ul>
         </div>
         <div class="shot reveal-x" style="--from:-40px">
@@ -380,6 +378,7 @@ a{color:inherit}
           <ul class="points">
             <li style="--dot:var(--amb)"><div><strong>Morning alerts</strong>A daily backend pass flags due and overdue work so the queue stays current.</div></li>
             <li style="--dot:var(--teal)"><div><strong>History stays with the machine</strong>Completing service rolls the next date forward by the interval.</div></li>
+            <li style="--dot:var(--coral)"><div><strong>Dedicated notification center</strong>Filter by Overdue, Reminder, or Completed with instant deep-linking.</div></li>
           </ul>
         </div>
         <div class="shot reveal-x" style="--from:40px">
@@ -454,6 +453,16 @@ a{color:inherit}
             <span class="note">Registry filtered by department role</span>
           </div>
           <div class="endpoint">
+            <span class="method">GET</span>
+            <span class="path">/api/machines/export/excel</span>
+            <span class="note">Export styled Excel maintenance schedules</span>
+          </div>
+          <div class="endpoint">
+            <span class="method">GET</span>
+            <span class="path">/api/notifications/</span>
+            <span class="note">In-app alerts and debounced sync</span>
+          </div>
+          <div class="endpoint">
             <span class="method">POST</span>
             <span class="path">/api/maintenance/{id}/complete</span>
             <span class="note">Log service; advance next date</span>
@@ -506,15 +515,15 @@ a{color:inherit}
           <p class="kicker">Get the app</p>
           <h2 class="h2">Put the schedule in someone’s pocket</h2>
           <p class="lede">Android build for technicians and admins on the mill floor.</p>
-          <p id="apk-meta" style="margin:10px 0 0;font-family:var(--mono);font-size:0.78rem;color:var(--teal)">v1.1.0 · ~50 MB · Android 8.0+</p>
+          <p id="apk-meta" style="margin:10px 0 0;font-family:var(--mono);font-size:0.78rem;color:var(--teal)">v2.0.0 · ~50 MB · Android 8.0+</p>
         </div>
         <div class="cta-actions-col">
           <div class="cta-actions">
-            <a class="btn btn--solid" id="apk-download-btn" href="https://github.com/Omega-127/MaintHub/releases/download/v1.1.0/mainthub110.apk" download="mainthub.apk">Download for Android</a>
+            <a class="btn btn--solid" id="apk-download-btn" href="https://github.com/Omega-127/MaintHub/releases/download/v2.0.0/mainthub200.apk" download="mainthub.apk">Download for Android</a>
             <a class="btn btn--ghost" href="https://github.com/Omega-127/MaintHub" target="_blank" rel="noopener">View on GitHub</a>
           </div>
           <div class="cta-fallback">
-            Download didn&rsquo;t start? <a href="https://github.com/Omega-127/MaintHub/releases" target="_blank" rel="noopener" id="apk-releases-fallback">Download manually from GitHub Releases &rarr;</a>
+            Download didn&rsquo;t start? <a href="https://github.com/Omega-127/MaintHub/releases" target="_blank" rel="noopener" id="apk-releases-fallback">Download manually from GitHub Releases &rarr;</a> · <a href="https://github.com/Omega-127/MaintHub/blob/main/RELEASE_NOTES.md" target="_blank" rel="noopener">v2.0.0 Release Notes &rarr;</a>
           </div>
         </div>
 
@@ -539,6 +548,7 @@ a{color:inherit}
         <a href="#features">Features</a>
         <a href="#api">API</a>
         <a href="#setup">Setup</a>
+        <a href="https://github.com/Omega-127/MaintHub/blob/main/RELEASE_NOTES.md" target="_blank" rel="noopener">Release Notes (v2.0.0)</a>
         <a href="https://github.com/Omega-127/MaintHub/blob/main/docs/ARCHITECTURE.md" target="_blank" rel="noopener">Architecture</a>
       </nav>
     </div>
