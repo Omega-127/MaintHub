@@ -33,16 +33,17 @@ class NotificationNavigator {
 
     final userDept = auth.user?.isAdmin == true ? null : auth.user?.department;
 
-    if (payload == 'overdue') {
-      navigatorKey.currentState?.push(
-        MaterialPageRoute(
-          builder: (_) => PendingMaintenanceScreen(department: userDept),
-        ),
-      );
-    } else if (payload == 'due_today' || payload == 'due_soon') {
+    if (payload.contains('due_today') || payload.contains('due_soon')) {
       navigatorKey.currentState?.push(
         MaterialPageRoute(
           builder: (_) => DueSoonScreen(department: userDept),
+        ),
+      );
+    } else {
+      // Overdue or any general maintenance notification
+      navigatorKey.currentState?.push(
+        MaterialPageRoute(
+          builder: (_) => PendingMaintenanceScreen(department: userDept),
         ),
       );
     }
@@ -53,7 +54,10 @@ class NotificationNavigator {
     if (_pendingPayload != null) {
       final payload = _pendingPayload;
       _pendingPayload = null;
-      Future.microtask(() => navigateFromPayload(payload));
+      Future.delayed(
+        const Duration(milliseconds: 250),
+        () => navigateFromPayload(payload),
+      );
     }
   }
 }

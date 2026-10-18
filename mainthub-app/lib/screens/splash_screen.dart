@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import '../config/theme.dart';
 import '../providers/auth_provider.dart';
 import '../services/overdue_alert_service.dart';
-import '../services/notification_navigator.dart';
 import 'machines/dashboard_screen.dart';
 import 'machines/login_screen.dart';
 
@@ -42,12 +41,6 @@ class _SplashScreenState extends State<SplashScreen> {
             : const LoginScreen(),
       ),
     );
-
-    if (auth.isLoggedIn) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        NotificationNavigator.checkAndConsumePendingPayload();
-      });
-    }
   }
 
   @override

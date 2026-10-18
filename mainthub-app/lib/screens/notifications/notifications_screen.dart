@@ -52,7 +52,14 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     final userDept = auth.user?.isAdmin == true ? null : auth.user?.department;
 
     // 2. Redirect toward overdue machines if overdue
-    if (item.isOverdue) {
+    final isOverdue = item.isOverdue ||
+        item.title.toLowerCase().contains('overdue') ||
+        item.message.toLowerCase().contains('overdue');
+    final isReminder = item.isReminder ||
+        item.title.toLowerCase().contains('due') ||
+        item.message.toLowerCase().contains('due');
+
+    if (isOverdue) {
       if (!mounted) return;
       Navigator.push(
         context,
@@ -60,7 +67,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           builder: (_) => PendingMaintenanceScreen(department: userDept),
         ),
       );
-    } else if (item.isReminder) {
+    } else if (isReminder) {
       if (!mounted) return;
       Navigator.push(
         context,

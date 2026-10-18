@@ -46,7 +46,9 @@ class LocalNotificationService {
         _channelId,
         _channelName,
         description: _channelDesc,
-        importance: Importance.high,
+        importance: Importance.max,
+        enableVibration: true,
+        playSound: true,
       ),
     );
 
@@ -54,8 +56,12 @@ class LocalNotificationService {
   }
 
   Future<bool> requestPermission() async {
+    final androidPlugin = _plugin.resolvePlatformSpecificImplementation<
+        AndroidFlutterLocalNotificationsPlugin>();
+    final pluginGranted = await androidPlugin?.requestNotificationsPermission();
+
     final status = await Permission.notification.status;
-    if (status.isGranted) return true;
+    if (status.isGranted || pluginGranted == true) return true;
     final result = await Permission.notification.request();
     return result.isGranted;
   }
@@ -72,10 +78,14 @@ class LocalNotificationService {
       _channelId,
       _channelName,
       channelDescription: _channelDesc,
-      importance: Importance.high,
+      importance: Importance.max,
       priority: Priority.high,
       icon: '@mipmap/ic_launcher',
       styleInformation: BigTextStyleInformation(body),
+      channelShowBadge: true,
+      enableVibration: true,
+      playSound: true,
+      visibility: NotificationVisibility.public,
     );
 
     await _plugin.show(

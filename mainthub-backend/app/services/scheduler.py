@@ -43,6 +43,10 @@ def check_due_machines(app):
             )
 
             for tech in technicians:
+                # Technicians only receive alerts for their department; Admins receive for all
+                if tech.role == "TECHNICIAN" and tech.department and machine.department and tech.department != machine.department:
+                    continue
+
                 # Avoid duplicate notifications for same machine+user on same calendar day
                 start_of_day = datetime.combine(today, datetime.min.time())
                 existing = Notification.query.filter(
@@ -81,4 +85,9 @@ def start_scheduler(app):
 
     scheduler.start()
     print("[scheduler] started - daily check at 6:00 AM")
+
+    # Run check immediately in background so notifications are ready on startup
+    import threading
+    threading.Thread(target=check_due_machines, args=(app,), daemon=True).start()
+
     return scheduler

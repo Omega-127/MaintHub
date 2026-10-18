@@ -44,13 +44,13 @@ class OverdueAlertService {
     }
 
     final prefs = await SharedPreferences.getInstance();
-    final today = _todayKey();
     final fingerprint = _fingerprint(overdue, dueToday);
-    final lastDay = prefs.getString('overdue_alert_day');
     final lastFp = prefs.getString('overdue_alert_fp');
+    final lastAlertTime = prefs.getInt('overdue_alert_timestamp') ?? 0;
+    final now = DateTime.now().millisecondsSinceEpoch;
 
-    if (!force && lastDay == today && lastFp == fingerprint) {
-      return; // already notified for this set today
+    if (!force && lastFp == fingerprint && (now - lastAlertTime < 15 * 60 * 1000)) {
+      return; // already notified for this set recently
     }
 
     if (overdue.isNotEmpty) {
@@ -98,7 +98,7 @@ class OverdueAlertService {
       }
     }
 
-    await prefs.setString('overdue_alert_day', today);
+    await prefs.setInt('overdue_alert_timestamp', now);
     await prefs.setString('overdue_alert_fp', fingerprint);
   }
 
@@ -106,10 +106,6 @@ class OverdueAlertService {
     // Kept for logout call-sites; no background scheduler currently.
   }
 
-  String _todayKey() {
-    final n = DateTime.now();
-    return '${n.year}-${n.month.toString().padLeft(2, '0')}-${n.day.toString().padLeft(2, '0')}';
-  }
 
   String _fingerprint(List<Machine> overdue, List<Machine> dueToday) {
     final o = overdue.map((m) => 'o${m.id}').join(',');

@@ -1,7 +1,8 @@
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, current_app
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from app import db
 from app.models.notification import Notification
+from app.services.scheduler import check_due_machines
 from datetime import datetime, timezone
 
 notifications_bp = Blueprint("notifications", __name__)
@@ -11,6 +12,12 @@ notifications_bp = Blueprint("notifications", __name__)
 @notifications_bp.route("/", methods=["GET"])
 @jwt_required()
 def get_notifications():
+    # Sync due/overdue machine notifications on demand
+    try:
+        check_due_machines(current_app._get_current_object())
+    except Exception as e:
+        current_app.logger.warning(f"[notifications] sync check error: {e}")
+
     user_id = get_jwt_identity()
     notifs = (Notification.query
               .filter_by(user_id=int(user_id))
