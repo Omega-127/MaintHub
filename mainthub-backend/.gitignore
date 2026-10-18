@@ -24,6 +24,10 @@ instance/
 *.db
 *.sqlite
 *.sqlite3
+*.dump
+*.sql
+*backup*.json
+
 
 # Distribution / packaging
 build/
