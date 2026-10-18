@@ -1,8 +1,9 @@
-from flask import Blueprint, request, jsonify
-from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask import Blueprint, request, jsonify, send_file
+from flask_jwt_extended import jwt_required, get_jwt_identity, decode_token
 from app import db
 from app.models.machine import Machine
 from app.models.user import User
+from app.services.export_service import generate_department_excel, generate_all_departments_excel
 from datetime import date, timedelta
 
 machines_bp = Blueprint("machines", __name__)
@@ -66,6 +67,73 @@ def get_machine_types():
 def get_departments():
     """Return the six available departments."""
     return jsonify(["BLOWROOM", "COMBER", "RING_FRAME", "SPEED_FRAME", "WINDING", "BUFFING"]), 200
+
+
+# ── GET /api/machines/export ──────────────────────────────────
+# ── GET /api/machines/export/<department> ─────────────────────
+@machines_bp.route("/export", methods=["GET"])
+@machines_bp.route("/export/<department>", methods=["GET"])
+@jwt_required(optional=True)
+def export_department_excel(department=None):
+    """
+    Export Excel maintenance schedule for a department.
+    Contains: Department title, all machines, previous maintenance date,
+    due date, and historical maintenance cycles as column pairs.
+    """
+    user_id = get_jwt_identity()
+    if not user_id:
+        token = request.args.get("token")
+        if token:
+            try:
+                decoded = decode_token(token)
+                user_id = decoded["sub"]
+            except Exception:
+                return jsonify({"error": "Invalid or expired token"}), 401
+        else:
+            return jsonify({"error": "Authorization token required"}), 401
+
+    user = User.query.get(user_id)
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+
+    valid_depts = ("BLOWROOM", "COMBER", "RING_FRAME", "SPEED_FRAME", "WINDING", "BUFFING")
+    target_dept = department or request.args.get("department")
+
+    # Technicians are restricted to their own department
+    if user.role != "ADMIN":
+        target_dept = user.department
+
+    if not target_dept or target_dept.upper() == "ALL":
+        if user.role != "ADMIN":
+            target_dept = user.department
+        else:
+            # Multi-department export: 1 sheet per department
+            dept_dict = {}
+            for d in valid_depts:
+                dept_dict[d] = Machine.query.filter_by(department=d).order_by(Machine.name.asc()).all()
+            excel_buf = generate_all_departments_excel(dept_dict)
+            filename = f"MaintHub_All_Departments_{date.today().strftime('%Y%m%d')}.xlsx"
+            return send_file(
+                excel_buf,
+                mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                as_attachment=True,
+                download_name=filename,
+            )
+
+    target_dept = target_dept.upper()
+    if target_dept not in valid_depts:
+        return jsonify({"error": f"Invalid department. Must be one of: {', '.join(valid_depts)}"}), 400
+
+    machines = Machine.query.filter_by(department=target_dept).order_by(Machine.name.asc()).all()
+    excel_buf = generate_department_excel(target_dept, machines)
+    filename = f"{target_dept}_Maintenance_Schedule_{date.today().strftime('%Y%m%d')}.xlsx"
+
+    return send_file(
+        excel_buf,
+        mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        as_attachment=True,
+        download_name=filename,
+    )
 
 
 # ── GET /api/machines/due ────────────────────────────────────

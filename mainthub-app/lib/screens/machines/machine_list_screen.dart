@@ -5,6 +5,7 @@ import '../../config/theme.dart';
 import '../../models/machine.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/machine_provider.dart';
+import '../../services/export_service.dart';
 import 'add_machine_screen.dart';
 import 'machine_details_screen.dart';
 
@@ -53,6 +54,9 @@ class _MachineListScreenState extends State<MachineListScreen> {
       final matchDept   = _activeDeptFilter == null || m.department == _activeDeptFilter;
       return matchSearch && matchDept;
     }).toList();
+
+    final currentDept = widget.department ?? _activeDeptFilter ?? (!isAdmin ? auth.user?.department : null);
+    final deptLabel = ExportService.getDepartmentLabel(currentDept);
 
     return Scaffold(
       appBar: AppBar(
@@ -109,6 +113,11 @@ class _MachineListScreenState extends State<MachineListScreen> {
             ),
             const SizedBox(width: 8),
           ],
+          IconButton(
+            icon: const Icon(Icons.file_download_outlined),
+            tooltip: 'Export Excel Schedule',
+            onPressed: () => _handleExport(context, auth),
+          ),
           IconButton(icon: const Icon(Icons.refresh), onPressed: provider.loadMachines),
         ],
       ),
@@ -126,13 +135,79 @@ class _MachineListScreenState extends State<MachineListScreen> {
         children: [
           // Search bar
           Padding(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 10),
             child: TextField(
               decoration: const InputDecoration(
                 hintText:  'Search machines...',
                 prefixIcon: Icon(Icons.search),
               ),
               onChanged: (v) => setState(() => _search = v),
+            ),
+          ),
+
+          // Department Excel Export banner
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
+            child: InkWell(
+              onTap: () => _handleExport(context, auth),
+              borderRadius: BorderRadius.circular(12),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF107C41).withValues(alpha: 0.08),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: const Color(0xFF107C41).withValues(alpha: 0.28),
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(7),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF107C41),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Icon(
+                        Icons.table_chart_rounded,
+                        size: 18,
+                        color: Colors.white,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            currentDept != null
+                                ? 'Export $deptLabel Schedule'
+                                : 'Export Department Schedule',
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 13,
+                              color: AppTheme.textDark,
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          const Text(
+                            'Excel sheet with machines, previous & due dates',
+                            style: TextStyle(
+                              fontSize: 11,
+                              color: AppTheme.textLight,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const Icon(
+                      Icons.file_download_outlined,
+                      color: Color(0xFF107C41),
+                      size: 22,
+                    ),
+                  ],
+                ),
+              ),
             ),
           ),
 
@@ -169,6 +244,102 @@ class _MachineListScreenState extends State<MachineListScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  void _handleExport(BuildContext context, AuthProvider auth) {
+    final currentDept = widget.department ??
+        _activeDeptFilter ??
+        (auth.user?.role != 'ADMIN' ? auth.user?.department : null);
+    if (currentDept != null) {
+      ExportService().exportAndPrompt(context, currentDept);
+    } else {
+      _showExportDepartmentSelector(context);
+    }
+  }
+
+  void _showExportDepartmentSelector(BuildContext context) {
+    final depts = [
+      ('BLOWROOM', 'Blowroom Department'),
+      ('COMBER', 'Comber Department'),
+      ('RING_FRAME', 'Ring Frame Department'),
+      ('SPEED_FRAME', 'Speed Frame Department'),
+      ('WINDING', 'Winding Department'),
+      ('BUFFING', 'Buffing Department'),
+      ('ALL', 'All Departments (Multi-tab Workbook)'),
+    ];
+
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (ctx) {
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(6),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF107C41),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: const Icon(Icons.table_chart_rounded, size: 20, color: Colors.white),
+                      ),
+                      const SizedBox(width: 12),
+                      const Text(
+                        'Export Maintenance Schedule',
+                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                ),
+                const Divider(),
+                Flexible(
+                  child: ListView(
+                    shrinkWrap: true,
+                    children: depts.map((d) {
+                      final isAll = d.$1 == 'ALL';
+                      return ListTile(
+                        leading: Icon(
+                          isAll ? Icons.folder_zip_outlined : Icons.description_outlined,
+                          color: isAll ? const Color(0xFF107C41) : AppTheme.primary,
+                        ),
+                        title: Text(
+                          d.$2,
+                          style: TextStyle(
+                            fontWeight: isAll ? FontWeight.bold : FontWeight.w500,
+                            color: isAll ? const Color(0xFF107C41) : AppTheme.textDark,
+                          ),
+                        ),
+                        subtitle: Text(
+                          isAll
+                              ? 'Combined Excel sheet with tabs for each department'
+                              : 'Includes all machines with maintenance history',
+                          style: const TextStyle(fontSize: 12),
+                        ),
+                        trailing: const Icon(Icons.arrow_forward_ios, size: 14),
+                        onTap: () {
+                          Navigator.pop(ctx);
+                          ExportService().exportAndPrompt(context, d.$1);
+                        },
+                      );
+                    }).toList(),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }
