@@ -1,5 +1,6 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'notification_navigator.dart';
 
 /// Shows OS-level notifications from the app (not email).
 class LocalNotificationService {
@@ -20,7 +21,23 @@ class LocalNotificationService {
     const android = AndroidInitializationSettings('@mipmap/ic_launcher');
     const settings = InitializationSettings(android: android);
 
-    await _plugin.initialize(settings: settings);
+    await _plugin.initialize(
+      settings: settings,
+      onDidReceiveNotificationResponse: (NotificationResponse response) {
+        if (response.payload != null) {
+          NotificationNavigator.navigateFromPayload(response.payload);
+        }
+      },
+    );
+
+    // If app launched from terminated state via notification click
+    final launchDetails = await _plugin.getNotificationAppLaunchDetails();
+    if (launchDetails?.didNotificationLaunchApp == true) {
+      final payload = launchDetails?.notificationResponse?.payload;
+      if (payload != null) {
+        NotificationNavigator.setPendingPayload(payload);
+      }
+    }
 
     final androidPlugin = _plugin.resolvePlatformSpecificImplementation<
         AndroidFlutterLocalNotificationsPlugin>();
@@ -47,6 +64,7 @@ class LocalNotificationService {
     required int id,
     required String title,
     required String body,
+    String? payload,
   }) async {
     if (!_ready) await init();
 
@@ -64,6 +82,7 @@ class LocalNotificationService {
       id: id,
       title: title,
       body: body,
+      payload: payload,
       notificationDetails: NotificationDetails(android: androidDetails),
     );
   }

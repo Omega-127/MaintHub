@@ -61,6 +61,7 @@ class OverdueAlertService {
           title: 'OVERDUE: ${m.name}',
           body:
               '${m.departmentLabel} at ${m.location ?? 'N/A'} was due on ${m.nextMaintenanceDate}.',
+          payload: 'overdue',
         );
       } else {
         final names = overdue.take(5).map((m) => m.name).join(', ');
@@ -69,6 +70,7 @@ class OverdueAlertService {
           id: 9001,
           title: '${overdue.length} machines overdue',
           body: '$names$extra need maintenance.',
+          payload: 'overdue',
         );
       }
     }
@@ -81,6 +83,7 @@ class OverdueAlertService {
           title: 'Due today: ${m.name}',
           body:
               '${m.departmentLabel} at ${m.location ?? 'N/A'} is due for maintenance today.',
+          payload: 'due_today',
         );
       } else {
         final names = dueToday.take(5).map((m) => m.name).join(', ');
@@ -90,6 +93,7 @@ class OverdueAlertService {
           id: 9002,
           title: '${dueToday.length} machines due today',
           body: '$names$extra.',
+          payload: 'due_today',
         );
       }
     }

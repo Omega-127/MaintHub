@@ -6,6 +6,8 @@ import 'providers/machine_provider.dart';
 import 'screens/splash_screen.dart';
 import 'services/overdue_alert_service.dart';
 
+import 'services/notification_navigator.dart';
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await OverdueAlertService.instance.initialize();
@@ -23,6 +25,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => MachineProvider()),
       ],
       child: MaterialApp(
+        navigatorKey: NotificationNavigator.navigatorKey,
         title: 'MainHub',
         theme: AppTheme.theme,
         debugShowCheckedModeBanner: false,

@@ -10,6 +10,10 @@ import 'machine_list_screen.dart';
 import 'add_machine_screen.dart';
 import '../maintanance/pending_screen.dart';
 import '../maintanance/due_soon_screen.dart';
+import '../../models/app_notification.dart';
+import '../../services/notification_service.dart';
+import '../../services/notification_navigator.dart';
+import '../notifications/notifications_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -21,7 +25,9 @@ class DashboardScreen extends StatefulWidget {
 class _DashboardScreenState extends State<DashboardScreen>
     with WidgetsBindingObserver {
   final _dashService = DashboardService();
+  final _notifService = NotificationService();
   DashboardSummary? _summary;
+  int _unreadNotifications = 0;
   bool _isLoading = true;
 
   @override
@@ -29,6 +35,9 @@ class _DashboardScreenState extends State<DashboardScreen>
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     _load();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      NotificationNavigator.checkAndConsumePendingPayload();
+    });
   }
 
   @override
@@ -41,17 +50,30 @@ class _DashboardScreenState extends State<DashboardScreen>
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
       OverdueAlertService.instance.checkAndNotify();
+      NotificationNavigator.checkAndConsumePendingPayload();
+      _load();
     }
   }
 
   Future<void> _load() async {
     try {
-      final summary = await _dashService.getSummary();
-      setState(() { _summary = summary; _isLoading = false; });
+      final summaryFuture = _dashService.getSummary();
+      final notifsFuture = _notifService.getNotifications();
+      final results = await Future.wait([summaryFuture, notifsFuture]);
+      final summary = results[0] as DashboardSummary;
+      final notifs = results[1] as List<AppNotification>;
+
+      if (mounted) {
+        setState(() {
+          _summary = summary;
+          _unreadNotifications = notifs.where((n) => !n.isRead).length;
+          _isLoading = false;
+        });
+      }
       // Refresh device notifications for overdue / due-today machines.
       await OverdueAlertService.instance.checkAndNotify();
     } catch (_) {
-      setState(() => _isLoading = false);
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
@@ -77,6 +99,21 @@ class _DashboardScreenState extends State<DashboardScreen>
       appBar: AppBar(
         title: const Text('MainHub'),
         actions: [
+          IconButton(
+            icon: Badge(
+              isLabelVisible: _unreadNotifications > 0,
+              label: Text('$_unreadNotifications'),
+              child: const Icon(Icons.notifications_outlined),
+            ),
+            tooltip: 'Notifications',
+            onPressed: () async {
+              await Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const NotificationsScreen()),
+              );
+              _load();
+            },
+          ),
           IconButton(icon: const Icon(Icons.refresh), onPressed: _load),
           IconButton(icon: const Icon(Icons.logout),  onPressed: _logout),
         ],
