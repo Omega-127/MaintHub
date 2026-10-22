@@ -59,7 +59,7 @@ class _MachineDetailScreenState extends State<MachineDetailScreen> {
       content: Text(success ? '✅ Maintenance completed!' : '❌ Failed to update'),
       backgroundColor: success ? AppTheme.success : AppTheme.danger,
     ));
-    if (success) Navigator.pop(context);
+    if (success) Navigator.pop(context, true);
   }
 
   Future<void> _delete() async {
@@ -79,9 +79,25 @@ class _MachineDetailScreenState extends State<MachineDetailScreen> {
     );
 
     if (confirmed != true || !mounted) return;
-    final success = await context.read<MachineProvider>().deleteMachine(widget.machine.id);
-    if (!mounted) return;
-    if (success) Navigator.pop(context);
+
+    final provider = context.read<MachineProvider>();
+    final messenger = ScaffoldMessenger.of(context);
+    final machineName = widget.machine.name;
+    final machineId = widget.machine.id;
+
+    if (Navigator.canPop(context)) {
+      Navigator.pop(context, true);
+    }
+
+    final success = await provider.deleteMachine(machineId);
+    messenger.showSnackBar(
+      SnackBar(
+        content: Text(success
+            ? '🗑️ Machine "$machineName" deleted'
+            : '❌ Failed to delete machine "$machineName"'),
+        backgroundColor: success ? AppTheme.success : AppTheme.danger,
+      ),
+    );
   }
 
   @override

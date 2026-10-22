@@ -59,7 +59,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     if (!mounted) return;
 
     if (success) {
-      OverdueAlertService.instance.checkAndNotify(force: true);
+      OverdueAlertService.instance.checkAndNotify();
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (_) => const DashboardScreen()),

@@ -96,6 +96,11 @@ class _DashboardScreenState extends State<DashboardScreen>
     }
   }
 
+  Future<void> _navigateTo(Widget page) async {
+    await Navigator.push(context, MaterialPageRoute(builder: (_) => page));
+    if (mounted) _load();
+  }
+
   Future<void> _logout() async {
     await OverdueAlertService.instance.stopPeriodicChecks();
     if (!mounted) return;
@@ -176,12 +181,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                           _summary!.totalMachines,
                           Icons.precision_manufacturing,
                           AppTheme.primary,
-                          onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => MachineListScreen(department: userDept),
-                            ),
-                          ),
+                          onTap: () => _navigateTo(MachineListScreen(department: userDept)),
                         ),
                         _KpiCard(
                           'Active',
@@ -197,24 +197,14 @@ class _DashboardScreenState extends State<DashboardScreen>
                           _summary!.overdue,
                           Icons.warning_rounded,
                           AppTheme.danger,
-                          onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => PendingMaintenanceScreen(department: userDept),
-                            ),
-                          ),
+                          onTap: () => _navigateTo(PendingMaintenanceScreen(department: userDept)),
                         ),
                         _KpiCard(
                           'Due Soon',
                           _summary!.upcoming7Days,
                           Icons.schedule,
                           AppTheme.warning,
-                          onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => DueSoonScreen(department: userDept),
-                            ),
-                          ),
+                          onTap: () => _navigateTo(DueSoonScreen(department: userDept)),
                         ),
                       ]),
                     ] else ...[
@@ -258,8 +248,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                         icon:    Icons.factory_outlined,
                         label:   'Blowroom Machines',
                         color:   const Color(0xFF0077B6),
-                        onTap:   () => Navigator.push(context,
-                            MaterialPageRoute(builder: (_) => const MachineListScreen(department: 'BLOWROOM'))),
+                        onTap:   () => _navigateTo(const MachineListScreen(department: 'BLOWROOM')),
                       ),
                       const SizedBox(height: 12),
                       // Comber department tile
@@ -267,8 +256,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                         icon:    Icons.settings_input_component_outlined,
                         label:   'Comber Machines',
                         color:   const Color(0xFF7B61FF),
-                        onTap:   () => Navigator.push(context,
-                            MaterialPageRoute(builder: (_) => const MachineListScreen(department: 'COMBER'))),
+                        onTap:   () => _navigateTo(const MachineListScreen(department: 'COMBER')),
                       ),
                       const SizedBox(height: 12),
                       // Ring Frame department tile
@@ -276,8 +264,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                         icon:    Icons.rotate_right_outlined,
                         label:   'Ring Frame Machines',
                         color:   const Color(0xFF00897B),
-                        onTap:   () => Navigator.push(context,
-                            MaterialPageRoute(builder: (_) => const MachineListScreen(department: 'RING_FRAME'))),
+                        onTap:   () => _navigateTo(const MachineListScreen(department: 'RING_FRAME')),
                       ),
                       const SizedBox(height: 12),
                       // Speed Frame department tile
@@ -285,8 +272,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                         icon:    Icons.speed_outlined,
                         label:   'Speed Frame Machines',
                         color:   const Color(0xFFE65100),
-                        onTap:   () => Navigator.push(context,
-                            MaterialPageRoute(builder: (_) => const MachineListScreen(department: 'SPEED_FRAME'))),
+                        onTap:   () => _navigateTo(const MachineListScreen(department: 'SPEED_FRAME')),
                       ),
                       const SizedBox(height: 12),
                       // Winding department tile
@@ -294,8 +280,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                         icon:    Icons.wind_power_outlined,
                         label:   'Winding Machines',
                         color:   const Color(0xFF6A1B9A),
-                        onTap:   () => Navigator.push(context,
-                            MaterialPageRoute(builder: (_) => const MachineListScreen(department: 'WINDING'))),
+                        onTap:   () => _navigateTo(const MachineListScreen(department: 'WINDING')),
                       ),
                       const SizedBox(height: 12),
                       // Buffing department tile
@@ -303,16 +288,14 @@ class _DashboardScreenState extends State<DashboardScreen>
                         icon:    Icons.construction_outlined,
                         label:   'Buffing Machines',
                         color:   const Color(0xFF00695C),
-                        onTap:   () => Navigator.push(context,
-                            MaterialPageRoute(builder: (_) => const MachineListScreen(department: 'BUFFING'))),
+                        onTap:   () => _navigateTo(const MachineListScreen(department: 'BUFFING')),
                       ),
                       const SizedBox(height: 12),
                       _ActionTile(
                         icon:    Icons.add_circle,
                         label:   'Add Machine',
                         color:   AppTheme.success,
-                        onTap:   () => Navigator.push(context,
-                            MaterialPageRoute(builder: (_) => const AddMachineScreen())),
+                        onTap:   () => _navigateTo(const AddMachineScreen()),
                       ),
                     ],
 
@@ -342,8 +325,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                                                 : userDept == 'BUFFING'
                                                     ? const Color(0xFF00695C)
                                                     : const Color(0xFF0077B6),
-                        onTap:   () => Navigator.push(context,
-                            MaterialPageRoute(builder: (_) => MachineListScreen(department: userDept))),
+                        onTap:   () => _navigateTo(MachineListScreen(department: userDept)),
                       ),
                     ],
                   ],

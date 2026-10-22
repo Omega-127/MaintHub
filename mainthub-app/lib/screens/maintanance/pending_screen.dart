@@ -226,10 +226,15 @@ class _OverdueMachineCard extends StatelessWidget {
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       child: ListTile(
-        onTap: () => Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => MachineDetailScreen(machine: machine)),
-        ),
+        onTap: () async {
+          final result = await Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => MachineDetailScreen(machine: machine)),
+          );
+          if (result == true && context.mounted) {
+            context.read<MachineProvider>().loadMachines();
+          }
+        },
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         leading: CircleAvatar(
           backgroundColor: AppTheme.danger.withOpacity(0.15),

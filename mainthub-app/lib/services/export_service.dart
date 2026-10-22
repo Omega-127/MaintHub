@@ -67,11 +67,13 @@ class ExportService {
               child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
             ),
             const SizedBox(width: 14),
-            Text('Generating $deptLabel Excel sheet...'),
+            Expanded(child: Text('Generating $deptLabel Excel sheet...')),
           ],
         ),
         duration: const Duration(seconds: 2),
         backgroundColor: AppTheme.primary,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       ),
     );
 
@@ -82,13 +84,18 @@ class ExportService {
 
       const xlsxMime = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
 
-      // Offer immediate open action
+      // Offer immediate open action with close/remove capability
       ScaffoldMessenger.of(context).hideCurrentSnackBar();
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('$deptLabel maintenance sheet exported!'),
           backgroundColor: AppTheme.success,
-          duration: const Duration(seconds: 6),
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          duration: const Duration(seconds: 4),
+          showCloseIcon: true,
+          closeIconColor: Colors.white,
+          dismissDirection: DismissDirection.horizontal,
           action: SnackBarAction(
             label: 'OPEN',
             textColor: Colors.white,
@@ -108,6 +115,11 @@ class ExportService {
         SnackBar(
           content: Text('Failed to export Excel: ${e.toString()}'),
           backgroundColor: AppTheme.danger,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          showCloseIcon: true,
+          closeIconColor: Colors.white,
+          dismissDirection: DismissDirection.horizontal,
         ),
       );
     }

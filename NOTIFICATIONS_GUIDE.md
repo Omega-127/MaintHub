@@ -8,7 +8,7 @@ MaintHub features an automated background notification and scheduling engine tha
 
 ### 1. Automatic Scheduler Evaluation (Backend)
 
-Every day at **6:00 AM**, `APScheduler` runs an automated inspection in `app/services/scheduler.py`:
+Every day at **7:00 AM** (Morning Shift) and **1:00 PM** (Afternoon Shift), `APScheduler` runs an automated inspection in `app/services/scheduler.py`:
 
 ```
 1. Query active machines where: next_maintenance_date <= TODAY()
@@ -82,10 +82,10 @@ Admin registers equipment:
 Backend automatically sets:
   next_maintenance_date = 2026-10-01 + 30 days = 2026-10-31
   ↓
-At 6:00 AM on 2026-10-31:
+At 7:00 AM or 1:00 PM on 2026-10-31:
   APScheduler evaluates AC-12 Autoconer as due today
   ↓
-Dispatches notification to Winding technicians:
+Dispatches notification to Winding technicians (and mobile alerts fire):
   Title: "🔔 Due Today: AC-12 Autoconer"
   ↓
 Technician opens MaintHub app:
@@ -167,14 +167,27 @@ def check_due_machines(app):
 
 def start_scheduler(app):
     scheduler = BackgroundScheduler()
+
+    # Morning shift check at 7:00 AM
     scheduler.add_job(
-        func=lambda: check_due_machines(app),
+        func=lambda: check_due_machines(app, shift_label="Morning Shift (7:00 AM)"),
         trigger="cron",
-        hour=6,
+        hour=7,
         minute=0,
-        id="daily_maintenance_check",
+        id="morning_shift_check",
         replace_existing=True
     )
+
+    # Afternoon shift check at 1:00 PM (13:00)
+    scheduler.add_job(
+        func=lambda: check_due_machines(app, shift_label="Afternoon Shift (1:00 PM)"),
+        trigger="cron",
+        hour=13,
+        minute=0,
+        id="afternoon_shift_check",
+        replace_existing=True
+    )
+
     scheduler.start()
     return scheduler
 ```
