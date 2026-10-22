@@ -1,5 +1,4 @@
-# flutter_package_1
-
+# MaintHub Mobile App
 A new Flutter project.
 
 ## Getting Started

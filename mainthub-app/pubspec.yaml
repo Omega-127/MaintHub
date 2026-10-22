@@ -1,6 +1,6 @@
-name: flutter_package_1
-description: "A new Flutter package project."
-version: 2.0.0+4
+name: mainthub
+description: "MaintHub - Machine maintenance management application."
+version: 2.0.1+5
 homepage:
 
 environment:
