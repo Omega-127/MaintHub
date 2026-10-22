@@ -58,6 +58,48 @@ class MachineProvider extends ChangeNotifier {
     }
   }
 
+  Future<Machine?> updateMachine({
+    required int id,
+    String? name,
+    String? type,
+    String? department,
+    String? location,
+    String? status,
+    int? intervalDays,
+    String? lastMaintenanceDate,
+    String? nextMaintenanceDate,
+  }) async {
+    _isLoading = true;
+    _error = '';
+    notifyListeners();
+
+    try {
+      final updated = await _service.updateMachine(
+        id: id,
+        name: name,
+        type: type,
+        department: department,
+        location: location,
+        status: status,
+        intervalDays: intervalDays,
+        lastMaintenanceDate: lastMaintenanceDate,
+        nextMaintenanceDate: nextMaintenanceDate,
+      );
+      final index = _machines.indexWhere((m) => m.id == id);
+      if (index != -1) {
+        _machines[index] = updated;
+      }
+      _isLoading = false;
+      notifyListeners();
+      return updated;
+    } catch (e) {
+      _error = 'Failed to update machine';
+      _isLoading = false;
+      notifyListeners();
+      return null;
+    }
+  }
+
   Future<bool> markComplete(int machineId, {String notes = ''}) async {
     try {
       final nextDate = await _service.markComplete(machineId, notes: notes);

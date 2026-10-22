@@ -7,6 +7,7 @@ import '../../providers/auth_provider.dart';
 import '../../providers/machine_provider.dart';
 import '../../services/export_service.dart';
 import 'add_machine_screen.dart';
+import 'edit_machine_screen.dart';
 import 'machine_details_screen.dart';
 
 class MachineListScreen extends StatefulWidget {
@@ -407,6 +408,7 @@ class _MachineCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final auth = context.watch<AuthProvider>();
     final textTheme = Theme.of(context).textTheme;
     final color  = machine.isOverdue ? AppTheme.danger : AppTheme.success;
     final label  = machine.isOverdue ? 'OVERDUE' : machine.isDueToday ? 'DUE TODAY' : 'OK';
@@ -484,20 +486,42 @@ class _MachineCard extends StatelessWidget {
             ),
           ],
         ),
-        trailing: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-          decoration: BoxDecoration(
-            color: color.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Text(
-            label,
-            style: textTheme.labelSmall?.copyWith(
-              color: color,
-              fontWeight: FontWeight.bold,
-              letterSpacing: 0.5,
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              decoration: BoxDecoration(
+                color: color.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Text(
+                label,
+                style: textTheme.labelSmall?.copyWith(
+                  color: color,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 0.5,
+                ),
+              ),
             ),
-          ),
+            if (auth.user?.isAdmin == true)
+              IconButton(
+                icon: const Icon(Icons.edit_outlined, size: 20),
+                color: AppTheme.textLight,
+                tooltip: 'Edit Machine',
+                onPressed: () async {
+                  final updated = await Navigator.push<Machine>(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => EditMachineScreen(machine: machine),
+                    ),
+                  );
+                  if (updated != null && context.mounted) {
+                    context.read<MachineProvider>().loadMachines();
+                  }
+                },
+              ),
+          ],
         ),
       ),
     );

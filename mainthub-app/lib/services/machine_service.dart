@@ -34,6 +34,34 @@ class MachineService {
     });
   }
 
+  Future<Machine> updateMachine({
+    required int id,
+    String? name,
+    String? type,
+    String? department,
+    String? location,
+    String? status,
+    int? intervalDays,
+    String? lastMaintenanceDate,
+    String? nextMaintenanceDate,
+  }) async {
+    final data = <String, dynamic>{};
+    if (name != null) data['name'] = name;
+    if (type != null) data['type'] = type;
+    if (department != null) data['department'] = department;
+    if (location != null) data['location'] = location;
+    if (status != null) data['status'] = status;
+    if (intervalDays != null) data['maintenance_interval'] = intervalDays;
+    if (lastMaintenanceDate != null) data['last_maintenance_date'] = lastMaintenanceDate;
+    if (nextMaintenanceDate != null) data['next_maintenance_date'] = nextMaintenanceDate;
+
+    final response = await _client.put('/machines/$id', data: data);
+    if (response.data is Map && response.data['machine'] != null) {
+      return Machine.fromJson(response.data['machine']);
+    }
+    return getMachine(id);
+  }
+
   Future<void> deleteMachine(int id) async {
     await _client.delete('/machines/$id');
   }

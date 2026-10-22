@@ -236,24 +236,60 @@ def update_machine(machine_id):
         return jsonify({"error": "Admin access required"}), 403
 
     machine = Machine.query.get_or_404(machine_id)
-    data = request.get_json()
+    data = request.get_json() or {}
 
-    if "name"       in data: machine.name       = data["name"]
-    if "type"       in data: machine.type       = data["type"]
-    if "department" in data: machine.department = data["department"]
-    if "location"   in data: machine.location   = data["location"]
-    if "status"     in data: machine.status     = data["status"]
+    if "name" in data and data["name"]:
+        machine.name = data["name"].strip()
+    if "type" in data and data["type"]:
+        machine.type = data["type"].strip()
+    if "department" in data and data["department"]:
+        dept = data["department"].strip().upper()
+        if dept not in ("BLOWROOM", "COMBER", "RING_FRAME", "SPEED_FRAME", "WINDING", "BUFFING"):
+            return jsonify({"error": "Invalid department"}), 400
+        machine.department = dept
+    if "location" in data:
+        machine.location = data["location"].strip() if data["location"] else None
+    if "status" in data and data["status"]:
+        status = data["status"].strip().upper()
+        if status not in ("ACTIVE", "INACTIVE", "UNDER_MAINTENANCE"):
+            return jsonify({"error": "Invalid status"}), 400
+        machine.status = status
 
-    if "maintenance_interval" in data:
-        machine.maintenance_interval = int(data["maintenance_interval"])
-        if machine.last_maintenance_date:
-            machine.next_maintenance_date = calculate_next_date(
-                machine.last_maintenance_date,
-                machine.maintenance_interval
-            )
+    interval_changed = False
+    if "maintenance_interval" in data and data["maintenance_interval"] is not None:
+        try:
+            machine.maintenance_interval = int(data["maintenance_interval"])
+            interval_changed = True
+        except (ValueError, TypeError):
+            return jsonify({"error": "maintenance_interval must be an integer"}), 400
+
+    last_date_changed = False
+    if "last_maintenance_date" in data:
+        if data["last_maintenance_date"]:
+            try:
+                machine.last_maintenance_date = date.fromisoformat(str(data["last_maintenance_date"]).split("T")[0])
+                last_date_changed = True
+            except ValueError:
+                return jsonify({"error": "Invalid last_maintenance_date. Use YYYY-MM-DD"}), 400
+        else:
+            machine.last_maintenance_date = None
+
+    if "next_maintenance_date" in data and data["next_maintenance_date"]:
+        try:
+            machine.next_maintenance_date = date.fromisoformat(str(data["next_maintenance_date"]).split("T")[0])
+        except ValueError:
+            return jsonify({"error": "Invalid next_maintenance_date. Use YYYY-MM-DD"}), 400
+    elif (interval_changed or last_date_changed) and machine.last_maintenance_date:
+        machine.next_maintenance_date = calculate_next_date(
+            machine.last_maintenance_date,
+            machine.maintenance_interval
+        )
 
     db.session.commit()
-    return jsonify({"message": "Machine updated successfully"}), 200
+    return jsonify({
+        "message": "Machine updated successfully",
+        "machine": machine_to_dict(machine)
+    }), 200
 
 
 # ── DELETE /api/machines/<id> ────────────────────────────────

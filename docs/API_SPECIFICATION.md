@@ -269,24 +269,41 @@ Create a new machine. Calculates initial `next_maintenance_date` automatically f
 ---
 
 ### 2.7 Update Machine
-Update machine attributes. If `maintenance_interval` is changed and `last_maintenance_date` exists, `next_maintenance_date` recalculates automatically.
+Update machine attributes. If `maintenance_interval` or `last_maintenance_date` is changed and `next_maintenance_date` is not explicitly provided, `next_maintenance_date` recalculates automatically.
 
 - **Method / URL:** `PUT /api/machines/<id>`
 - **Auth Required:** Yes (Role: `ADMIN`)
 
-#### Request Body
+#### Request Body (All fields optional)
 ```json
 {
   "name": "SF-08 Speed Frame (Overhauled)",
+  "type": "Speed Frame",
+  "department": "SPEED_FRAME",
+  "location": "Shed 1, Row 4",
   "status": "ACTIVE",
-  "maintenance_interval": 45
+  "maintenance_interval": 45,
+  "last_maintenance_date": "2026-09-01",
+  "next_maintenance_date": "2026-10-16"
 }
 ```
 
 #### Response (`200 OK`)
 ```json
 {
-  "message": "Machine updated successfully"
+  "message": "Machine updated successfully",
+  "machine": {
+    "id": 8,
+    "name": "SF-08 Speed Frame (Overhauled)",
+    "type": "Speed Frame",
+    "department": "SPEED_FRAME",
+    "location": "Shed 1, Row 4",
+    "status": "ACTIVE",
+    "maintenance_interval": 45,
+    "last_maintenance_date": "2026-09-01",
+    "next_maintenance_date": "2026-10-16",
+    "created_by": 1
+  }
 }
 ```
 

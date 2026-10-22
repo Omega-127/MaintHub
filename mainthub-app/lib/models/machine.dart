@@ -80,4 +80,26 @@ class Machine {
     nextMaintenanceDate:  json['next_maintenance_date']?.toString() ?? '',
     status:               json['status']?.toString() ?? 'ACTIVE',
   );
+
+  Machine copyWith({
+    int? id,
+    String? name,
+    String? type,
+    String? department,
+    String? location,
+    int? maintenanceInterval,
+    String? lastMaintenanceDate,
+    String? nextMaintenanceDate,
+    String? status,
+  }) => Machine(
+    id:                   id ?? this.id,
+    name:                 name ?? this.name,
+    type:                 type ?? this.type,
+    department:           department ?? this.department,
+    location:             location ?? this.location,
+    maintenanceInterval:  maintenanceInterval ?? this.maintenanceInterval,
+    lastMaintenanceDate:  lastMaintenanceDate ?? this.lastMaintenanceDate,
+    nextMaintenanceDate:  nextMaintenanceDate ?? this.nextMaintenanceDate,
+    status:               status ?? this.status,
+  );
 }
