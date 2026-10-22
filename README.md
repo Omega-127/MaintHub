@@ -16,7 +16,7 @@ Built with a high-performance **Python/Flask** backend, **MySQL** database with 
 ## 🎯 Key Highlights
 
 - **🏭 6 Textile Mill Departments:** Full support for `BLOWROOM`, `COMBER`, `RING_FRAME`, `SPEED_FRAME`, `WINDING`, and `BUFFING`.
-- **⚙️ 343 Pre-Seeded Machines:** Complete catalog synchronized directly from industry maintenance schedules.
+- **⚙️ 379 Pre-Seeded Machines:** Complete catalog synchronized directly from industry maintenance schedules.
 - **👥 Role-Based Access Control (RBAC):**
   - **Technicians:** Automatically scoped to their assigned department to view relevant machinery, upcoming tasks, and overdue alerts.
   - **Administrators:** Facility-wide visibility with instant department-switching tabs, equipment CRUD, and scheduling management.
@@ -82,9 +82,10 @@ MaintHub/
 ├── DEPLOYMENT.md                       ← Production deployment on Railway + Render
 ├── NOTIFICATIONS_GUIDE.md              ← Background scheduler & notification engine
 ├── docker-compose.yml                  ← Local MySQL 8.0 & phpMyAdmin services
-├── init.sql                            ← Database DDL schema & 343 machine seeds
+├── init.sql                            ← Database DDL schema & 379 machine seeds
 ├── migrate_add_departments.sql         ← Standalone department migration script
 ├── migrate_add_card_schedules.sql      ← Standalone carding schedules migration script
+├── migrate_add_card_grinding_schedules.sql ← Standalone carding grinding/SFL schedules migration script
 ├── render.yaml                         ← Render Infrastructure-as-Code manifest
 ├── LICENSE                             ← MIT License
 │
@@ -98,7 +99,7 @@ MaintHub/
 ├── mainthub-backend/                   ← 🐍 Flask Backend Service
 │   ├── README.md                       ← Backend specific documentation
 │   ├── run.py                          ← Server entry point
-│   ├── seed.py                         ← Machine catalog definitions (343 machines)
+│   ├── seed.py                         ← Machine catalog definitions (379 machines)
 │   ├── Dockerfile                      ← Container specification
 │   ├── Procfile                        ← Gunicorn web process definition
 │   ├── render.yaml                     ← Service configuration for Render
@@ -148,7 +149,7 @@ python -m venv venv
 .\venv\Scripts\activate          # Windows PowerShell (or source venv/bin/activate on Unix)
 pip install -r requirements.txt
 
-# Run backend (auto-migrates schema and syncs 343 machines)
+# Run backend (auto-migrates schema and syncs 379 machines)
 python run.py
 # Server runs on http://localhost:5000
 ```
@@ -214,13 +215,13 @@ Detailed schemas, query parameters, and JSON payloads: see [`docs/API_SPECIFICAT
 
 | Department | Equipment Types | Seeded Count |
 |------------|-----------------|--------------|
-| **BLOWROOM** | Bale Opener, Uniclean, Mono Cylinder, Carding (Wire, Brushes, Oil, Comb) | 72 |
+| **BLOWROOM** | Bale Opener, Uniclean, Mono Cylinder, Carding (Wire, Brushes, Oil, Comb, Grinding, SFL) | 108 |
 | **COMBER** | Lap Former, Comber, Draw Frame | 27 |
 | **RING FRAME** | Ring Spinning Frames RF-01 to RF-37 | 37 |
 | **SPEED FRAME** | Speed / Roving Frames SF-01 to SF-50 | 50 |
 | **WINDING** | Autoconers AC-01 to AC-105 | 105 |
 | **BUFFING** | Cot Buffing & Maintenance Equipment | 52 |
-| **TOTAL** | **Comprehensive Textile Mill Inventory** | **343 Machines** |
+| **TOTAL** | **Comprehensive Textile Mill Inventory** | **379 Machines** |
 
 ---
 

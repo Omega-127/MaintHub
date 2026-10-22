@@ -683,6 +683,337 @@ MACHINES = [
         "next_maintenance_date": date(2026, 11, 21),
     },
 
+    # ── Carding: Lickerin Wire (Schedule: 9 months / 274 days) ───────────
+    # Sourced from Carding_Machine_Maintenance_Schedule.xlsx
+    {
+        "name":                  "Card A1 - Lickerin Wire",
+        "type":                  "Carding",
+        "department":            "BLOWROOM",
+        "location":              "Carding Section",
+        "maintenance_interval":  274,                   # 9 months
+        "last_maintenance_date": date(2025, 10, 11),
+        "next_maintenance_date": date(2026, 7, 11),
+    },
+    {
+        "name":                  "Card A2 - Lickerin Wire",
+        "type":                  "Carding",
+        "department":            "BLOWROOM",
+        "location":              "Carding Section",
+        "maintenance_interval":  274,                   # 9 months
+        "last_maintenance_date": date(2026, 7, 3),
+        "next_maintenance_date": date(2027, 4, 3),
+    },
+    {
+        "name":                  "Card A3 - Lickerin Wire",
+        "type":                  "Carding",
+        "department":            "BLOWROOM",
+        "location":              "Carding Section",
+        "maintenance_interval":  274,                   # 9 months
+        "last_maintenance_date": date(2025, 8, 21),
+        "next_maintenance_date": date(2026, 5, 21),
+    },
+    {
+        "name":                  "Card A4 - Lickerin Wire",
+        "type":                  "Carding",
+        "department":            "BLOWROOM",
+        "location":              "Carding Section",
+        "maintenance_interval":  274,                   # 9 months
+        "last_maintenance_date": date(2026, 6, 20),
+        "next_maintenance_date": date(2027, 3, 21),
+    },
+    {
+        "name":                  "Card A5 - Lickerin Wire",
+        "type":                  "Carding",
+        "department":            "BLOWROOM",
+        "location":              "Carding Section",
+        "maintenance_interval":  274,                   # 9 months
+        "last_maintenance_date": date(2025, 10, 15),
+        "next_maintenance_date": date(2026, 7, 15),
+    },
+    {
+        "name":                  "Card A6 - Lickerin Wire",
+        "type":                  "Carding",
+        "department":            "BLOWROOM",
+        "location":              "Carding Section",
+        "maintenance_interval":  274,                   # 9 months
+        "last_maintenance_date": date(2025, 10, 10),
+        "next_maintenance_date": date(2026, 7, 10),
+    },
+    {
+        "name":                  "Card B1 - Lickerin Wire",
+        "type":                  "Carding",
+        "department":            "BLOWROOM",
+        "location":              "Carding Section",
+        "maintenance_interval":  274,                   # 9 months
+        "last_maintenance_date": date(2025, 11, 29),
+        "next_maintenance_date": date(2026, 8, 30),
+    },
+    {
+        "name":                  "Card B2 - Lickerin Wire",
+        "type":                  "Carding",
+        "department":            "BLOWROOM",
+        "location":              "Carding Section",
+        "maintenance_interval":  274,                   # 9 months
+        "last_maintenance_date": date(2026, 6, 30),
+        "next_maintenance_date": date(2027, 3, 31),
+    },
+    {
+        "name":                  "Card B3 - Lickerin Wire",
+        "type":                  "Carding",
+        "department":            "BLOWROOM",
+        "location":              "Carding Section",
+        "maintenance_interval":  274,                   # 9 months
+        "last_maintenance_date": date(2025, 8, 19),
+        "next_maintenance_date": date(2026, 5, 19),
+    },
+    {
+        "name":                  "Card B4 - Lickerin Wire",
+        "type":                  "Carding",
+        "department":            "BLOWROOM",
+        "location":              "Carding Section",
+        "maintenance_interval":  274,                   # 9 months
+        "last_maintenance_date": date(2025, 12, 3),
+        "next_maintenance_date": date(2026, 9, 3),
+    },
+    {
+        "name":                  "Card B5 - Lickerin Wire",
+        "type":                  "Carding",
+        "department":            "BLOWROOM",
+        "location":              "Carding Section",
+        "maintenance_interval":  274,                   # 9 months
+        "last_maintenance_date": date(2026, 6, 26),
+        "next_maintenance_date": date(2027, 3, 27),
+    },
+    {
+        "name":                  "Card B6 - Lickerin Wire",
+        "type":                  "Carding",
+        "department":            "BLOWROOM",
+        "location":              "Carding Section",
+        "maintenance_interval":  274,                   # 9 months
+        "last_maintenance_date": date(2025, 8, 24),
+        "next_maintenance_date": date(2026, 5, 24),
+    },
+    # ── Carding: Flat Grinding (Schedule: 6.5 months / 198 days) ───────────
+    # Sourced from Carding_Machine_Maintenance_Schedule.xlsx
+    {
+        "name":                  "Card A1 - Flat Grinding",
+        "type":                  "Carding",
+        "department":            "BLOWROOM",
+        "location":              "Carding Section",
+        "maintenance_interval":  198,                   # 6.5 months
+        "last_maintenance_date": date(2026, 7, 25),
+        "next_maintenance_date": date(2027, 2, 8),
+    },
+    {
+        "name":                  "Card A2 - Flat Grinding",
+        "type":                  "Carding",
+        "department":            "BLOWROOM",
+        "location":              "Carding Section",
+        "maintenance_interval":  198,                   # 6.5 months
+        "last_maintenance_date": date(2025, 12, 10),
+        "next_maintenance_date": date(2026, 6, 26),
+    },
+    {
+        "name":                  "Card A3 - Flat Grinding",
+        "type":                  "Carding",
+        "department":            "BLOWROOM",
+        "location":              "Carding Section",
+        "maintenance_interval":  198,                   # 6.5 months
+        "last_maintenance_date": date(2026, 7, 25),
+        "next_maintenance_date": date(2027, 2, 8),
+    },
+    {
+        "name":                  "Card A4 - Flat Grinding",
+        "type":                  "Carding",
+        "department":            "BLOWROOM",
+        "location":              "Carding Section",
+        "maintenance_interval":  198,                   # 6.5 months
+        "last_maintenance_date": date(2026, 8, 5),
+        "next_maintenance_date": date(2027, 2, 19),
+    },
+    {
+        "name":                  "Card A5 - Flat Grinding",
+        "type":                  "Carding",
+        "department":            "BLOWROOM",
+        "location":              "Carding Section",
+        "maintenance_interval":  198,                   # 6.5 months
+        "last_maintenance_date": date(2026, 8, 5),
+        "next_maintenance_date": date(2027, 2, 19),
+    },
+    {
+        "name":                  "Card A6 - Flat Grinding",
+        "type":                  "Carding",
+        "department":            "BLOWROOM",
+        "location":              "Carding Section",
+        "maintenance_interval":  198,                   # 6.5 months
+        "last_maintenance_date": date(2026, 7, 28),
+        "next_maintenance_date": date(2027, 2, 11),
+    },
+    {
+        "name":                  "Card B1 - Flat Grinding",
+        "type":                  "Carding",
+        "department":            "BLOWROOM",
+        "location":              "Carding Section",
+        "maintenance_interval":  198,                   # 6.5 months
+        "last_maintenance_date": date(2026, 7, 31),
+        "next_maintenance_date": date(2027, 2, 14),
+    },
+    {
+        "name":                  "Card B2 - Flat Grinding",
+        "type":                  "Carding",
+        "department":            "BLOWROOM",
+        "location":              "Carding Section",
+        "maintenance_interval":  198,                   # 6.5 months
+        "last_maintenance_date": date(2026, 1, 6),
+        "next_maintenance_date": date(2026, 7, 23),
+    },
+    {
+        "name":                  "Card B3 - Flat Grinding",
+        "type":                  "Carding",
+        "department":            "BLOWROOM",
+        "location":              "Carding Section",
+        "maintenance_interval":  198,                   # 6.5 months
+        "last_maintenance_date": date(2026, 4, 28),
+        "next_maintenance_date": date(2026, 11, 12),
+    },
+    {
+        "name":                  "Card B4 - Flat Grinding",
+        "type":                  "Carding",
+        "department":            "BLOWROOM",
+        "location":              "Carding Section",
+        "maintenance_interval":  198,                   # 6.5 months
+        "last_maintenance_date": date(2026, 4, 10),
+        "next_maintenance_date": date(2026, 10, 25),
+    },
+    {
+        "name":                  "Card B5 - Flat Grinding",
+        "type":                  "Carding",
+        "department":            "BLOWROOM",
+        "location":              "Carding Section",
+        "maintenance_interval":  198,                   # 6.5 months
+        "last_maintenance_date": date(2026, 4, 28),
+        "next_maintenance_date": date(2026, 11, 12),
+    },
+    {
+        "name":                  "Card B6 - Flat Grinding",
+        "type":                  "Carding",
+        "department":            "BLOWROOM",
+        "location":              "Carding Section",
+        "maintenance_interval":  198,                   # 6.5 months
+        "last_maintenance_date": date(2026, 8, 4),
+        "next_maintenance_date": date(2027, 2, 18),
+    },
+    # ── Carding: SFL Maintenance (Schedule: 8.5 months / 258 days) ───────────
+    # Sourced from Carding_Machine_Maintenance_Schedule.xlsx
+    {
+        "name":                  "Card A1 - SFL Maintenance",
+        "type":                  "Carding",
+        "department":            "BLOWROOM",
+        "location":              "Carding Section",
+        "maintenance_interval":  258,                   # 8.5 months
+        "last_maintenance_date": date(2026, 9, 20),
+        "next_maintenance_date": date(2027, 6, 5),
+    },
+    {
+        "name":                  "Card A2 - SFL Maintenance",
+        "type":                  "Carding",
+        "department":            "BLOWROOM",
+        "location":              "Carding Section",
+        "maintenance_interval":  258,                   # 8.5 months
+        "last_maintenance_date": date(2026, 7, 21),
+        "next_maintenance_date": date(2027, 4, 5),
+    },
+    {
+        "name":                  "Card A3 - SFL Maintenance",
+        "type":                  "Carding",
+        "department":            "BLOWROOM",
+        "location":              "Carding Section",
+        "maintenance_interval":  258,                   # 8.5 months
+        "last_maintenance_date": date(2026, 9, 19),
+        "next_maintenance_date": date(2027, 6, 4),
+    },
+    {
+        "name":                  "Card A4 - SFL Maintenance",
+        "type":                  "Carding",
+        "department":            "BLOWROOM",
+        "location":              "Carding Section",
+        "maintenance_interval":  258,                   # 8.5 months
+        "last_maintenance_date": date(2026, 7, 14),
+        "next_maintenance_date": date(2027, 3, 29),
+    },
+    {
+        "name":                  "Card A5 - SFL Maintenance",
+        "type":                  "Carding",
+        "department":            "BLOWROOM",
+        "location":              "Carding Section",
+        "maintenance_interval":  258,                   # 8.5 months
+        "last_maintenance_date": date(2025, 8, 22),
+        "next_maintenance_date": date(2026, 5, 22),
+    },
+    {
+        "name":                  "Card A6 - SFL Maintenance",
+        "type":                  "Carding",
+        "department":            "BLOWROOM",
+        "location":              "Carding Section",
+        "maintenance_interval":  258,                   # 8.5 months
+        "last_maintenance_date": date(2026, 10, 4),
+        "next_maintenance_date": date(2027, 6, 19),
+    },
+    {
+        "name":                  "Card B1 - SFL Maintenance",
+        "type":                  "Carding",
+        "department":            "BLOWROOM",
+        "location":              "Carding Section",
+        "maintenance_interval":  258,                   # 8.5 months
+        "last_maintenance_date": date(2025, 10, 4),
+        "next_maintenance_date": date(2026, 7, 4),
+    },
+    {
+        "name":                  "Card B2 - SFL Maintenance",
+        "type":                  "Carding",
+        "department":            "BLOWROOM",
+        "location":              "Carding Section",
+        "maintenance_interval":  258,                   # 8.5 months
+        "last_maintenance_date": date(2026, 9, 12),
+        "next_maintenance_date": date(2027, 5, 28),
+    },
+    {
+        "name":                  "Card B3 - SFL Maintenance",
+        "type":                  "Carding",
+        "department":            "BLOWROOM",
+        "location":              "Carding Section",
+        "maintenance_interval":  258,                   # 8.5 months
+        "last_maintenance_date": date(2026, 9, 18),
+        "next_maintenance_date": date(2027, 6, 3),
+    },
+    {
+        "name":                  "Card B4 - SFL Maintenance",
+        "type":                  "Carding",
+        "department":            "BLOWROOM",
+        "location":              "Carding Section",
+        "maintenance_interval":  258,                   # 8.5 months
+        "last_maintenance_date": date(2026, 6, 16),
+        "next_maintenance_date": date(2027, 3, 1),
+    },
+    {
+        "name":                  "Card B5 - SFL Maintenance",
+        "type":                  "Carding",
+        "department":            "BLOWROOM",
+        "location":              "Carding Section",
+        "maintenance_interval":  258,                   # 8.5 months
+        "last_maintenance_date": date(2026, 6, 13),
+        "next_maintenance_date": date(2027, 2, 26),
+    },
+    {
+        "name":                  "Card B6 - SFL Maintenance",
+        "type":                  "Carding",
+        "department":            "BLOWROOM",
+        "location":              "Carding Section",
+        "maintenance_interval":  258,                   # 8.5 months
+        "last_maintenance_date": date(2026, 10, 7),
+        "next_maintenance_date": date(2027, 6, 22),
+    },
+
     # ── COMBER Department (Comber LK-64, sourced from comber_schedules.xlsx) ─
     # 1. Top Comb change — Schedule: 600 tons (2 years) = 730 days
     #    Last changed: Cbr 1 = 09.08.26, Cbr 2 = 08.08.26, Cbr 3 = 06.09.26,

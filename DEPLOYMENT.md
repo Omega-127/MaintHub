@@ -198,7 +198,7 @@ git push origin main
 Upon successful startup, the backend automatically runs `_auto_migrate()`:
 1. Self-heals database schema (ensures `department` and `is_active` columns exist on `users` and `machines`).
 2. Creates the default admin account: `admin@mainthub.com` / `admin123`.
-3. Synchronizes all 343 machines across all 6 textile departments (`BLOWROOM`, `COMBER`, `RING_FRAME`, `SPEED_FRAME`, `WINDING`, `BUFFING`).
+3. Synchronizes all 379 machines across all 6 textile departments (`BLOWROOM`, `COMBER`, `RING_FRAME`, `SPEED_FRAME`, `WINDING`, `BUFFING`).
 
 ### Step 4: Verify Backend Health
 

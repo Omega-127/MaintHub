@@ -185,5 +185,5 @@ When the Flask backend starts (`app/__init__.py`), it executes `_auto_migrate(ap
 2. **Default Admin Seeding:**
    - Ensures `admin@mainthub.com` exists with BCrypt-hashed credentials (`admin123`).
 3. **Machine Catalog Synchronization:**
-   - Compares existing database machines against `seed.py` (343 machines across 6 departments).
+   - Compares existing database machines against `seed.py` (379 machines across 6 departments).
    - Inserts any missing machines automatically without duplicating existing records.
