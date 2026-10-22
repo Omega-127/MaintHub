@@ -69,7 +69,7 @@ mainthub-backend/
 │   └── services/
 │       └── scheduler.py      # APScheduler background tasks
 ├── run.py                    # Entry point for development / gunicorn
-├── seed.py                   # 295 machine catalog seeds across 6 departments
+├── seed.py                   # 343 machine catalog seeds across 6 departments
 ├── Dockerfile                # Container definition
 ├── Procfile                  # Gunicorn definition for Render/Heroku
 └── render.yaml               # Infrastructure-as-code deployment manifest
@@ -128,7 +128,7 @@ The system enforces strict role-based access control combined with textile mill 
 | **Department Scope** | Cross-department (All 6 departments) | Assigned Department Only |
 | **Department Switching** | ✅ Filter by any department | ❌ Locked to assigned department |
 | **View Dashboard & KPIs** | ✅ Global or filtered KPIs | ✅ Department-specific KPIs |
-| **View Machine List** | ✅ All 295 machines | ✅ Department machines only |
+| **View Machine List** | ✅ All 343 machines | ✅ Department machines only |
 | **Add New Machines** | ✅ Allowed | ❌ Forbidden (`403 Forbidden`) |
 | **Update Machine Info** | ✅ Allowed | ❌ Forbidden (`403 Forbidden`) |
 | **Delete Machines** | ✅ Allowed | ❌ Forbidden (`403 Forbidden`) |

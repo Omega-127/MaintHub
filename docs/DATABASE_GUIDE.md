@@ -79,7 +79,7 @@ python seed.py
 ### Manual Execution of SQL Scripts
 If you prefer raw SQL execution:
 ```bash
-# Apply complete schema and 295 machines
+# Apply complete schema and 343 machines
 mysql -u mainthub_user -p mainthub_db < init.sql
 
 # Or apply department migration script to existing database
@@ -90,17 +90,17 @@ mysql -u mainthub_user -p mainthub_db < migrate_add_departments.sql
 
 ## 4. Department Data Breakdown
 
-MaintHub comes pre-loaded with **295 textile manufacturing machines** derived from real mill schedules across 6 specialized departments:
+MaintHub comes pre-loaded with **343 textile manufacturing machines** derived from real mill schedules across 6 specialized departments:
 
 | Department Code | Department Name | Machine Count | Machine Types Included |
 |-----------------|-----------------|---------------|------------------------|
-| `BLOWROOM` | Preparatory / Blowroom | 24 | Bale Opener, Uniclean, Mono Cylinder, Step Cleaner, Carding |
+| `BLOWROOM` | Preparatory / Blowroom | 72 | Bale Opener, Uniclean, Mono Cylinder, Step Cleaner, Carding (Wire, Brushes, Oil, Comb) |
 | `COMBER` | Comber Department | 27 | Lap Former, Comber, Draw Frame |
 | `RING_FRAME` | Ring Spinning | 37 | Ring Frame Lines RF-01 to RF-37 |
 | `SPEED_FRAME` | Speed Frame / Roving | 50 | Speed Frame SF-01 to SF-50, Simplex Frames |
 | `WINDING` | Autoconer / Winding | 105 | Autoconer AC-01 to AC-105, Murata Process Coners |
 | `BUFFING` | Maintenance & Buffing | 52 | Cot Buffing, Roller Grinder, Arbour Cleaning |
-| **TOTAL** | **All Departments** | **295** | Full Textile Mill Machinery |
+| **TOTAL** | **All Departments** | **343** | Full Textile Mill Machinery |
 
 ---
 
@@ -206,5 +206,5 @@ SELECT COUNT(*) FROM machines;
 -- DELETE FROM maintenance_history;
 -- DELETE FROM notifications;
 -- DELETE FROM machines;
--- Restarting backend will re-seed all 295 machines automatically!
+-- Restarting backend will re-seed all 343 machines automatically!
 ```

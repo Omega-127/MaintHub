@@ -383,8 +383,8 @@ Provides key performance indicators, top 5 overdue machines for quick actions, a
 ```json
 {
   "summary": {
-    "total_machines": 295,
-    "active": 295,
+    "total_machines": 343,
+    "active": 343,
     "inactive": 0,
     "under_maintenance": 0,
     "overdue": 12,

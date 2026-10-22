@@ -16,7 +16,7 @@ The REST API backend for **MaintHub**, managing equipment registries, technician
   - Admins can query all departments or filter by department.
   - Technicians are automatically scoped to their designated department (`BLOWROOM`, `COMBER`, `RING_FRAME`, `SPEED_FRAME`, `WINDING`, `BUFFING`).
 - **Pre-Seeded Machinery Catalog:**
-  - Synchronizes 295 textile manufacturing machines across all 6 departments on startup.
+  - Synchronizes 343 textile manufacturing machines across all 6 departments on startup.
 - **Self-Healing Schema & Auto-Migration:**
   - `_auto_migrate(app)` verifies and dynamically applies schema alterations (e.g. `department`, `is_active` columns).
   - Automatically provisions default administrator credentials (`admin@mainthub.com` / `admin123`).
@@ -50,7 +50,7 @@ mainthub-backend/
 │   └── services/
 │       └── scheduler.py      # Background APScheduler service
 ├── instance/                 # Local SQLite database fallback storage
-├── seed.py                   # 295 machine catalog definitions across 6 departments
+├── seed.py                   # 343 machine catalog definitions across 6 departments
 ├── run.py                    # Entry point script
 ├── Dockerfile                # Production container specification
 ├── Procfile                  # Gunicorn web service process definition

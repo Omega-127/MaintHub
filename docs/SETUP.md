@@ -92,11 +92,11 @@ PORT=5000
 python run.py
 ```
 
-The console will indicate that the database tables were inspected, auto-migrated, and 295 machines seeded:
+The console will indicate that the database tables were inspected, auto-migrated, and 343 machines seeded:
 ```
 * Running on http://127.0.0.1:5000
 * Database connected: mysql+pymysql://...
-* Auto-migration complete: 295 machines synced.
+* Auto-migration complete: 343 machines synced.
 ```
 
 ### 5. Verify Backend Health

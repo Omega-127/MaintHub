@@ -13,6 +13,13 @@ from app import db
 from app.models.machine import Machine
 from app.models.user import User
 from datetime import date
+import sys
+
+if hasattr(sys.stdout, "reconfigure"):
+    try:
+        sys.stdout.reconfigure(encoding="utf-8")
+    except Exception:
+        pass
 
 # ── Machine seed data ─────────────────────────────────────────────────────────
 MACHINES = [
@@ -233,6 +240,447 @@ MACHINES = [
         "maintenance_interval":  791,
         "last_maintenance_date": date(2025, 1, 17),
         "next_maintenance_date": date(2027, 3, 17),
+    },
+
+    # ── Carding: Flat Brush Change (Schedule: 18 months / 548 days) ───────────
+    # Sourced from maintenance_schedule_transcribed.xlsx
+    {
+        "name":                  "Card A1 - Flat Brush Change",
+        "type":                  "Carding",
+        "department":            "BLOWROOM",
+        "location":              "Carding Section",
+        "maintenance_interval":  548,                   # 18 months
+        "last_maintenance_date": date(2026, 5, 27),
+        "next_maintenance_date": date(2027, 11, 27),
+    },
+    {
+        "name":                  "Card A2 - Flat Brush Change",
+        "type":                  "Carding",
+        "department":            "BLOWROOM",
+        "location":              "Carding Section",
+        "maintenance_interval":  548,                   # 18 months
+        "last_maintenance_date": date(2026, 5, 27),
+        "next_maintenance_date": date(2027, 11, 27),
+    },
+    {
+        "name":                  "Card A3 - Flat Brush Change",
+        "type":                  "Carding",
+        "department":            "BLOWROOM",
+        "location":              "Carding Section",
+        "maintenance_interval":  548,                   # 18 months
+        "last_maintenance_date": date(2026, 5, 26),
+        "next_maintenance_date": date(2027, 11, 27),
+    },
+    {
+        "name":                  "Card A4 - Flat Brush Change",
+        "type":                  "Carding",
+        "department":            "BLOWROOM",
+        "location":              "Carding Section",
+        "maintenance_interval":  548,                   # 18 months
+        "last_maintenance_date": date(2026, 5, 24),
+        "next_maintenance_date": date(2027, 11, 24),
+    },
+    {
+        "name":                  "Card A5 - Flat Brush Change",
+        "type":                  "Carding",
+        "department":            "BLOWROOM",
+        "location":              "Carding Section",
+        "maintenance_interval":  548,                   # 18 months
+        "last_maintenance_date": date(2026, 5, 30),
+        "next_maintenance_date": date(2027, 11, 27),
+    },
+    {
+        "name":                  "Card A6 - Flat Brush Change",
+        "type":                  "Carding",
+        "department":            "BLOWROOM",
+        "location":              "Carding Section",
+        "maintenance_interval":  548,                   # 18 months
+        "last_maintenance_date": date(2026, 6, 8),
+        "next_maintenance_date": date(2027, 11, 27),
+    },
+    {
+        "name":                  "Card B1 - Flat Brush Change",
+        "type":                  "Carding",
+        "department":            "BLOWROOM",
+        "location":              "Carding Section",
+        "maintenance_interval":  548,                   # 18 months
+        "last_maintenance_date": date(2026, 6, 28),
+        "next_maintenance_date": date(2027, 11, 27),
+    },
+    {
+        "name":                  "Card B2 - Flat Brush Change",
+        "type":                  "Carding",
+        "department":            "BLOWROOM",
+        "location":              "Carding Section",
+        "maintenance_interval":  548,                   # 18 months
+        "last_maintenance_date": date(2026, 5, 26),
+        "next_maintenance_date": date(2027, 11, 27),
+    },
+    {
+        "name":                  "Card B3 - Flat Brush Change",
+        "type":                  "Carding",
+        "department":            "BLOWROOM",
+        "location":              "Carding Section",
+        "maintenance_interval":  548,                   # 18 months
+        "last_maintenance_date": date(2026, 5, 29),
+        "next_maintenance_date": date(2027, 11, 27),
+    },
+    {
+        "name":                  "Card B4 - Flat Brush Change",
+        "type":                  "Carding",
+        "department":            "BLOWROOM",
+        "location":              "Carding Section",
+        "maintenance_interval":  548,                   # 18 months
+        "last_maintenance_date": date(2026, 5, 28),
+        "next_maintenance_date": date(2027, 11, 27),
+    },
+    {
+        "name":                  "Card B5 - Flat Brush Change",
+        "type":                  "Carding",
+        "department":            "BLOWROOM",
+        "location":              "Carding Section",
+        "maintenance_interval":  548,                   # 18 months
+        "last_maintenance_date": date(2026, 5, 15),
+        "next_maintenance_date": date(2027, 11, 27),
+    },
+    {
+        "name":                  "Card B6 - Flat Brush Change",
+        "type":                  "Carding",
+        "department":            "BLOWROOM",
+        "location":              "Carding Section",
+        "maintenance_interval":  548,                   # 18 months
+        "last_maintenance_date": date(2026, 6, 8),
+        "next_maintenance_date": date(2027, 11, 27),
+    },
+    # ── Carding: Coiler Oil Change (220 no.; Schedule: 18 months / 548 days) ──
+    # Sourced from maintenance_schedule_transcribed.xlsx
+    {
+        "name":                  "Card A1 - Coiler Oil Change",
+        "type":                  "Carding",
+        "department":            "BLOWROOM",
+        "location":              "Carding Section",
+        "maintenance_interval":  548,                   # 18 months (oil grade 220)
+        "last_maintenance_date": date(2023, 10, 10),
+        "next_maintenance_date": date(2025, 4, 10),
+    },
+    {
+        "name":                  "Card A2 - Coiler Oil Change",
+        "type":                  "Carding",
+        "department":            "BLOWROOM",
+        "location":              "Carding Section",
+        "maintenance_interval":  548,                   # 18 months (oil grade 220)
+        "last_maintenance_date": date(2025, 9, 26),
+        "next_maintenance_date": date(2027, 3, 26),
+    },
+    {
+        "name":                  "Card A3 - Coiler Oil Change",
+        "type":                  "Carding",
+        "department":            "BLOWROOM",
+        "location":              "Carding Section",
+        "maintenance_interval":  548,                   # 18 months (oil grade 220)
+        "last_maintenance_date": date(2025, 9, 26),
+        "next_maintenance_date": date(2027, 3, 26),
+    },
+    {
+        "name":                  "Card A4 - Coiler Oil Change",
+        "type":                  "Carding",
+        "department":            "BLOWROOM",
+        "location":              "Carding Section",
+        "maintenance_interval":  548,                   # 18 months (oil grade 220)
+        "last_maintenance_date": date(2025, 9, 26),
+        "next_maintenance_date": date(2027, 3, 26),
+    },
+    {
+        "name":                  "Card A5 - Coiler Oil Change",
+        "type":                  "Carding",
+        "department":            "BLOWROOM",
+        "location":              "Carding Section",
+        "maintenance_interval":  548,                   # 18 months (oil grade 220)
+        "last_maintenance_date": date(2025, 9, 26),
+        "next_maintenance_date": date(2027, 3, 26),
+    },
+    {
+        "name":                  "Card A6 - Coiler Oil Change",
+        "type":                  "Carding",
+        "department":            "BLOWROOM",
+        "location":              "Carding Section",
+        "maintenance_interval":  548,                   # 18 months (oil grade 220)
+        "last_maintenance_date": date(2025, 9, 26),
+        "next_maintenance_date": date(2027, 3, 26),
+    },
+    {
+        "name":                  "Card B1 - Coiler Oil Change",
+        "type":                  "Carding",
+        "department":            "BLOWROOM",
+        "location":              "Carding Section",
+        "maintenance_interval":  548,                   # 18 months (oil grade 220)
+        "last_maintenance_date": date(2025, 9, 26),
+        "next_maintenance_date": date(2027, 3, 26),
+    },
+    {
+        "name":                  "Card B2 - Coiler Oil Change",
+        "type":                  "Carding",
+        "department":            "BLOWROOM",
+        "location":              "Carding Section",
+        "maintenance_interval":  548,                   # 18 months (oil grade 220)
+        "last_maintenance_date": date(2025, 9, 26),
+        "next_maintenance_date": date(2027, 3, 26),
+    },
+    {
+        "name":                  "Card B3 - Coiler Oil Change",
+        "type":                  "Carding",
+        "department":            "BLOWROOM",
+        "location":              "Carding Section",
+        "maintenance_interval":  548,                   # 18 months (oil grade 220)
+        "last_maintenance_date": date(2025, 9, 26),
+        "next_maintenance_date": date(2027, 3, 26),
+    },
+    {
+        "name":                  "Card B4 - Coiler Oil Change",
+        "type":                  "Carding",
+        "department":            "BLOWROOM",
+        "location":              "Carding Section",
+        "maintenance_interval":  548,                   # 18 months (oil grade 220)
+        "last_maintenance_date": date(2025, 9, 26),
+        "next_maintenance_date": date(2027, 3, 26),
+    },
+    {
+        "name":                  "Card B5 - Coiler Oil Change",
+        "type":                  "Carding",
+        "department":            "BLOWROOM",
+        "location":              "Carding Section",
+        "maintenance_interval":  548,                   # 18 months (oil grade 220)
+        "last_maintenance_date": date(2025, 9, 26),
+        "next_maintenance_date": date(2027, 3, 26),
+    },
+    {
+        "name":                  "Card B6 - Coiler Oil Change",
+        "type":                  "Carding",
+        "department":            "BLOWROOM",
+        "location":              "Carding Section",
+        "maintenance_interval":  548,                   # 18 months (oil grade 220)
+        "last_maintenance_date": date(2025, 9, 26),
+        "next_maintenance_date": date(2027, 3, 26),
+    },
+    # ── Carding: Take up Roller Brush Change (Schedule: 18 months / 548 days) ─
+    # Sourced from maintenance_schedule_transcribed.xlsx
+    {
+        "name":                  "Card A1 - Take up Roller Brush Change",
+        "type":                  "Carding",
+        "department":            "BLOWROOM",
+        "location":              "Carding Section",
+        "maintenance_interval":  548,                   # 18 months
+        "last_maintenance_date": date(2024, 10, 1),
+        "next_maintenance_date": date(2026, 4, 1),
+    },
+    {
+        "name":                  "Card A2 - Take up Roller Brush Change",
+        "type":                  "Carding",
+        "department":            "BLOWROOM",
+        "location":              "Carding Section",
+        "maintenance_interval":  548,                   # 18 months
+        "last_maintenance_date": date(2024, 10, 1),
+        "next_maintenance_date": date(2026, 4, 1),
+    },
+    {
+        "name":                  "Card A3 - Take up Roller Brush Change",
+        "type":                  "Carding",
+        "department":            "BLOWROOM",
+        "location":              "Carding Section",
+        "maintenance_interval":  548,                   # 18 months
+        "last_maintenance_date": date(2024, 10, 1),
+        "next_maintenance_date": date(2026, 4, 1),
+    },
+    {
+        "name":                  "Card A4 - Take up Roller Brush Change",
+        "type":                  "Carding",
+        "department":            "BLOWROOM",
+        "location":              "Carding Section",
+        "maintenance_interval":  548,                   # 18 months
+        "last_maintenance_date": date(2024, 10, 1),
+        "next_maintenance_date": date(2026, 4, 1),
+    },
+    {
+        "name":                  "Card A5 - Take up Roller Brush Change",
+        "type":                  "Carding",
+        "department":            "BLOWROOM",
+        "location":              "Carding Section",
+        "maintenance_interval":  548,                   # 18 months
+        "last_maintenance_date": date(2024, 10, 1),
+        "next_maintenance_date": date(2026, 4, 1),
+    },
+    {
+        "name":                  "Card A6 - Take up Roller Brush Change",
+        "type":                  "Carding",
+        "department":            "BLOWROOM",
+        "location":              "Carding Section",
+        "maintenance_interval":  548,                   # 18 months
+        "last_maintenance_date": date(2024, 10, 1),
+        "next_maintenance_date": date(2026, 4, 1),
+    },
+    {
+        "name":                  "Card B1 - Take up Roller Brush Change",
+        "type":                  "Carding",
+        "department":            "BLOWROOM",
+        "location":              "Carding Section",
+        "maintenance_interval":  548,                   # 18 months
+        "last_maintenance_date": date(2024, 10, 1),
+        "next_maintenance_date": date(2026, 4, 1),
+    },
+    {
+        "name":                  "Card B2 - Take up Roller Brush Change",
+        "type":                  "Carding",
+        "department":            "BLOWROOM",
+        "location":              "Carding Section",
+        "maintenance_interval":  548,                   # 18 months
+        "last_maintenance_date": date(2024, 10, 1),
+        "next_maintenance_date": date(2026, 4, 1),
+    },
+    {
+        "name":                  "Card B3 - Take up Roller Brush Change",
+        "type":                  "Carding",
+        "department":            "BLOWROOM",
+        "location":              "Carding Section",
+        "maintenance_interval":  548,                   # 18 months
+        "last_maintenance_date": date(2025, 8, 19),
+        "next_maintenance_date": date(2027, 2, 19),
+    },
+    {
+        "name":                  "Card B4 - Take up Roller Brush Change",
+        "type":                  "Carding",
+        "department":            "BLOWROOM",
+        "location":              "Carding Section",
+        "maintenance_interval":  548,                   # 18 months
+        "last_maintenance_date": date(2024, 10, 1),
+        "next_maintenance_date": date(2026, 4, 1),
+    },
+    {
+        "name":                  "Card B5 - Take up Roller Brush Change",
+        "type":                  "Carding",
+        "department":            "BLOWROOM",
+        "location":              "Carding Section",
+        "maintenance_interval":  548,                   # 18 months
+        "last_maintenance_date": date(2024, 10, 1),
+        "next_maintenance_date": date(2026, 4, 1),
+    },
+    {
+        "name":                  "Card B6 - Take up Roller Brush Change",
+        "type":                  "Carding",
+        "department":            "BLOWROOM",
+        "location":              "Carding Section",
+        "maintenance_interval":  548,                   # 18 months
+        "last_maintenance_date": date(2024, 10, 1),
+        "next_maintenance_date": date(2026, 4, 1),
+    },
+    # ── Carding: Flat Comb (CRC; Schedule: 1 year / 365 days) ─────────────────
+    # Sourced from maintenance_schedule_transcribed.xlsx
+    {
+        "name":                  "Card A1 - Flat Comb",
+        "type":                  "Carding",
+        "department":            "BLOWROOM",
+        "location":              "Carding Section",
+        "maintenance_interval":  365,                   # 1 year (CRC)
+        "last_maintenance_date": date(2025, 11, 23),
+        "next_maintenance_date": date(2026, 11, 23),
+    },
+    {
+        "name":                  "Card A2 - Flat Comb",
+        "type":                  "Carding",
+        "department":            "BLOWROOM",
+        "location":              "Carding Section",
+        "maintenance_interval":  365,                   # 1 year (CRC)
+        "last_maintenance_date": date(2025, 11, 23),
+        "next_maintenance_date": date(2026, 11, 23),
+    },
+    {
+        "name":                  "Card A3 - Flat Comb",
+        "type":                  "Carding",
+        "department":            "BLOWROOM",
+        "location":              "Carding Section",
+        "maintenance_interval":  365,                   # 1 year (CRC)
+        "last_maintenance_date": date(2025, 10, 9),
+        "next_maintenance_date": date(2026, 10, 9),
+    },
+    {
+        "name":                  "Card A4 - Flat Comb",
+        "type":                  "Carding",
+        "department":            "BLOWROOM",
+        "location":              "Carding Section",
+        "maintenance_interval":  365,                   # 1 year (CRC)
+        "last_maintenance_date": date(2025, 11, 23),
+        "next_maintenance_date": date(2026, 11, 23),
+    },
+    {
+        "name":                  "Card A5 - Flat Comb",
+        "type":                  "Carding",
+        "department":            "BLOWROOM",
+        "location":              "Carding Section",
+        "maintenance_interval":  365,                   # 1 year (CRC)
+        "last_maintenance_date": date(2025, 11, 23),
+        "next_maintenance_date": date(2026, 11, 23),
+    },
+    {
+        "name":                  "Card A6 - Flat Comb",
+        "type":                  "Carding",
+        "department":            "BLOWROOM",
+        "location":              "Carding Section",
+        "maintenance_interval":  365,                   # 1 year (CRC)
+        "last_maintenance_date": date(2025, 11, 23),
+        "next_maintenance_date": date(2026, 11, 23),
+    },
+    {
+        "name":                  "Card B1 - Flat Comb",
+        "type":                  "Carding",
+        "department":            "BLOWROOM",
+        "location":              "Carding Section",
+        "maintenance_interval":  365,                   # 1 year (CRC)
+        "last_maintenance_date": date(2025, 11, 22),
+        "next_maintenance_date": date(2026, 11, 22),
+    },
+    {
+        "name":                  "Card B2 - Flat Comb",
+        "type":                  "Carding",
+        "department":            "BLOWROOM",
+        "location":              "Carding Section",
+        "maintenance_interval":  365,                   # 1 year (CRC)
+        "last_maintenance_date": date(2025, 7, 18),
+        "next_maintenance_date": date(2026, 7, 18),
+    },
+    {
+        "name":                  "Card B3 - Flat Comb",
+        "type":                  "Carding",
+        "department":            "BLOWROOM",
+        "location":              "Carding Section",
+        "maintenance_interval":  365,                   # 1 year (CRC)
+        "last_maintenance_date": date(2025, 11, 21),
+        "next_maintenance_date": date(2026, 11, 21),
+    },
+    {
+        "name":                  "Card B4 - Flat Comb",
+        "type":                  "Carding",
+        "department":            "BLOWROOM",
+        "location":              "Carding Section",
+        "maintenance_interval":  365,                   # 1 year (CRC)
+        "last_maintenance_date": date(2025, 11, 22),
+        "next_maintenance_date": date(2026, 11, 22),
+    },
+    {
+        "name":                  "Card B5 - Flat Comb",
+        "type":                  "Carding",
+        "department":            "BLOWROOM",
+        "location":              "Carding Section",
+        "maintenance_interval":  365,                   # 1 year (CRC)
+        "last_maintenance_date": date(2024, 8, 24),
+        "next_maintenance_date": date(2025, 8, 24),
+    },
+    {
+        "name":                  "Card B6 - Flat Comb",
+        "type":                  "Carding",
+        "department":            "BLOWROOM",
+        "location":              "Carding Section",
+        "maintenance_interval":  365,                   # 1 year (CRC)
+        "last_maintenance_date": date(2025, 11, 21),
+        "next_maintenance_date": date(2026, 11, 21),
     },
 
     # ── COMBER Department (Comber LK-64, sourced from comber_schedules.xlsx) ─
